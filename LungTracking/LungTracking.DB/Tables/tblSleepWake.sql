@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[tblSleepWake]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [SleepOrWake] BIT NOT NULL, 
+    [TimeOfDay] DATETIME NOT NULL, 
+    [PatientId] UNIQUEIDENTIFIER NOT NULL
+)

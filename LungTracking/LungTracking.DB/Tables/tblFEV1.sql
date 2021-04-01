@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[tblFEV1]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [FEV1Number] DECIMAL(18, 2) NOT NULL, 
+    [BeginningEnd] BIT NOT NULL, 
+    [TimeOfDay] DATETIME NOT NULL, 
+    [PatientId] UNIQUEIDENTIFIER NOT NULL
+)

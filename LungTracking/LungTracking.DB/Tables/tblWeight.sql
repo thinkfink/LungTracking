@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[tblWeight]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [WeightNumberInPounds] INT NOT NULL, 
+    [TimeOfDay] DATETIME NOT NULL, 
+    [PatientId] UNIQUEIDENTIFIER NOT NULL
+)

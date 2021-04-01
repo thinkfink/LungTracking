@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>LungTracking.DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{51e67c75-8646-44a8-8e89-34d83d55e3cd}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>LungTracking.DB</RootNamespace>
+    <AssemblyName>LungTracking.DB</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="PostDeploy" />
+    <Folder Include="PreDeploy" />
+    <Folder Include="StoredProcedures" />
+    <Folder Include="Tables" />
+    <Folder Include="PostDeploy\DefaultData" />
+    <Folder Include="ForeignKeys" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\tblUser.sql" />
+    <Build Include="Tables\tblProvider.sql" />
+    <Build Include="Tables\tblPatient.sql" />
+    <Build Include="Tables\tblMedication.sql" />
+    <Build Include="Tables\tblPEF.sql" />
+    <Build Include="Tables\tblFEV1.sql" />
+    <Build Include="Tables\tblTemperature.sql" />
+    <Build Include="Tables\tblBloodPressure.sql" />
+    <Build Include="Tables\tblPulse.sql" />
+    <Build Include="Tables\tblBloodSugar.sql" />
+    <Build Include="ForeignKeys\tblBloodPressure_PatientId.sql" />
+    <Build Include="ForeignKeys\tblBloodSugar_PatientId.sql" />
+    <Build Include="ForeignKeys\tblFEV1_PatientId.sql" />
+    <Build Include="ForeignKeys\tblMedication_PatientId.sql" />
+    <Build Include="ForeignKeys\tblPatient_UserId.sql" />
+    <Build Include="ForeignKeys\tblPEF_PatientId.sql" />
+    <Build Include="ForeignKeys\tblProvider_UserId.sql" />
+    <Build Include="ForeignKeys\tblPulse_PatientId.sql" />
+    <Build Include="ForeignKeys\tblTemperature_PatientId.sql" />
+    <Build Include="Tables\tblWeight.sql" />
+    <Build Include="Tables\tblSleepWake.sql" />
+    <Build Include="Tables\tblAppointment.sql" />
+    <Build Include="ForeignKeys\tblAppointment_PatientId.sql" />
+    <Build Include="ForeignKeys\tblWeight_PatientId.sql" />
+    <Build Include="ForeignKeys\tblSleepWake_PatientId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PostDeploy\DefaultData\Users.sql" />
+    <None Include="PostDeploy\DefaultData\Providers.sql" />
+    <None Include="PostDeploy\DefaultData\Patients.sql" />
+    <None Include="PostDeploy\DefaultData\Medications.sql" />
+    <None Include="PostDeploy\DefaultData\PEFs.sql" />
+    <None Include="PostDeploy\DefaultData\FEV1s.sql" />
+    <None Include="PostDeploy\DefaultData\Temperatures.sql" />
+    <None Include="PostDeploy\DefaultData\BloodPressures.sql" />
+    <None Include="PostDeploy\DefaultData\Pulses.sql" />
+    <None Include="PostDeploy\DefaultData\BloodSugars.sql" />
+    <None Include="local.publish.xml" />
+    <None Include="PostDeploy\DefaultData\Weights.sql" />
+    <None Include="PostDeploy\DefaultData\SleepWakes.sql" />
+    <None Include="PostDeploy\DefaultData\Appointments.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="PostDeploy\Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="LungTracking.DB.refactorlog" />
+  </ItemGroup>
+</Project>

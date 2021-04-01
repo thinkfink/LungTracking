@@ -1,0 +1,4 @@
+﻿ALTER TABLE [dbo].[tblPEF]
+	ADD CONSTRAINT [tblPEF_PatientId]
+	FOREIGN KEY (PatientId)
+	REFERENCES [tblPatient] (Id) ON DELETE NO ACTION
