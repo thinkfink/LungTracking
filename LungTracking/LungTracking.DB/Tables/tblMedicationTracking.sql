@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[tblMedicationTracking]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+	[PillTakenTime] DATETIME NOT NULL, 
+    [MedicationId] UNIQUEIDENTIFIER NOT NULL, 
+    [PatientId] UNIQUEIDENTIFIER NOT NULL
+)

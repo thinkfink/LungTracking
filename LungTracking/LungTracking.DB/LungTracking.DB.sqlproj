@@ -67,7 +67,6 @@
     <Build Include="Tables\tblUser.sql" />
     <Build Include="Tables\tblProvider.sql" />
     <Build Include="Tables\tblPatient.sql" />
-    <Build Include="Tables\tblMedication.sql" />
     <Build Include="Tables\tblPEF.sql" />
     <Build Include="Tables\tblFEV1.sql" />
     <Build Include="Tables\tblTemperature.sql" />
@@ -77,7 +76,6 @@
     <Build Include="ForeignKeys\tblBloodPressure_PatientId.sql" />
     <Build Include="ForeignKeys\tblBloodSugar_PatientId.sql" />
     <Build Include="ForeignKeys\tblFEV1_PatientId.sql" />
-    <Build Include="ForeignKeys\tblMedication_PatientId.sql" />
     <Build Include="ForeignKeys\tblPatient_UserId.sql" />
     <Build Include="ForeignKeys\tblPEF_PatientId.sql" />
     <Build Include="ForeignKeys\tblProvider_UserId.sql" />
@@ -89,12 +87,15 @@
     <Build Include="ForeignKeys\tblAppointment_PatientId.sql" />
     <Build Include="ForeignKeys\tblWeight_PatientId.sql" />
     <Build Include="ForeignKeys\tblSleepWake_PatientId.sql" />
+    <None Include="PostDeploy\DefaultData\MedicationDetails.sql" />
+    <Build Include="Tables\tblMedicationDetails.sql" />
+    <Build Include="Tables\tblMedicationTime.sql" />
+    <Build Include="Tables\tblMedicationTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
     <None Include="PostDeploy\DefaultData\Providers.sql" />
     <None Include="PostDeploy\DefaultData\Patients.sql" />
-    <None Include="PostDeploy\DefaultData\Medications.sql" />
     <None Include="PostDeploy\DefaultData\PEFs.sql" />
     <None Include="PostDeploy\DefaultData\FEV1s.sql" />
     <None Include="PostDeploy\DefaultData\Temperatures.sql" />
@@ -105,6 +106,13 @@
     <None Include="PostDeploy\DefaultData\Weights.sql" />
     <None Include="PostDeploy\DefaultData\SleepWakes.sql" />
     <None Include="PostDeploy\DefaultData\Appointments.sql" />
+    <None Include="PostDeploy\DefaultData\MedicationTimes.sql" />
+    <None Include="PostDeploy\DefaultData\MedicationTrackings.sql" />
+    <Build Include="ForeignKeys\tblMedicationDetails_PatientId.sql" />
+    <Build Include="ForeignKeys\tblMedicationTime_PatientId.sql" />
+    <None Include="ForeignKeys\tblMedicationTracking_PatientId.sql" />
+    <None Include="ForeignKeys\tblMedicationTime_MedicationId.sql" />
+    <None Include="ForeignKeys\tblMedicationTracking_MedicationId.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />

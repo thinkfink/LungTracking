@@ -1,4 +1,4 @@
 ﻿ALTER TABLE [dbo].[tblFEV1]
 	ADD CONSTRAINT [tblFEV1_PatientId]
 	FOREIGN KEY (PatientId)
-	REFERENCES [tblPatient] (Id) ON DELETE NO ACTION
+	REFERENCES [tblPatient] (Id) ON DELETE CASCADE
