@@ -15,6 +15,7 @@ Post-Deployment Script Template
 :r .\DefaultData\MedicationDetails.sql
 :r .\DefaultData\MedicationTimes.sql
 :r .\DefaultData\MedicationTrackings.sql
+:r .\DefaultData\Emergencies.sql
 :r .\DefaultData\PEFs.sql
 :r .\DefaultData\FEV1s.sql
 :r .\DefaultData\Temperatures.sql

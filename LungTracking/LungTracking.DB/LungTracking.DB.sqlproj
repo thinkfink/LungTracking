@@ -91,6 +91,8 @@
     <Build Include="Tables\tblMedicationDetails.sql" />
     <Build Include="Tables\tblMedicationTime.sql" />
     <Build Include="Tables\tblMedicationTracking.sql" />
+    <Build Include="Tables\tblEmergency.sql" />
+    <Build Include="ForeignKeys\tblEmergency_PatientId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
@@ -113,6 +115,7 @@
     <None Include="ForeignKeys\tblMedicationTracking_PatientId.sql" />
     <None Include="ForeignKeys\tblMedicationTime_MedicationId.sql" />
     <None Include="ForeignKeys\tblMedicationTracking_MedicationId.sql" />
+    <None Include="PostDeploy\DefaultData\Emergencies.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />
