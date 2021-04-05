@@ -93,6 +93,7 @@
     <Build Include="Tables\tblMedicationTracking.sql" />
     <Build Include="Tables\tblEmergency.sql" />
     <Build Include="ForeignKeys\tblEmergency_PatientId.sql" />
+    <Build Include="StoredProcedures\spFindAllPatientData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
