@@ -12,6 +12,7 @@ Post-Deployment Script Template
 :r .\DefaultData\Users.sql
 :r .\DefaultData\Providers.sql
 :r .\DefaultData\Patients.sql
+:r .\DefaultData\PatientProviderAccesses.sql
 :r .\DefaultData\MedicationDetails.sql
 :r .\DefaultData\MedicationTimes.sql
 :r .\DefaultData\MedicationTrackings.sql

@@ -92,6 +92,7 @@
     <Build Include="Tables\tblMedicationTime.sql" />
     <Build Include="Tables\tblMedicationTracking.sql" />
     <Build Include="StoredProcedures\spFindAllPatientData.sql" />
+    <Build Include="Tables\tblPatientProviderAccess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
@@ -114,6 +115,9 @@
     <None Include="ForeignKeys\tblMedicationTracking_PatientId.sql" />
     <None Include="ForeignKeys\tblMedicationTime_MedicationId.sql" />
     <None Include="ForeignKeys\tblMedicationTracking_MedicationId.sql" />
+    <None Include="PostDeploy\DefaultData\PatientProviderAccesses.sql" />
+    <None Include="ForeignKeys\tblPatientProviderAccess_PatientId.sql" />
+    <None Include="ForeignKeys\tblPatientProviderAccess_ProviderId.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />
