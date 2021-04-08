@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LungTracking.BL.Models
 {
-    public class Provider : User
+    public class Caregiver : User
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
@@ -15,8 +15,6 @@ namespace LungTracking.BL.Models
         public string City { get; set; }
         public string State { get; set; }
         public string PhoneNumber { get; set; }
-        public string JobDescription { get; set; }
-        public string ImagePath { get; set; }
         public Guid UserId { get; set; }
     }
 }

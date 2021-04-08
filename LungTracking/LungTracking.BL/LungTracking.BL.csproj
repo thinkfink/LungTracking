@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LungTracking.BL.Models\LungTracking.BL.Models.csproj" />
+    <ProjectReference Include="..\LungTracking.PL\LungTracking.PL.csproj" />
+  </ItemGroup>
+
+</Project>

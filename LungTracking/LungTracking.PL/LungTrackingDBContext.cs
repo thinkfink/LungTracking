@@ -42,7 +42,6 @@ namespace LungTracking.PL
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\ProjectsV13;Database=LungTracking.DB;Integrated Security=True");
-                optionsBuilder.UseLazyLoadingProxies();
             }
         }
 
@@ -116,7 +115,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblCaregiver");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D1BE49FFF")
+                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4DC4BAFBE9")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -230,7 +229,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblPatient");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D71FDC548")
+                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4DF14D1BDC")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -288,7 +287,7 @@ namespace LungTracking.PL
             modelBuilder.Entity<tblPatientProviderAccess>(entity =>
             {
                 entity.HasKey(e => new { e.PatientId, e.ProviderId })
-                    .HasName("PK__tblPatie__5C5A05E12C2E22E6");
+                    .HasName("PK__tblPatie__5C5A05E19E397716");
 
                 entity.ToTable("tblPatientProviderAccess");
             });
@@ -315,7 +314,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblProvider");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4D7D6D91EE")
+                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4DEE6C10ED")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -407,6 +406,12 @@ namespace LungTracking.PL
             modelBuilder.Entity<tblUser>(entity =>
             {
                 entity.ToTable("tblUser");
+
+                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E48EBCEDBD")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D1053467CAAABF")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 

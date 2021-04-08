@@ -7,6 +7,6 @@
     [State] VARCHAR(20) NOT NULL, 
     [PhoneNumber] VARCHAR(22) NOT NULL, 
     [JobDescription] VARCHAR(50) NOT NULL,
-    [ImagePath] VARCHAR(MAX) NOT NULL, 
+    [ImagePath] VARCHAR(MAX) NULL, 
     [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE
 )
