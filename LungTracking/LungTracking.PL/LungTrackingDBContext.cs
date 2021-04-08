@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace LungTracking.PL
 {
-    public partial class LungTrackingDBContext : DbContext
+    public partial class LungTrackingEntities : DbContext
     {
-        public LungTrackingDBContext()
+        public LungTrackingEntities()
         {
         }
 
-        public LungTrackingDBContext(DbContextOptions<LungTrackingDBContext> options)
+        public LungTrackingEntities(DbContextOptions<LungTrackingEntities> options)
             : base(options)
         {
         }
@@ -42,6 +42,7 @@ namespace LungTracking.PL
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\ProjectsV13;Database=LungTracking.DB;Integrated Security=True");
+                optionsBuilder.UseLazyLoadingProxies();
             }
         }
 

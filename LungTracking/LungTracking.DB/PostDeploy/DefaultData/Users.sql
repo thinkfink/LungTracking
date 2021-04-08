@@ -250,4 +250,5 @@
 	('c618dcb3-6de5-4ee8-92b2-2a74cbc93b62', 'rhazelgrove1a', 'CuOR9MCgDB', 2, 'cwinders1a@tumblr.com', '2020-07-15 12:07:00', '2021-03-29 10:11:27'),
 	('4c793388-6541-4b45-bc53-48f9a46c75ae', 'mbrydell1b', 'l60oro1', 2, 'lsouthard1b@example.com', '2020-08-21 09:22:08', '2021-03-21 09:32:55'),
 	('da4b87d6-5ca7-4f0c-bb1e-9eaa2f566aaa', 'mtarborn1c', 'k7a5sKYM5v', 2, 'agodfery1c@youtu.be', '2020-07-29 14:13:07', '2021-03-28 14:04:16'),
-	('31edb120-b27a-4ec6-b8e2-058f58089a92', 'jclapston1d', 'MQZz7VP', 2, 'refford1d@friendfeed.com', '2020-09-30 02:21:13', '2021-03-26 00:57:02')END
+	('31edb120-b27a-4ec6-b8e2-058f58089a92', 'jclapston1d', 'MQZz7VP', 2, 'refford1d@friendfeed.com', '2020-09-30 02:21:13', '2021-03-26 00:57:02')
+END
