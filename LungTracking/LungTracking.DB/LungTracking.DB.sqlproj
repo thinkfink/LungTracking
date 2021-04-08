@@ -9,8 +9,7 @@
     <ProjectGuid>{51e67c75-8646-44a8-8e89-34d83d55e3cd}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>LungTracking.DB</RootNamespace>
     <AssemblyName>LungTracking.DB</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
@@ -48,7 +47,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -93,6 +91,8 @@
     <Build Include="Tables\tblMedicationTracking.sql" />
     <Build Include="StoredProcedures\spFindAllPatientData.sql" />
     <Build Include="Tables\tblPatientProviderAccess.sql" />
+    <Build Include="Tables\tblCaregiver.sql" />
+    <Build Include="Tables\tblPatientCaregiverAccess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
@@ -118,6 +118,11 @@
     <None Include="PostDeploy\DefaultData\PatientProviderAccesses.sql" />
     <None Include="ForeignKeys\tblPatientProviderAccess_PatientId.sql" />
     <None Include="ForeignKeys\tblPatientProviderAccess_ProviderId.sql" />
+    <None Include="PostDeploy\DefaultData\Caregivers.sql" />
+    <Build Include="ForeignKeys\tblCaregiver_UserId.sql" />
+    <None Include="PostDeploy\DefaultData\PatientCaregiverAccesses.sql" />
+    <None Include="ForeignKeys\tblPatientCaregiverAccess_CaregiverId.sql" />
+    <None Include="ForeignKeys\tblPatientCaregiverAccess_PatientId.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />

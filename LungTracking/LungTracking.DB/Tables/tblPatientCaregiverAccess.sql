@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[tblPatientCaregiverAccess]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [PatientId] UNIQUEIDENTIFIER NOT NULL, 
+    [CaregiverId] UNIQUEIDENTIFIER NOT NULL
+)

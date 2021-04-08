@@ -21,7 +21,9 @@ DROP TABLE IF EXISTS dbo.tblMedicationTime
 DROP TABLE IF EXISTS dbo.tblMedicationTracking
 DROP TABLE IF EXISTS dbo.tblMedicationDetails
 DROP TABLE IF EXISTS dbo.tblAppointment
+DROP TABLE IF EXISTS dbo.tblPatientCaregiverAccess
 DROP TABLE IF EXISTS dbo.tblPatientProviderAccess
+DROP TABLE IF EXISTS dbo.tblCaregiver
 DROP TABLE IF EXISTS dbo.tblPatient
 DROP TABLE IF EXISTS dbo.tblProvider
 DROP TABLE IF EXISTS dbo.tblUser

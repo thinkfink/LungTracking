@@ -8,5 +8,5 @@
     [PhoneNumber] VARCHAR(22) NOT NULL, 
     [JobDescription] VARCHAR(50) NOT NULL,
     [ImagePath] VARCHAR(MAX) NOT NULL, 
-    [UserId] UNIQUEIDENTIFIER NOT NULL
+    [UserId] UNIQUEIDENTIFIER NOT NULL UNIQUE
 )
