@@ -1,5 +1,5 @@
 ﻿BEGIN
-	INSERT INTO tblAppointment (Id, AppointmentDate, AppointmentTimeStart, AppointmentTimeEnd, AppointmentDescription, AppointmentLocation, PatientId) 
+	INSERT INTO tblAppointment (Id, Date, TimeStart, TimeEnd, Description, Location, PatientId) 
 	VALUES
 	('66dde9a9-0cab-4096-a15a-57c2749b60a0', '2021-06-28', '9:16:20', '16:31:28', 'Sed ante. Vivamus tortor. Duis mattis egestas metus. Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh. Quisque id justo sit amet sapien dignissim vestibulum.', 'Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis. Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.', 'f0fa6cd1-ef6d-47cb-b79c-aea9083de01b'),
 	('c5e26412-f627-42b6-903d-01fc91a32bbe', '2021-05-10', '9:10:36', '14:46:49', 'Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est. Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum. Proin eu mi. Nulla ac enim.', 'Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est. Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum. Proin eu mi.', '733a1497-e8eb-490e-8f22-637c5eae6aed'),

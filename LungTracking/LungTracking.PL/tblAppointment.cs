@@ -8,11 +8,11 @@ namespace LungTracking.PL
     public partial class tblAppointment
     {
         public Guid Id { get; set; }
-        public DateTime AppointmentDate { get; set; }
-        public TimeSpan AppointmentTimeStart { get; set; }
-        public TimeSpan AppointmentTimeEnd { get; set; }
-        public string AppointmentDescription { get; set; }
-        public string AppointmentLocation { get; set; }
+        public DateTime Date { get; set; }
+        public TimeSpan TimeStart { get; set; }
+        public TimeSpan TimeEnd { get; set; }
+        public string Description { get; set; }
+        public string Location { get; set; }
         public Guid PatientId { get; set; }
 
         public virtual tblPatient Patient { get; set; }

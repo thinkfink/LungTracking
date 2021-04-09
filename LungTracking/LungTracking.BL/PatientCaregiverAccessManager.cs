@@ -35,14 +35,14 @@ namespace LungTracking.BL
             }
         }
 
-        public static PatientCaregiverAccess LoadById(Guid patientId, Guid providerId)
+        public static PatientCaregiverAccess LoadById(Guid patientId, Guid caregiverId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
 
-                    tblPatientCaregiverAccess row = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == providerId select dt).FirstOrDefault();
+                    tblPatientCaregiverAccess row = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == caregiverId select dt).FirstOrDefault();
 
                     if (row != null)
                     {
@@ -74,7 +74,7 @@ namespace LungTracking.BL
             return result;
         }
 
-        public static int Insert(out Guid id, Guid patientId, Guid providerId)
+        public static int Insert(out Guid id, Guid patientId, Guid caregiverId)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace LungTracking.BL
                     id = Guid.NewGuid();
                     newrow.Id = id;
                     newrow.PatientId = patientId;
-                    newrow.CaregiverId = providerId;
+                    newrow.CaregiverId = caregiverId;
                     dc.tblPatientCaregiverAccesses.Add(newrow);
                     return dc.SaveChanges();
                 }
@@ -97,13 +97,13 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Delete(Guid patientId, Guid providerId)
+        public static int Delete(Guid patientId, Guid caregiverId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblPatientCaregiverAccess deleterow = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == providerId select dt).FirstOrDefault();
+                    tblPatientCaregiverAccess deleterow = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == caregiverId select dt).FirstOrDefault();
                     dc.tblPatientCaregiverAccesses.Remove(deleterow);
                     return dc.SaveChanges();
                 }

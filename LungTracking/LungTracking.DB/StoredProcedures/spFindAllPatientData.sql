@@ -4,7 +4,7 @@ AS
 BEGIN
 	SELECT 
 		FirstName, LastName, Sex, DateOfBirth, StreetAddress, City, State, PhoneNumber,
-		tblAppointment.AppointmentDate, tblAppointment.AppointmentTimeStart, tblAppointment.AppointmentTimeEnd, tblAppointment.AppointmentDescription, tblAppointment.AppointmentLocation,
+		tblAppointment.Date, tblAppointment.TimeStart, tblAppointment.TimeEnd, tblAppointment.Description, tblAppointment.Location,
 		tblBloodSugar.BloodSugarNumber, tblBloodSugar.TimeOfDay, tblBloodSugar. UnitsOfInsulinGiven,
 		tblFEV1.FEV1Number, tblFEV1.BeginningEnd, tblFEV1.TimeOfDay,
 		tblMedicationDetails.MedicationName, tblMedicationDetails.MedicationDosageTotal, tblMedicationDetails.MedicationDosagePerPill, tblMedicationDetails.MedicationInstructions, tblMedicationDetails.NumberOfPills, tblMedicationDetails.DateFilled, tblMedicationDetails.QuantityOfFill, tblMedicationDetails.RefillDate,

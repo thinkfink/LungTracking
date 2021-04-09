@@ -55,13 +55,13 @@ namespace LungTracking.PL
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.AppointmentDate).HasColumnType("date");
+                entity.Property(e => e.Date).HasColumnType("date");
 
-                entity.Property(e => e.AppointmentDescription)
+                entity.Property(e => e.Description)
                     .IsRequired()
                     .IsUnicode(false);
 
-                entity.Property(e => e.AppointmentLocation)
+                entity.Property(e => e.Location)
                     .IsRequired()
                     .IsUnicode(false);
 
@@ -115,7 +115,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblCaregiver");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4DC4BAFBE9")
+                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D28B7EC83")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -229,7 +229,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblPatient");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4DF14D1BDC")
+                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4DAC55FE73")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -287,7 +287,7 @@ namespace LungTracking.PL
             modelBuilder.Entity<tblPatientProviderAccess>(entity =>
             {
                 entity.HasKey(e => new { e.PatientId, e.ProviderId })
-                    .HasName("PK__tblPatie__5C5A05E19E397716");
+                    .HasName("PK__tblPatie__5C5A05E1181ADD4F");
 
                 entity.ToTable("tblPatientProviderAccess");
             });
@@ -314,7 +314,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblProvider");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4DEE6C10ED")
+                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4D0D25A474")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -329,9 +329,7 @@ namespace LungTracking.PL
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ImagePath)
-                    .IsRequired()
-                    .IsUnicode(false);
+                entity.Property(e => e.ImagePath).IsUnicode(false);
 
                 entity.Property(e => e.JobDescription)
                     .IsRequired()
@@ -407,10 +405,10 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblUser");
 
-                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E48EBCEDBD")
+                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4FDB5D24D")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D1053467CAAABF")
+                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D1053424F383AC")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();

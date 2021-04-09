@@ -49,11 +49,11 @@ namespace LungTracking.PL.Test
         {
             tblAppointment newrow = new tblAppointment();
             newrow.Id = id;
-            newrow.AppointmentDate = DateTime.Parse("2020-04-10");
-            newrow.AppointmentTimeStart = TimeSpan.Parse("11:00:00");
-            newrow.AppointmentTimeEnd = TimeSpan.Parse("12:00:00");
-            newrow.AppointmentDescription = "Doing some testing";
-            newrow.AppointmentLocation = "Test Place";
+            newrow.Date = DateTime.Parse("2020-04-10");
+            newrow.TimeStart = TimeSpan.Parse("11:00:00");
+            newrow.TimeEnd = TimeSpan.Parse("12:00:00");
+            newrow.Description = "Doing some testing";
+            newrow.Location = "Test Place";
             newrow.PatientId = patientId;
 
             dc.tblAppointments.Add(newrow);
@@ -71,13 +71,13 @@ namespace LungTracking.PL.Test
 
             if (existingrow != null)
             {
-                existingrow.AppointmentLocation = "Updated Test Place";
+                existingrow.Location = "Updated Test Place";
                 dc.SaveChanges();
             }
 
             tblAppointment row = dc.tblAppointments.FirstOrDefault(r => r.Id == id);
 
-            Assert.AreEqual(existingrow.AppointmentLocation, row.AppointmentLocation);
+            Assert.AreEqual(existingrow.Location, row.Location);
         }
 
         [TestMethod]
