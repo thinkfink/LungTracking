@@ -10,16 +10,11 @@ using Xamarin.Forms.Xaml;
 namespace LungTracking.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SpiroBPPulseTempTrackerPage : ContentPage
+    public partial class BloodTrackerPage : ContentPage
     {
-        public SpiroBPPulseTempTrackerPage()
+        public BloodTrackerPage()
         {
             InitializeComponent();
-        }
-
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-
         }
     }
 }
