@@ -51,10 +51,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -78,10 +78,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -127,10 +127,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -150,10 +150,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -188,10 +188,10 @@ namespace LungTracking.BL
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -244,10 +244,10 @@ namespace LungTracking.BL
                     throw new Exception("Please provide a patient Id.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -262,10 +262,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
     }

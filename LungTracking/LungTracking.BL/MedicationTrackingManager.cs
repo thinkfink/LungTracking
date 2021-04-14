@@ -45,10 +45,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -88,10 +88,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -129,10 +129,10 @@ namespace LungTracking.BL
                     return medTracking;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
 
@@ -147,10 +147,10 @@ namespace LungTracking.BL
                     return dc.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
-                throw ex;
+                throw;
             }
         }
     }
