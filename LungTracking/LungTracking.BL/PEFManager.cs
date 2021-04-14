@@ -8,42 +8,42 @@ using LungTracking.PL;
 
 namespace LungTracking.BL
 {
-    public static class FEV1Manager
+    public static class PEFManager
     {
-        public static List<FEV1> Load()
+        public static List<PEF> Load()
         {
             using (LungTrackingEntities dc = new LungTrackingEntities())
             {
-                List<FEV1> fev1 = new List<FEV1>();
+                List<PEF> pefs = new List<PEF>();
 
-                dc.tblFev1s
+                dc.tblPefs
                     .ToList()
-                    .ForEach(u => fev1.Add(new FEV1
+                    .ForEach(u => pefs.Add(new PEF
                     {
                         Id = u.Id,
-                        FEV1Number = u.Fev1number,
+                        PEFNumber = u.Pefnumber,
                         BeginningEnd = u.BeginningEnd,
                         TimeOfDay = u.TimeOfDay,
                         PatientId = u.PatientId
                     }));
-                return fev1;
+                return pefs;
             }
         }
-        public static int Insert(int fev1Number, bool beginningEnd, DateTime timeOfDay, Guid patientId)
+        public static int Insert(int pefNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblFev1 newFEV1 = new tblFev1
+                    tblPef newPEF = new tblPef
                     {
                         Id = Guid.NewGuid(),
-                        Fev1number = fev1Number,
+                        Pefnumber = pefNumber,
                         BeginningEnd = beginningEnd,
                         TimeOfDay = timeOfDay,
                         PatientId = patientId
                     };
-                    dc.tblFev1s.Add(newFEV1);
+                    dc.tblPefs.Add(newPEF);
                     return dc.SaveChanges();
                 }
             }
@@ -54,21 +54,21 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Insert(FEV1 fev1)
+        public static int Insert(PEF pef)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblFev1 newFEV1 = new tblFev1
+                    tblPef newPEF = new tblPef
                     {
                         Id = Guid.NewGuid(),
-                        Fev1number = fev1.FEV1Number,
-                        BeginningEnd = fev1.BeginningEnd,
-                        TimeOfDay = fev1.TimeOfDay,
-                        PatientId = fev1.PatientId
+                        Pefnumber = pef.PEFNumber,
+                        BeginningEnd = pef.BeginningEnd,
+                        TimeOfDay = pef.TimeOfDay,
+                        PatientId = pef.PatientId
                     };
-                    dc.tblFev1s.Add(newFEV1);
+                    dc.tblPefs.Add(newPEF);
                     return dc.SaveChanges();
                 }
             }
@@ -78,14 +78,14 @@ namespace LungTracking.BL
                 throw;
             }
         }
-        public static int Update(Guid id, decimal fev1Number, bool beginningEnd, DateTime timeOfDay, Guid patientId)
+        public static int Update(Guid id, decimal pefNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblFev1 updaterow = (from dt in dc.tblFev1s where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.Fev1number = fev1Number;
+                    tblPef updaterow = (from dt in dc.tblPefs where dt.Id == id select dt).FirstOrDefault();
+                    updaterow.Pefnumber = pefNumber;
                     updaterow.BeginningEnd = beginningEnd;
                     updaterow.TimeOfDay = timeOfDay;
                     updaterow.PatientId = patientId;
@@ -99,40 +99,40 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Update(FEV1 fev1)
+        public static int Update(PEF pef)
         {
-            return Update(fev1.Id, fev1.FEV1Number, fev1.BeginningEnd, fev1.TimeOfDay, fev1.PatientId); ;
+            return Update(pef.Id, pef.PEFNumber, pef.BeginningEnd, pef.TimeOfDay, pef.PatientId); ;
         }
 
-        public static List<FEV1> LoadByPatientId(Guid patientId)
+        public static List<PEF> LoadByPatientId(Guid patientId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    List<FEV1> fev1s = new List<FEV1>();
+                    List<PEF> pefs = new List<PEF>();
 
-                    var results = (from fev1 in dc.tblFev1s
-                                   where fev1.PatientId == patientId
+                    var results = (from pef in dc.tblPefs
+                                   where pef.PatientId == patientId
                                    select new
                                    {
-                                       fev1.Id,
-                                       fev1.Fev1number,
-                                       fev1.BeginningEnd,
-                                       fev1.TimeOfDay,
-                                       fev1.PatientId
+                                       pef.Id,
+                                       pef.Pefnumber,
+                                       pef.BeginningEnd,
+                                       pef.TimeOfDay,
+                                       pef.PatientId
                                    }).ToList();
 
-                    results.ForEach(r => fev1s.Add(new FEV1
+                    results.ForEach(r => pefs.Add(new PEF
                     {
                         Id = r.Id,
-                        FEV1Number = r.Fev1number,
+                        PEFNumber = r.Pefnumber,
                         BeginningEnd = r.BeginningEnd,
                         TimeOfDay = r.TimeOfDay,
                         PatientId = r.PatientId
                     }));
 
-                    return fev1s;
+                    return pefs;
                 }
             }
             catch (Exception)
@@ -148,8 +148,8 @@ namespace LungTracking.BL
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblFev1 deleterow = (from dt in dc.tblFev1s where dt.Id == id select dt).FirstOrDefault();
-                    dc.tblFev1s.Remove(deleterow);
+                    tblPef deleterow = (from dt in dc.tblPefs where dt.Id == id select dt).FirstOrDefault();
+                    dc.tblPefs.Remove(deleterow);
                     return dc.SaveChanges();
                 }
             }
