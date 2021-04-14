@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS dbo.tblWeight
 DROP TABLE IF EXISTS dbo.tblSleepWake
 DROP TABLE IF EXISTS dbo.tblMedicationTime
 DROP TABLE IF EXISTS dbo.tblMedicationTracking
-DROP TABLE IF EXISTS dbo.tblMedicationDetails
+DROP TABLE IF EXISTS dbo.tblMedicationDetail
 DROP TABLE IF EXISTS dbo.tblAppointment
 DROP TABLE IF EXISTS dbo.tblPatientCaregiverAccess
 DROP TABLE IF EXISTS dbo.tblPatientProviderAccess

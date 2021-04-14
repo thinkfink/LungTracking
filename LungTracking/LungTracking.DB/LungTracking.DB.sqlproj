@@ -86,7 +86,7 @@
     <Build Include="ForeignKeys\tblWeight_PatientId.sql" />
     <Build Include="ForeignKeys\tblSleepWake_PatientId.sql" />
     <None Include="PostDeploy\DefaultData\MedicationDetails.sql" />
-    <Build Include="Tables\tblMedicationDetails.sql" />
+    <Build Include="Tables\tblMedicationDetail.sql" />
     <Build Include="Tables\tblMedicationTime.sql" />
     <Build Include="Tables\tblMedicationTracking.sql" />
     <Build Include="StoredProcedures\spFindAllPatientData.sql" />

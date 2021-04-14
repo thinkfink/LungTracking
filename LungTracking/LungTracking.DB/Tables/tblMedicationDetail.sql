@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[tblMedicationDetails]
+﻿CREATE TABLE [dbo].[tblMedicationDetail]
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
     [MedicationName] VARCHAR(MAX) NOT NULL, 

@@ -1,5 +1,5 @@
 ﻿BEGIN 
-	INSERT INTO [dbo].[tblMedicationDetails] (Id, MedicationName, MedicationDosageTotal, MedicationDosagePerPill, MedicationInstructions, NumberOfPills, DateFilled, QuantityOfFill, RefillDate, PatientId)
+	INSERT INTO [dbo].[tblMedicationDetail] (Id, MedicationName, MedicationDosageTotal, MedicationDosagePerPill, MedicationInstructions, NumberOfPills, DateFilled, QuantityOfFill, RefillDate, PatientId)
 	VALUES
 	('aa596935-5d6f-4a1d-940e-3c3afb6fd9c7', 'Calc phos, Calc sil, Carbo veg, Kali brom, Viola tri', 'O328', 'S31021D', 'Mauris lacinia sapien quis libero. Nullam sit amet turpis elementum ligula vehicula consequat.', 1, '2021-03-21', 34, '2021-05-20', '2f2e5e3e-3cb5-4774-9f8c-01e808827fb7'),
 	('1d942841-e3aa-4362-97dc-e57ff235bf8f', 'CHLOROXYLENOL', 'S82191C', 'S6392XD', 'Integer ac neque. Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus. In sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus. Suspendisse potenti. In eleifend quam a odio. In hac habitasse platea dictumst.', 1, '2021-03-25', 39, '2021-05-20', '39637806-8a22-4cc9-b595-34919738aa8d'),

@@ -7,7 +7,7 @@ BEGIN
 		tblAppointment.Date, tblAppointment.TimeStart, tblAppointment.TimeEnd, tblAppointment.Description, tblAppointment.Location,
 		tblBloodSugar.BloodSugarNumber, tblBloodSugar.TimeOfDay, tblBloodSugar. UnitsOfInsulinGiven,
 		tblFEV1.FEV1Number, tblFEV1.BeginningEnd, tblFEV1.TimeOfDay,
-		tblMedicationDetails.MedicationName, tblMedicationDetails.MedicationDosageTotal, tblMedicationDetails.MedicationDosagePerPill, tblMedicationDetails.MedicationInstructions, tblMedicationDetails.NumberOfPills, tblMedicationDetails.DateFilled, tblMedicationDetails.QuantityOfFill, tblMedicationDetails.RefillDate,
+		tblMedicationDetail.MedicationName, tblMedicationDetail.MedicationDosageTotal, tblMedicationDetail.MedicationDosagePerPill, tblMedicationDetail.MedicationInstructions, tblMedicationDetail.NumberOfPills, tblMedicationDetail.DateFilled, tblMedicationDetail.QuantityOfFill, tblMedicationDetail.RefillDate,
 		tblMedicationTime.PillTime, tblMedicationTime.MedicationId,
 		tblMedicationTracking.PillTakenTime, tblMedicationTracking.MedicationId,
 		tblPEF.PEFNumber, tblPEF.BeginningEnd, tblPEF.TimeOfDay,
@@ -20,7 +20,7 @@ BEGIN
 	JOIN tblBloodPressure ON tblBloodPressure.PatientId = tblPatient.Id
 	JOIN tblBloodSugar ON tblBloodSugar.PatientId = tblPatient.Id
 	JOIN tblFEV1 ON tblFEV1.PatientId = tblPatient.Id
-	JOIN tblMedicationDetails ON tblMedicationDetails.PatientId = tblPatient.Id
+	JOIN tblMedicationDetail ON tblMedicationDetail.PatientId = tblPatient.Id
 	JOIN tblMedicationTime ON tblMedicationTime.PatientId = tblPatient.Id
 	JOIN tblMedicationTracking ON tblMedicationTracking.PatientId = tblPatient.Id
 	JOIN tblPEF ON tblPEF.PatientId = tblPatient.Id

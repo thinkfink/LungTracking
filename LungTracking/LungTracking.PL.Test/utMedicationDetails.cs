@@ -35,9 +35,9 @@ namespace LungTracking.PL.Test
             int expected = 301;
             int actual = 0;
 
-            var medicationDetailss = dc.tblMedicationDetails;
+            var medicationDetails = dc.tblMedicationDetails;
 
-            actual = medicationDetailss.Count();
+            actual = medicationDetails.Count();
 
             Assert.AreEqual(expected, actual);
 
