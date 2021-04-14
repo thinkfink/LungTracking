@@ -33,13 +33,13 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void InsertTest()
         {
-            Pulse temp = new Pulse();
-            temp.PulseNumber = 90;
-            temp.BeginningEnd = true;
-            temp.TimeOfDay = timeOfDay;
-            temp.PatientId = patientId;
+            Pulse pulse = new Pulse();
+            pulse.PulseNumber = 90;
+            pulse.BeginningEnd = true;
+            pulse.TimeOfDay = timeOfDay;
+            pulse.PatientId = patientId;
 
-            int result = PulseManager.Insert(temp);
+            int result = PulseManager.Insert(pulse);
             Assert.IsTrue(result > 0);
 
         }
@@ -49,24 +49,24 @@ namespace LungTracking.BL.Test
         {
             List<Pulse> pulses = PulseManager.Load();
 
-            Pulse temp = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
+            Pulse pulse = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
 
-            temp.PulseNumber = 100;
+            pulse.PulseNumber = 100;
 
-            PulseManager.Update(temp);
+            PulseManager.Update(pulse);
 
-            Pulse updatedtemp = pulses.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+            Pulse updatedpulse = pulses.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
 
-            Assert.AreEqual(temp.PulseNumber, updatedtemp.PulseNumber);
+            Assert.AreEqual(pulse.PulseNumber, updatedpulse.PulseNumber);
         }
 
         [TestMethod]
         public void DeleteTest()
         {
             List<Pulse> pulses = PulseManager.Load();
-            Pulse temp = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
+            Pulse pulse = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
 
-            int results = PulseManager.Delete(temp.Id);
+            int results = PulseManager.Delete(pulse.Id);
             Assert.IsTrue(results > 0);
         }
     }
