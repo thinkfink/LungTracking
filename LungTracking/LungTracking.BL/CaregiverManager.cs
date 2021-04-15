@@ -228,20 +228,37 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Delete(Guid id)
+        public async static Task<int> Delete(Guid id, bool rollback = false)
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                IDbContextTransaction transaction = null;
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblCaregiver deleterow = (from dt in dc.tblCaregivers where dt.Id == id select dt).FirstOrDefault();
-                    dc.tblCaregivers.Remove(deleterow);
-                    return dc.SaveChanges();
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblCaregiver row = dc.tblCaregivers.FirstOrDefault(c => c.Id == id);
+
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
+
+                            dc.tblCaregivers.Remove(row);
+
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found.");
+                        }
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

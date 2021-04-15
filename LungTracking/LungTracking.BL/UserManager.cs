@@ -235,24 +235,6 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Delete(Guid id)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblUser deleterow = (from dt in dc.tblUsers where dt.Id == id select dt).FirstOrDefault();
-                    dc.tblUsers.Remove(deleterow);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         public static int UpdatePassword(Guid id, string password, string newPassword, string confirmPassword)
         {
 
@@ -283,6 +265,41 @@ namespace LungTracking.BL
             else
             {
                 throw new Exception("New Password and Confirm Password do not match.");
+            }
+        }
+
+        public async static Task<int> Delete(Guid id, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+                int results = 0;
+                await Task.Run(() =>
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblUser row = dc.tblUsers.FirstOrDefault(c => c.Id == id);
+
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
+
+                            dc.tblUsers.Remove(row);
+
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found.");
+                        }
+                    }
+                });
+                return results;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }
