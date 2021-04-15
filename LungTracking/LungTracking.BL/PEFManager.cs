@@ -5,46 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class PEFManager
     {
-        public static List<PEF> Load()
-        {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
-            {
-                List<PEF> pefs = new List<PEF>();
-
-                dc.tblPefs
-                    .ToList()
-                    .ForEach(u => pefs.Add(new PEF
-                    {
-                        Id = u.Id,
-                        PEFNumber = u.Pefnumber,
-                        BeginningEnd = u.BeginningEnd,
-                        TimeOfDay = u.TimeOfDay,
-                        PatientId = u.PatientId
-                    }));
-                return pefs;
-            }
-        }
-        public static int Insert(int pefNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId)
+        public async static Task<IEnumerable<Models.PEF>> Load()
         {
             try
             {
+                List<PEF> pef = new List<PEF>();
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblPef newPEF = new tblPef
-                    {
-                        Id = Guid.NewGuid(),
-                        Pefnumber = pefNumber,
-                        BeginningEnd = beginningEnd,
-                        TimeOfDay = timeOfDay,
-                        PatientId = patientId
-                    };
-                    dc.tblPefs.Add(newPEF);
-                    return dc.SaveChanges();
+                    dc.tblPefs
+                        .ToList()
+                        .ForEach(u => pef.Add(new PEF
+                        {
+                            Id = u.Id,
+                            PEFNumber = u.Pefnumber,
+                            BeginningEnd = u.BeginningEnd,
+                            TimeOfDay = u.TimeOfDay,
+                            PatientId = u.PatientId
+                        }));
+                    return pef;
                 }
             }
             catch (Exception)
@@ -54,22 +39,49 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Insert(PEF pef)
+        public async static Task<IEnumerable<Models.PEF>> LoadByPatientId(Guid patientId)
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                if (patientId != null)
                 {
-                    tblPef newPEF = new tblPef
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        Id = Guid.NewGuid(),
-                        Pefnumber = pef.PEFNumber,
-                        BeginningEnd = pef.BeginningEnd,
-                        TimeOfDay = pef.TimeOfDay,
-                        PatientId = pef.PatientId
-                    };
-                    dc.tblPefs.Add(newPEF);
-                    return dc.SaveChanges();
+
+                        List<PEF> results = new List<PEF>();
+
+                        var pef = (from dt in dc.tblPefs
+                                    where dt.PatientId == patientId
+                                    select new
+                                    {
+                                        dt.Id,
+                                        dt.Pefnumber,
+                                        dt.BeginningEnd,
+                                        dt.TimeOfDay,
+                                        dt.PatientId
+                                    }).ToList();
+
+                        if (pef != null)
+                        {
+                            pef.ForEach(app => results.Add(new PEF
+                            {
+                                Id = app.Id,
+                                PEFNumber = app.Pefnumber,
+                                BeginningEnd = app.BeginningEnd,
+                                TimeOfDay = app.TimeOfDay,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("PEF was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
                 }
             }
             catch (Exception)
@@ -78,18 +90,56 @@ namespace LungTracking.BL
                 throw;
             }
         }
-        public static int Update(Guid id, decimal pefNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId)
+
+
+        public async static Task<Guid> Insert(decimal pefNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId, bool rollback = false)
         {
             try
             {
+                Models.PEF pef = new Models.PEF
+                {
+                    Id = Guid.NewGuid(),
+                    PEFNumber = pefNumber,
+                    BeginningEnd = beginningEnd,
+                    TimeOfDay = timeOfDay,
+                    PatientId = patientId
+                };
+                await Insert(pef, rollback);
+                return pef.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.PEF pef, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblPef updaterow = (from dt in dc.tblPefs where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.Pefnumber = pefNumber;
-                    updaterow.BeginningEnd = beginningEnd;
-                    updaterow.TimeOfDay = timeOfDay;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblPef newrow = new tblPef();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.Pefnumber = pef.PEFNumber;
+                    newrow.BeginningEnd = pef.BeginningEnd;
+                    newrow.TimeOfDay = pef.TimeOfDay;
+                    newrow.PatientId = pef.PatientId;
+
+                    pef.Id = newrow.Id;
+
+                    dc.tblPefs.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
                 }
             }
             catch (Exception)
@@ -99,40 +149,33 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Update(PEF pef)
-        {
-            return Update(pef.Id, pef.PEFNumber, pef.BeginningEnd, pef.TimeOfDay, pef.PatientId); ;
-        }
-
-        public static List<PEF> LoadByPatientId(Guid patientId)
+        public async static Task<int> Update(Models.PEF pef, bool rollback = false)
         {
             try
             {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    List<PEF> pefs = new List<PEF>();
-
-                    var results = (from pef in dc.tblPefs
-                                   where pef.PatientId == patientId
-                                   select new
-                                   {
-                                       pef.Id,
-                                       pef.Pefnumber,
-                                       pef.BeginningEnd,
-                                       pef.TimeOfDay,
-                                       pef.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => pefs.Add(new PEF
+                    tblPef row = (from dt in dc.tblPefs where dt.Id == pef.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
                     {
-                        Id = r.Id,
-                        PEFNumber = r.Pefnumber,
-                        BeginningEnd = r.BeginningEnd,
-                        TimeOfDay = r.TimeOfDay,
-                        PatientId = r.PatientId
-                    }));
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    return pefs;
+                        row.Pefnumber = pef.PEFNumber;
+                        row.BeginningEnd = pef.BeginningEnd;
+                        row.TimeOfDay = pef.TimeOfDay;
+                        row.PatientId = pef.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

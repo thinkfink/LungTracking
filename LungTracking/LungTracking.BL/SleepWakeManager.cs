@@ -5,44 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class SleepWakeManager
     {
-        public static List<SleepWake> Load()
-        {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
-            {
-                List<SleepWake> sws = new List<SleepWake>();
-
-                dc.tblSleepWakes
-                    .ToList()
-                    .ForEach(u => sws.Add(new SleepWake
-                    {
-                        Id = u.Id,
-                        SleepOrWake = u.SleepOrWake,
-                        TimeOfDay = u.TimeOfDay,
-                        PatientId = u.PatientId
-                    }));
-                return sws;
-            }
-        }
-        public static int Insert(bool sleepOrWake, DateTime timeOfDay, Guid patientId)
+        public async static Task<IEnumerable<Models.SleepWake>> Load()
         {
             try
             {
+                List<SleepWake> sw = new List<SleepWake>();
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblSleepWake newSleepWake = new tblSleepWake
-                    {
-                        Id = Guid.NewGuid(),
-                        SleepOrWake = sleepOrWake,
-                        TimeOfDay = timeOfDay,
-                        PatientId = patientId
-                    };
-                    dc.tblSleepWakes.Add(newSleepWake);
-                    return dc.SaveChanges();
+                    dc.tblSleepWakes
+                        .ToList()
+                        .ForEach(u => sw.Add(new SleepWake
+                        {
+                            Id = u.Id,
+                            SleepOrWake = u.SleepOrWake,
+                            TimeOfDay = u.TimeOfDay,
+                            PatientId = u.PatientId
+                        }));
+                    return sw;
                 }
             }
             catch (Exception)
@@ -52,21 +38,47 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Insert(SleepWake sw)
+        public async static Task<IEnumerable<Models.SleepWake>> LoadByPatientId(Guid patientId)
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                if (patientId != null)
                 {
-                    tblSleepWake newSleepWake = new tblSleepWake
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        Id = Guid.NewGuid(),
-                        SleepOrWake = sw.SleepOrWake,
-                        TimeOfDay = sw.TimeOfDay,
-                        PatientId = sw.PatientId
-                    };
-                    dc.tblSleepWakes.Add(newSleepWake);
-                    return dc.SaveChanges();
+
+                        List<SleepWake> results = new List<SleepWake>();
+
+                        var sw = (from dt in dc.tblSleepWakes
+                                    where dt.PatientId == patientId
+                                    select new
+                                    {
+                                        dt.Id,
+                                        dt.SleepOrWake,
+                                        dt.TimeOfDay,
+                                        dt.PatientId
+                                    }).ToList();
+
+                        if (sw != null)
+                        {
+                            sw.ForEach(app => results.Add(new SleepWake
+                            {
+                                Id = app.Id,
+                                SleepOrWake = app.SleepOrWake,
+                                TimeOfDay = app.TimeOfDay,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("SleepWake was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
                 }
             }
             catch (Exception)
@@ -75,17 +87,54 @@ namespace LungTracking.BL
                 throw;
             }
         }
-        public static int Update(Guid id, bool sleepOrWake, DateTime timeOfDay, Guid patientId)
+
+
+        public async static Task<Guid> Insert(bool sleepOrWake, DateTime timeOfDay, Guid patientId, bool rollback = false)
         {
             try
             {
+                Models.SleepWake sw = new Models.SleepWake
+                {
+                    Id = Guid.NewGuid(),
+                    SleepOrWake = sleepOrWake,
+                    TimeOfDay = timeOfDay,
+                    PatientId = patientId
+                };
+                await Insert(sw, rollback);
+                return sw.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.SleepWake sw, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblSleepWake updaterow = (from dt in dc.tblSleepWakes where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.SleepOrWake = sleepOrWake;
-                    updaterow.TimeOfDay = timeOfDay;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblSleepWake newrow = new tblSleepWake();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.SleepOrWake = sw.SleepOrWake;
+                    newrow.TimeOfDay = sw.TimeOfDay;
+                    newrow.PatientId = sw.PatientId;
+
+                    sw.Id = newrow.Id;
+
+                    dc.tblSleepWakes.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
                 }
             }
             catch (Exception)
@@ -95,38 +144,32 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Update(SleepWake sw)
-        {
-            return Update(sw.Id, sw.SleepOrWake, sw.TimeOfDay, sw.PatientId);
-        }
-
-        public static List<SleepWake> LoadByPatientId(Guid patientId)
+        public async static Task<int> Update(Models.SleepWake sw, bool rollback = false)
         {
             try
             {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    List<SleepWake> sws = new List<SleepWake>();
-
-                    var results = (from sw in dc.tblSleepWakes
-                                   where sw.PatientId == patientId
-                                   select new
-                                   {
-                                       sw.Id,
-                                       sw.SleepOrWake,
-                                       sw.TimeOfDay,
-                                       sw.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => sws.Add(new SleepWake
+                    tblSleepWake row = (from dt in dc.tblSleepWakes where dt.Id == sw.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
                     {
-                        Id = r.Id,
-                        SleepOrWake = r.SleepOrWake,
-                        TimeOfDay = r.TimeOfDay,
-                        PatientId = r.PatientId
-                    }));
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    return sws;
+                        row.SleepOrWake = sw.SleepOrWake;
+                        row.TimeOfDay = sw.TimeOfDay;
+                        row.PatientId = sw.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

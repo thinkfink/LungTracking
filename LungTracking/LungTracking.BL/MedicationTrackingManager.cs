@@ -5,128 +5,171 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class MedicationTrackingManager
     {
-        public static List<MedicationTracking> Load()
+        public async static Task<IEnumerable<Models.MedicationTracking>> Load()
         {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
+            try
             {
                 List<MedicationTracking> medTracking = new List<MedicationTracking>();
 
-                dc.tblMedicationTrackings
-                    .ToList()
-                    .ForEach(u => medTracking.Add(new MedicationTracking
-                    {
-                        Id = u.Id,
-                        PillTakenTime = u.PillTakenTime,
-                        MedicationId = u.MedicationId,
-                        PatientId = u.PatientId
-                    }));
-                return medTracking;
-            }
-        }
-        public static int Insert(DateTime pillTakenTime, Guid medId, Guid patientId)
-        {
-            try
-            {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblMedicationTracking newMedTracking = new tblMedicationTracking
-                    {
-                        Id = Guid.NewGuid(),
-                        PillTakenTime = pillTakenTime,
-                        MedicationId = medId,
-                        PatientId = patientId
-                    };
-                    dc.tblMedicationTrackings.Add(newMedTracking);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Insert(MedicationTracking medTracking)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationTracking newMedTracking = new tblMedicationTracking
-                    {
-                        Id = Guid.NewGuid(),
-                        PillTakenTime = medTracking.PillTakenTime,
-                        MedicationId = medTracking.MedicationId,
-                        PatientId = medTracking.PatientId
-                    };
-                    dc.tblMedicationTrackings.Add(newMedTracking);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public static int Update(Guid id, DateTime pillTakenTime, Guid medId, Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationTracking updaterow = (from dt in dc.tblMedicationTrackings where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.PillTakenTime = pillTakenTime;
-                    updaterow.MedicationId = medId;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Update(MedicationTracking medTracking)
-        {
-            return Update(medTracking.Id, medTracking.PillTakenTime, medTracking.MedicationId, medTracking.PatientId);
-        }
-
-        public static List<MedicationTracking> LoadByPatientId(Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    List<MedicationTracking> medTracking = new List<MedicationTracking>();
-
-                    var results = (from mdt in dc.tblMedicationTrackings
-                                   where mdt.PatientId == patientId
-                                   select new
-                                   {
-                                       mdt.Id,
-                                       mdt.PillTakenTime,
-                                       mdt.MedicationId,
-                                       mdt.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => medTracking.Add(new MedicationTracking
-                    {
-                        Id = r.Id,
-                        PillTakenTime = r.PillTakenTime,
-                        MedicationId = r.MedicationId,
-                        PatientId = r.PatientId
-                    }));
-
+                    dc.tblMedicationTrackings
+                        .ToList()
+                        .ForEach(u => medTracking.Add(new MedicationTracking
+                        {
+                            Id = u.Id,
+                            PillTakenTime = u.PillTakenTime,
+                            MedicationId = u.MedicationId,
+                            PatientId = u.PatientId
+                        }));
                     return medTracking;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<IEnumerable<Models.MedicationTracking>> LoadByPatientId(Guid patientId)
+        {
+            try
+            {
+                if (patientId != null)
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+
+                        List<MedicationTracking> results = new List<MedicationTracking>();
+
+                        var medTracking = (from dt in dc.tblMedicationTrackings
+                                       where dt.PatientId == patientId
+                                       select new
+                                       {
+                                           dt.Id,
+                                           dt.PillTakenTime,
+                                           dt.MedicationId,
+                                           dt.PatientId
+                                       }).ToList();
+
+                        if (medTracking != null)
+                        {
+                            medTracking.ForEach(app => results.Add(new MedicationTracking
+                            {
+                                Id = app.Id,
+                                PillTakenTime = app.PillTakenTime,
+                                MedicationId = app.MedicationId,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("MedicationTracking was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async static Task<Guid> Insert(DateTime pillTracking, Guid medId, Guid patientId, bool rollback = false)
+        {
+            try
+            {
+                Models.MedicationTracking medTracking = new Models.MedicationTracking
+                {
+                    Id = Guid.NewGuid(),
+                    PillTakenTime = pillTracking,
+                    MedicationId = medId,
+                    PatientId = patientId
+                };
+                await Insert(medTracking, rollback);
+                return medTracking.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.MedicationTracking medTracking, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblMedicationTracking newrow = new tblMedicationTracking();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.PillTakenTime = medTracking.PillTakenTime;
+                    newrow.MedicationId = medTracking.MedicationId;
+                    newrow.PatientId = medTracking.PatientId;
+
+                    medTracking.Id = newrow.Id;
+
+                    dc.tblMedicationTrackings.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Update(Models.MedicationTracking medTracking, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblMedicationTracking row = (from dt in dc.tblMedicationTrackings where dt.Id == medTracking.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
+
+                        row.PillTakenTime = medTracking.PillTakenTime;
+                        row.MedicationId = medTracking.MedicationId;
+                        row.PatientId = medTracking.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

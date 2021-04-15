@@ -5,89 +5,90 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class PatientCaregiverAccessManager
     {
-        public static List<PatientCaregiverAccess> Load()
+        public async static Task<IEnumerable<Models.PatientCaregiverAccess>> Load()
         {
             try
             {
+                List<PatientCaregiverAccess> pcas = new List<PatientCaregiverAccess>();
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    List<PatientCaregiverAccess> patientCaregiverAccess = new List<PatientCaregiverAccess>();
-                    foreach (tblPatientCaregiverAccess dt in dc.tblPatientCaregiverAccesses)
-                    {
-                        patientCaregiverAccess.Add(new PatientCaregiverAccess
+                    dc.tblPatientCaregiverAccesses
+                        .ToList()
+                        .ForEach(u => pcas.Add(new PatientCaregiverAccess
                         {
-                            Id = dt.Id,
-                            PatientId = dt.PatientId,
-                            CaregiverId = dt.CaregiverId
-                        });
-                    }
-                    return patientCaregiverAccess;
+                            Id = u.Id,
+                            PatientId = u.PatientId,
+                            CaregiverId = u.CaregiverId
+                        }));
+                    return pcas;
                 }
             }
             catch (Exception)
             {
+
                 throw;
             }
         }
 
-        public static PatientCaregiverAccess LoadById(Guid patientId, Guid caregiverId)
+        public async static Task<Models.PatientCaregiverAccess> LoadById(Guid patientId, Guid caregiverId)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
+                    tblPatientCaregiverAccess tblPatientCaregiverAccess = dc.tblPatientCaregiverAccesses.FirstOrDefault(c => c.PatientId == patientId && c.CaregiverId == caregiverId);
+                    Models.PatientCaregiverAccess pca = new Models.PatientCaregiverAccess();
 
-                    tblPatientCaregiverAccess row = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == caregiverId select dt).FirstOrDefault();
-
-                    if (row != null)
+                    if (tblPatientCaregiverAccess != null)
                     {
-                        return new PatientCaregiverAccess
-                        {
-                            Id = row.Id,
-                            PatientId = row.PatientId,
-                            CaregiverId = row.CaregiverId
-                        };
+                        pca.Id = tblPatientCaregiverAccess.Id;
+                        pca.PatientId = tblPatientCaregiverAccess.PatientId;
+                        pca.CaregiverId = tblPatientCaregiverAccess.CaregiverId;
+                        return pca;
                     }
                     else
                     {
-                        throw new Exception("PatientCaregiverAccess was not found.");
+                        throw new Exception("Could not find the row");
                     }
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
-        public static int Insert(PatientCaregiverAccess patientCaregiverAccess)
-        {
-            Guid id;
-            int result = Insert(out id, patientCaregiverAccess.PatientId, patientCaregiverAccess.CaregiverId);
-            patientCaregiverAccess.Id = id;
-            return result;
-        }
-
-        public static int Insert(out Guid id, Guid patientId, Guid caregiverId)
+        public async static Task<int> Insert(Models.PatientCaregiverAccess pca, bool rollback = false)
         {
             try
             {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
                     tblPatientCaregiverAccess newrow = new tblPatientCaregiverAccess();
 
-                    id = Guid.NewGuid();
-                    newrow.Id = id;
-                    newrow.PatientId = patientId;
-                    newrow.CaregiverId = caregiverId;
+                    newrow.Id = Guid.NewGuid();
+                    newrow.PatientId = pca.PatientId;
+                    newrow.CaregiverId = pca.CaregiverId;
+
+                    pca.Id = newrow.Id;
+
                     dc.tblPatientCaregiverAccesses.Add(newrow);
-                    return dc.SaveChanges();
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
                 }
             }
             catch (Exception)
@@ -96,14 +97,13 @@ namespace LungTracking.BL
                 throw;
             }
         }
-
-        public static int Delete(Guid patientId, Guid caregiverId)
+        public static int Delete(Guid id)
         {
             try
             {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblPatientCaregiverAccess deleterow = (from dt in dc.tblPatientCaregiverAccesses where dt.PatientId == patientId && dt.CaregiverId == caregiverId select dt).FirstOrDefault();
+                    tblPatientCaregiverAccess deleterow = (from dt in dc.tblPatientCaregiverAccesses where dt.Id == id select dt).FirstOrDefault();
                     dc.tblPatientCaregiverAccesses.Remove(deleterow);
                     return dc.SaveChanges();
                 }

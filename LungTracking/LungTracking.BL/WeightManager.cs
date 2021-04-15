@@ -5,44 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class WeightManager
     {
-        public static List<Weight> Load()
-        {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
-            {
-                List<Weight> weights = new List<Weight>();
-
-                dc.tblWeights
-                    .ToList()
-                    .ForEach(u => weights.Add(new Weight
-                    {
-                        Id = u.Id,
-                        WeightNumberInPounds = u.WeightNumberInPounds,
-                        TimeOfDay = u.TimeOfDay,
-                        PatientId = u.PatientId
-                    }));
-                return weights;
-            }
-        }
-        public static int Insert(int weightNumber, bool beginningEnd, DateTime timeOfDay, Guid patientId)
+        public async static Task<IEnumerable<Models.Weight>> Load()
         {
             try
             {
+                List<Weight> weight = new List<Weight>();
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblWeight newWeight = new tblWeight
-                    {
-                        Id = Guid.NewGuid(),
-                        WeightNumberInPounds = weightNumber,
-                        TimeOfDay = timeOfDay,
-                        PatientId = patientId
-                    };
-                    dc.tblWeights.Add(newWeight);
-                    return dc.SaveChanges();
+                    dc.tblWeights
+                        .ToList()
+                        .ForEach(u => weight.Add(new Weight
+                        {
+                            Id = u.Id,
+                            WeightNumberInPounds = u.WeightNumberInPounds,
+                            TimeOfDay = u.TimeOfDay,
+                            PatientId = u.PatientId
+                        }));
+                    return weight;
                 }
             }
             catch (Exception)
@@ -52,21 +38,47 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Insert(Weight weight)
+        public async static Task<IEnumerable<Models.Weight>> LoadByPatientId(Guid patientId)
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                if (patientId != null)
                 {
-                    tblWeight newWeight = new tblWeight
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        Id = Guid.NewGuid(),
-                        WeightNumberInPounds = weight.WeightNumberInPounds,
-                        TimeOfDay = weight.TimeOfDay,
-                        PatientId = weight.PatientId
-                    };
-                    dc.tblWeights.Add(newWeight);
-                    return dc.SaveChanges();
+
+                        List<Weight> results = new List<Weight>();
+
+                        var weight = (from dt in dc.tblWeights
+                                  where dt.PatientId == patientId
+                                  select new
+                                  {
+                                      dt.Id,
+                                      dt.WeightNumberInPounds,
+                                      dt.TimeOfDay,
+                                      dt.PatientId
+                                  }).ToList();
+
+                        if (weight != null)
+                        {
+                            weight.ForEach(app => results.Add(new Weight
+                            {
+                                Id = app.Id,
+                                WeightNumberInPounds = app.WeightNumberInPounds,
+                                TimeOfDay = app.TimeOfDay,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("Weight was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
                 }
             }
             catch (Exception)
@@ -75,17 +87,54 @@ namespace LungTracking.BL
                 throw;
             }
         }
-        public static int Update(Guid id, int weightNumber, DateTime timeOfDay, Guid patientId)
+
+
+        public async static Task<Guid> Insert(int weightNumber, DateTime timeOfDay, Guid patientId, bool rollback = false)
         {
             try
             {
+                Models.Weight weight = new Models.Weight
+                {
+                    Id = Guid.NewGuid(),
+                    WeightNumberInPounds = weightNumber,
+                    TimeOfDay = timeOfDay,
+                    PatientId = patientId
+                };
+                await Insert(weight, rollback);
+                return weight.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.Weight weight, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblWeight updaterow = (from dt in dc.tblWeights where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.WeightNumberInPounds = weightNumber;
-                    updaterow.TimeOfDay = timeOfDay;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblWeight newrow = new tblWeight();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.WeightNumberInPounds = weight.WeightNumberInPounds;
+                    newrow.TimeOfDay = weight.TimeOfDay;
+                    newrow.PatientId = weight.PatientId;
+
+                    weight.Id = newrow.Id;
+
+                    dc.tblWeights.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
                 }
             }
             catch (Exception)
@@ -95,38 +144,32 @@ namespace LungTracking.BL
             }
         }
 
-        public static int Update(Weight weight)
-        {
-            return Update(weight.Id, weight.WeightNumberInPounds, weight.TimeOfDay, weight.PatientId);
-        }
-
-        public static List<Weight> LoadByPatientId(Guid patientId)
+        public async static Task<int> Update(Models.Weight weight, bool rollback = false)
         {
             try
             {
+                IDbContextTransaction transaction = null;
+
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    List<Weight> weights = new List<Weight>();
-
-                    var results = (from weight in dc.tblWeights
-                                   where weight.PatientId == patientId
-                                   select new
-                                   {
-                                       weight.Id,
-                                       weight.WeightNumberInPounds,
-                                       weight.TimeOfDay,
-                                       weight.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => weights.Add(new Weight
+                    tblWeight row = (from dt in dc.tblWeights where dt.Id == weight.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
                     {
-                        Id = r.Id,
-                        WeightNumberInPounds = r.WeightNumberInPounds,
-                        TimeOfDay = r.TimeOfDay,
-                        PatientId = r.PatientId
-                    }));
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    return weights;
+                        row.WeightNumberInPounds = weight.WeightNumberInPounds;
+                        row.TimeOfDay = weight.TimeOfDay;
+                        row.PatientId = weight.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

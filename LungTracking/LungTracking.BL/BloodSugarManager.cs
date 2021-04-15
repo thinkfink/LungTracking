@@ -5,146 +5,189 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class BloodSugarManager
     {
-        public static List<BloodSugar> Load()
+        public async static Task<IEnumerable<Models.BloodSugar>> Load()
         {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
+            try
             {
                 List<BloodSugar> bloodSugar = new List<BloodSugar>();
 
-                dc.tblBloodSugars
-                    .ToList()
-                    .ForEach(u => bloodSugar.Add(new BloodSugar
-                    {
-                        Id = u.Id,
-                        BloodSugarNumber = u.BloodSugarNumber,
-                        TimeOfDay = u.TimeOfDay,
-                        UnitsOfInsulinGiven = u.UnitsOfInsulinGiven,
-                        TypeOfInsulinGiven = u.TypeOfInsulinGiven,
-                        Notes = u.Notes,
-                        PatientId = u.PatientId
-                    }));
-                return bloodSugar;
-            }
-        }
-        public static int Insert(int bloodSugarNumber, DateTime timeOfDay, int unitsOfInsulin, string typeOfInsulin, string notes, Guid patientId)
-        {
-            try
-            {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblBloodSugar newBloodSugar = new tblBloodSugar
-                    {
-                        Id = Guid.NewGuid(),
-                        BloodSugarNumber = bloodSugarNumber,
-                        TimeOfDay = timeOfDay,
-                        UnitsOfInsulinGiven = unitsOfInsulin,
-                        TypeOfInsulinGiven = typeOfInsulin,
-                        Notes = notes,
-                        PatientId = patientId
-                    };
-                    dc.tblBloodSugars.Add(newBloodSugar);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Insert(BloodSugar bloodSugar)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblBloodSugar newBloodSugar = new tblBloodSugar
-                    {
-                        Id = Guid.NewGuid(),
-                        BloodSugarNumber = bloodSugar.BloodSugarNumber,
-                        TimeOfDay = bloodSugar.TimeOfDay,
-                        UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven,
-                        TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven,
-                        Notes = bloodSugar.Notes,
-                        PatientId = bloodSugar.PatientId
-                    };
-                    dc.tblBloodSugars.Add(newBloodSugar);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public static int Update(Guid id, int bloodSugarNumber, DateTime timeOfDay, int unitsOfInsulin, string typeOfInsulin, string notes, Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblBloodSugar updaterow = (from dt in dc.tblBloodSugars where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.BloodSugarNumber = bloodSugarNumber;
-                    updaterow.TimeOfDay = timeOfDay;
-                    updaterow.UnitsOfInsulinGiven = unitsOfInsulin;
-                    updaterow.TypeOfInsulinGiven = typeOfInsulin;
-                    updaterow.Notes = notes;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Update(BloodSugar bloodSugar)
-        {
-            return Update(bloodSugar.Id, bloodSugar.BloodSugarNumber, bloodSugar.TimeOfDay, bloodSugar.UnitsOfInsulinGiven, bloodSugar.TypeOfInsulinGiven, bloodSugar.Notes, bloodSugar.PatientId);
-        }
-
-        public static List<BloodSugar> LoadByPatientId(Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    List<BloodSugar> bloodSugar = new List<BloodSugar>();
-
-                    var results = (from bs in dc.tblBloodSugars
-                                   where bs.PatientId == patientId
-                                   select new
-                                   {
-                                       bs.Id,
-                                       bs.BloodSugarNumber,
-                                       bs.TimeOfDay,
-                                       bs.UnitsOfInsulinGiven,
-                                       bs.TypeOfInsulinGiven,
-                                       bs.Notes,
-                                       bs.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => bloodSugar.Add(new BloodSugar
-                    {
-                        Id = r.Id,
-                        BloodSugarNumber = r.BloodSugarNumber,
-                        TimeOfDay = r.TimeOfDay,
-                        UnitsOfInsulinGiven = r.UnitsOfInsulinGiven,
-                        TypeOfInsulinGiven = r.TypeOfInsulinGiven,
-                        Notes = r.Notes,
-                        PatientId = r.PatientId
-                    }));
-
+                    dc.tblBloodSugars
+                        .ToList()
+                        .ForEach(u => bloodSugar.Add(new BloodSugar
+                        {
+                            Id = u.Id,
+                            BloodSugarNumber = u.BloodSugarNumber,
+                            TimeOfDay = u.TimeOfDay,
+                            UnitsOfInsulinGiven = u.UnitsOfInsulinGiven,
+                            TypeOfInsulinGiven = u.TypeOfInsulinGiven,
+                            Notes = u.Notes,
+                            PatientId = u.PatientId
+                        }));
                     return bloodSugar;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<IEnumerable<Models.BloodSugar>> LoadByPatientId(Guid patientId)
+        {
+            try
+            {
+                if (patientId != null)
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+
+                        List<BloodSugar> results = new List<BloodSugar>();
+
+                        var bloodSugar = (from dt in dc.tblBloodSugars
+                                             where dt.PatientId == patientId
+                                             select new
+                                             {
+                                                 dt.Id,
+                                                 dt.BloodSugarNumber,
+                                                 dt.TimeOfDay,
+                                                 dt.UnitsOfInsulinGiven,
+                                                 dt.TypeOfInsulinGiven,
+                                                 dt.Notes,
+                                                 dt.PatientId
+                                             }).ToList();
+
+                        if (bloodSugar != null)
+                        {
+                            bloodSugar.ForEach(app => results.Add(new BloodSugar
+                            {
+                                Id = app.Id,
+                                BloodSugarNumber = app.BloodSugarNumber,
+                                TimeOfDay = app.TimeOfDay,
+                                UnitsOfInsulinGiven = app.UnitsOfInsulinGiven,
+                                TypeOfInsulinGiven = app.TypeOfInsulinGiven,
+                                Notes = app.Notes,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("BloodSugar was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async static Task<Guid> Insert(int bloodSugarNumber, DateTime timeOfDay, int unitsOfInsulin, string typeOfInsulin, string notes, Guid patientId, bool rollback = false)
+        {
+            try
+            {
+                Models.BloodSugar bloodSugar = new Models.BloodSugar
+                {
+                    Id = Guid.NewGuid(),
+                    BloodSugarNumber = bloodSugarNumber,
+                    TimeOfDay = timeOfDay,
+                    UnitsOfInsulinGiven = unitsOfInsulin,
+                    TypeOfInsulinGiven = typeOfInsulin,
+                    Notes = notes,
+                    PatientId = patientId
+                };
+                await Insert(bloodSugar, rollback);
+                return bloodSugar.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.BloodSugar bloodSugar, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblBloodSugar newrow = new tblBloodSugar();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.BloodSugarNumber = bloodSugar.BloodSugarNumber;
+                    newrow.TimeOfDay = bloodSugar.TimeOfDay;
+                    newrow.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
+                    newrow.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
+                    newrow.Notes = bloodSugar.Notes;
+                    newrow.PatientId = bloodSugar.PatientId;
+
+                    bloodSugar.Id = newrow.Id;
+
+                    dc.tblBloodSugars.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Update(Models.BloodSugar bloodSugar, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblBloodSugar row = (from dt in dc.tblBloodSugars where dt.Id == bloodSugar.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
+
+                        row.BloodSugarNumber = bloodSugar.BloodSugarNumber;
+                        row.TimeOfDay = bloodSugar.TimeOfDay;
+                        row.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
+                        row.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
+                        row.Notes = bloodSugar.Notes;
+                        row.PatientId = bloodSugar.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

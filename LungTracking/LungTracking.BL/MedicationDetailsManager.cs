@@ -5,163 +5,241 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class MedicationDetailsManager
     {
-        public static List<MedicationDetails> Load()
+        public async static Task<IEnumerable<Models.MedicationDetails>> Load()
         {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
+            try
             {
                 List<MedicationDetails> medDetails = new List<MedicationDetails>();
 
-                dc.tblMedicationDetails
-                    .ToList()
-                    .ForEach(u => medDetails.Add(new MedicationDetails
-                    {
-                        Id = u.Id,
-                        MedicationName = u.MedicationName,
-                        MedicationDosageTotal = u.MedicationDosageTotal,
-                        MedicationDosagePerPill = u.MedicationDosagePerPill,
-                        MedicationInstructions = u.MedicationInstructions,
-                        NumberOfPills = u.NumberOfPills,
-                        DateFilled = u.DateFilled,
-                        QuantityOfFill = u.QuantityOfFill,
-                        RefillDate = u.RefillDate,
-                        PatientId = u.PatientId
-                    }));
-                return medDetails;
-            }
-        }
-        public static int Insert(string medName, string medDosageTotal, string medDosagePerPill, string medInstructions, int numberOfPills, DateTime dateFilled, int quantityOfFill, DateTime refillDate, Guid patientId)
-        {
-            try
-            {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblMedicationDetail newMedDetail = new tblMedicationDetail
-                    {
-                        Id = Guid.NewGuid(),
-                        MedicationName = medName,
-                        MedicationDosageTotal = medDosageTotal,
-                        MedicationDosagePerPill = medDosagePerPill,
-                        MedicationInstructions = medInstructions,
-                        NumberOfPills = numberOfPills,
-                        DateFilled = dateFilled,
-                        QuantityOfFill = quantityOfFill,
-                        RefillDate = refillDate,
-                        PatientId = patientId
-                    };
-                    dc.tblMedicationDetails.Add(newMedDetail);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Insert(MedicationDetails medDetail)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationDetail newMedDetail = new tblMedicationDetail
-                    {
-                        Id = Guid.NewGuid(),
-                        MedicationName = medDetail.MedicationName,
-                        MedicationDosageTotal = medDetail.MedicationDosageTotal,
-                        MedicationDosagePerPill = medDetail.MedicationDosagePerPill,
-                        MedicationInstructions = medDetail.MedicationInstructions,
-                        NumberOfPills = medDetail.NumberOfPills,
-                        DateFilled = medDetail.DateFilled,
-                        QuantityOfFill = medDetail.QuantityOfFill,
-                        RefillDate = medDetail.RefillDate,
-                        PatientId = medDetail.PatientId
-                    };
-                    dc.tblMedicationDetails.Add(newMedDetail);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public static int Update(Guid id, string medName, string medDosageTotal, string medDosagePerPill, string medInstructions, int numberOfPills, DateTime dateFilled, int quantityOfFill, DateTime refillDate, Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationDetail updaterow = (from dt in dc.tblMedicationDetails where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.MedicationName = medName;
-                    updaterow.MedicationDosageTotal = medDosageTotal;
-                    updaterow.MedicationDosagePerPill = medDosagePerPill;
-                    updaterow.MedicationInstructions = medInstructions;
-                    updaterow.NumberOfPills = numberOfPills;
-                    updaterow.DateFilled = dateFilled;
-                    updaterow.QuantityOfFill = quantityOfFill;
-                    updaterow.RefillDate = refillDate;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Update(MedicationDetails medDetail)
-        {
-            return Update(medDetail.Id, medDetail.MedicationName, medDetail.MedicationDosageTotal, medDetail.MedicationDosagePerPill, medDetail.MedicationInstructions, medDetail.NumberOfPills, medDetail.DateFilled, medDetail.QuantityOfFill, medDetail.RefillDate, medDetail.PatientId);
-        }
-
-        public static List<MedicationDetails> LoadByPatientId(Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    List<MedicationDetails> medDetails = new List<MedicationDetails>();
-
-                    var results = (from mdt in dc.tblMedicationDetails where mdt.PatientId == patientId
-                                   select new
-                                   {
-                                       mdt.Id,
-                                       mdt.MedicationName,
-                                       mdt.MedicationDosageTotal,
-                                       mdt.MedicationDosagePerPill,
-                                       mdt.MedicationInstructions,
-                                       mdt.NumberOfPills,
-                                       mdt.DateFilled,
-                                       mdt.QuantityOfFill,
-                                       mdt.RefillDate,
-                                       mdt.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => medDetails.Add(new MedicationDetails
-                    {
-                        Id = r.Id,
-                        MedicationName = r.MedicationName,
-                        MedicationDosageTotal = r.MedicationDosageTotal,
-                        MedicationDosagePerPill = r.MedicationDosagePerPill,
-                        MedicationInstructions = r.MedicationInstructions,
-                        NumberOfPills = r.NumberOfPills,
-                        DateFilled = r.DateFilled,
-                        QuantityOfFill = r.QuantityOfFill,
-                        RefillDate = r.RefillDate,
-                        PatientId = r.PatientId
-                    }));
-
+                    dc.tblMedicationDetails
+                        .ToList()
+                        .ForEach(u => medDetails.Add(new MedicationDetails
+                        {
+                            Id = u.Id,
+                            MedicationName = u.MedicationName,
+                            MedicationDosageTotal = u.MedicationDosageTotal,
+                            MedicationDosagePerPill = u.MedicationDosagePerPill,
+                            MedicationInstructions = u.MedicationInstructions,
+                            NumberOfPills = u.NumberOfPills,
+                            DateFilled = u.DateFilled,
+                            QuantityOfFill = u.QuantityOfFill,
+                            RefillDate = u.RefillDate,
+                            PatientId = u.PatientId
+                        }));
                     return medDetails;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<Models.MedicationDetails> LoadByMedicationDetailsId(Guid medDetailsId)
+        {
+            try
+            {
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblMedicationDetail tblMedicationDetails = dc.tblMedicationDetails.FirstOrDefault(c => c.Id == medDetailsId);
+                    Models.MedicationDetails medDetails = new Models.MedicationDetails();
+
+                    if (tblMedicationDetails != null)
+                    {
+                        medDetails.Id = tblMedicationDetails.Id;
+                        medDetails.MedicationName = tblMedicationDetails.MedicationName;
+                        medDetails.MedicationDosageTotal = tblMedicationDetails.MedicationDosageTotal;
+                        medDetails.MedicationDosagePerPill = tblMedicationDetails.MedicationDosagePerPill;
+                        medDetails.MedicationInstructions = tblMedicationDetails.MedicationInstructions;
+                        medDetails.NumberOfPills = tblMedicationDetails.NumberOfPills;
+                        medDetails.DateFilled = tblMedicationDetails.DateFilled;
+                        medDetails.QuantityOfFill = tblMedicationDetails.QuantityOfFill;
+                        medDetails.RefillDate = tblMedicationDetails.RefillDate;
+                        medDetails.PatientId = tblMedicationDetails.PatientId;
+                        return medDetails;
+                    }
+                    else
+                    {
+                        throw new Exception("Could not find the row");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async static Task<IEnumerable<Models.MedicationDetails>> LoadByPatientId(Guid patientId)
+        {
+            try
+            {
+                if (patientId != null)
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+
+                        List<MedicationDetails> results = new List<MedicationDetails>();
+
+                        var medDetails = (from dt in dc.tblMedicationDetails
+                                            where dt.PatientId == patientId
+                                            select new
+                                            {
+                                                dt.Id,
+                                                dt.MedicationName,
+                                                dt.MedicationDosageTotal,
+                                                dt.MedicationDosagePerPill,
+                                                dt.MedicationInstructions,
+                                                dt.NumberOfPills,
+                                                dt.DateFilled,
+                                                dt.QuantityOfFill,
+                                                dt.RefillDate,
+                                                dt.PatientId
+                                            }).ToList();
+
+                        if (medDetails != null)
+                        {
+                            medDetails.ForEach(app => results.Add(new MedicationDetails
+                            {
+                                Id = app.Id,
+                                MedicationName = app.MedicationName,
+                                MedicationDosageTotal = app.MedicationDosageTotal,
+                                MedicationDosagePerPill = app.MedicationDosagePerPill,
+                                MedicationInstructions = app.MedicationInstructions,
+                                NumberOfPills = app.NumberOfPills,
+                                DateFilled = app.DateFilled,
+                                QuantityOfFill = app.QuantityOfFill,
+                                RefillDate = app.RefillDate,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("MedicationDetails was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async static Task<Guid> Insert(string medName, string medDosageTotal, string medDosagePerPill, string medInstructions, int numberOfPills, DateTime dateFilled, int quantityOfFill, DateTime refillDate, Guid patientId, bool rollback = false)
+        {
+            try
+            {
+                Models.MedicationDetails medDetails = new Models.MedicationDetails
+                {
+                    MedicationName = medName,
+                    MedicationDosageTotal = medDosageTotal,
+                    MedicationDosagePerPill = medDosagePerPill,
+                    MedicationInstructions = medInstructions,
+                    NumberOfPills = numberOfPills,
+                    DateFilled = dateFilled,
+                    QuantityOfFill = quantityOfFill,
+                    RefillDate = refillDate,
+                    PatientId = patientId
+                };
+                await Insert(medDetails, rollback);
+                return medDetails.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.MedicationDetails medDetails, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblMedicationDetail newrow = new tblMedicationDetail();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.MedicationName = medDetails.MedicationName;
+                    newrow.MedicationDosageTotal = medDetails.MedicationDosageTotal;
+                    newrow.MedicationDosagePerPill = medDetails.MedicationDosagePerPill;
+                    newrow.MedicationInstructions = medDetails.MedicationInstructions;
+                    newrow.NumberOfPills = medDetails.NumberOfPills;
+                    newrow.DateFilled = medDetails.DateFilled;
+                    newrow.QuantityOfFill = medDetails.QuantityOfFill;
+                    newrow.RefillDate = medDetails.RefillDate;
+                    newrow.PatientId = medDetails.PatientId;
+
+                    medDetails.Id = newrow.Id;
+
+                    dc.tblMedicationDetails.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Update(Models.MedicationDetails medDetails, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblMedicationDetail row = (from dt in dc.tblMedicationDetails where dt.Id == medDetails.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
+
+                        row.MedicationName = medDetails.MedicationName;
+                        row.MedicationDosageTotal = medDetails.MedicationDosageTotal;
+                        row.MedicationDosagePerPill = medDetails.MedicationDosagePerPill;
+                        row.MedicationInstructions = medDetails.MedicationInstructions;
+                        row.NumberOfPills = medDetails.NumberOfPills;
+                        row.DateFilled = medDetails.DateFilled;
+                        row.QuantityOfFill = medDetails.QuantityOfFill;
+                        row.RefillDate = medDetails.RefillDate;
+                        row.PatientId = medDetails.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

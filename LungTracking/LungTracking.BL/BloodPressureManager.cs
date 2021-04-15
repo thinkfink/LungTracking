@@ -5,140 +5,183 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class BloodPressureManager
     {
-        public static List<BloodPressure> Load()
+        public async static Task<IEnumerable<Models.BloodPressure>> Load()
         {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
+            try
             {
                 List<BloodPressure> bloodPressure = new List<BloodPressure>();
 
-                dc.tblBloodPressures
-                    .ToList()
-                    .ForEach(u => bloodPressure.Add(new BloodPressure
-                    {
-                        Id = u.Id,
-                        BPsystolic = u.Bpsystolic,
-                        BPdiastolic = u.Bpdiastolic,
-                        BeginningEnd = u.BeginningEnd,
-                        TimeOfDay = u.TimeOfDay,
-                        PatientId = u.PatientId
-                    }));
-                return bloodPressure;
-            }
-        }
-        public static int Insert(int bpSystolic, int bpDiastolic, bool beginningEnd, DateTime timeOfDay, Guid patientId)
-        {
-            try
-            {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblBloodPressure newBloodPressure = new tblBloodPressure
-                    {
-                        Id = Guid.NewGuid(),
-                        Bpsystolic = bpSystolic,
-                        Bpdiastolic = bpDiastolic,
-                        BeginningEnd = beginningEnd,
-                        TimeOfDay = timeOfDay,
-                        PatientId = patientId
-                    };
-                    dc.tblBloodPressures.Add(newBloodPressure);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Insert(BloodPressure bloodPressure)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblBloodPressure newBloodPressure = new tblBloodPressure
-                    {
-                        Id = Guid.NewGuid(),
-                        Bpsystolic = bloodPressure.BPsystolic,
-                        Bpdiastolic = bloodPressure.BPdiastolic,
-                        BeginningEnd = bloodPressure.BeginningEnd,
-                        TimeOfDay = bloodPressure.TimeOfDay,
-                        PatientId = bloodPressure.PatientId
-                    };
-                    dc.tblBloodPressures.Add(newBloodPressure);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public static int Update(Guid id, int bpSystolic, int bpDiastolic, bool beginningEnd, DateTime timeOfDay, Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblBloodPressure updaterow = (from dt in dc.tblBloodPressures where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.Bpsystolic = bpSystolic;
-                    updaterow.Bpdiastolic = bpDiastolic;
-                    updaterow.BeginningEnd = beginningEnd;
-                    updaterow.TimeOfDay = timeOfDay;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Update(BloodPressure bloodPressure)
-        {
-            return Update(bloodPressure.Id, bloodPressure.BPsystolic, bloodPressure.BPdiastolic, bloodPressure.BeginningEnd, bloodPressure.TimeOfDay, bloodPressure.PatientId);
-        }
-
-        public static List<BloodPressure> LoadByPatientId(Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    List<BloodPressure> bloodPressure = new List<BloodPressure>();
-
-                    var results = (from bp in dc.tblBloodPressures
-                                   where bp.PatientId == patientId
-                                   select new
-                                   {
-                                       bp.Id,
-                                       bp.Bpsystolic,
-                                       bp.Bpdiastolic,
-                                       bp.BeginningEnd,
-                                       bp.TimeOfDay,
-                                       bp.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => bloodPressure.Add(new BloodPressure
-                    {
-                        Id = r.Id,
-                        BPsystolic = r.Bpsystolic,
-                        BPdiastolic = r.Bpdiastolic,
-                        BeginningEnd = r.BeginningEnd,
-                        TimeOfDay = r.TimeOfDay,
-                        PatientId = r.PatientId
-                    }));
-
+                    dc.tblBloodPressures
+                        .ToList()
+                        .ForEach(u => bloodPressure.Add(new BloodPressure
+                        {
+                            Id = u.Id,
+                            BPsystolic = u.Bpsystolic,
+                            BPdiastolic = u.Bpdiastolic,
+                            BeginningEnd = u.BeginningEnd,
+                            TimeOfDay = u.TimeOfDay,
+                            PatientId = u.PatientId
+                        }));
                     return bloodPressure;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<IEnumerable<Models.BloodPressure>> LoadByPatientId(Guid patientId)
+        {
+            try
+            {
+                if (patientId != null)
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+
+                        List<BloodPressure> results = new List<BloodPressure>();
+
+                        var bloodPressure = (from dt in dc.tblBloodPressures
+                                           where dt.PatientId == patientId
+                                           select new
+                                           {
+                                               dt.Id,
+                                               dt.Bpsystolic,
+                                               dt.Bpdiastolic,
+                                               dt.BeginningEnd,
+                                               dt.TimeOfDay,
+                                               dt.PatientId
+                                           }).ToList();
+
+                        if (bloodPressure != null)
+                        {
+                            bloodPressure.ForEach(app => results.Add(new BloodPressure
+                            {
+                                Id = app.Id,
+                                BPsystolic = app.Bpsystolic,
+                                BPdiastolic = app.Bpdiastolic,
+                                BeginningEnd = app.BeginningEnd,
+                                TimeOfDay = app.TimeOfDay,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("BloodPressure was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async static Task<Guid> Insert(int bpSystolic, int bpDiastolic, bool beginningEnd, DateTime timeOfDay, Guid patientId, bool rollback = false)
+        {
+            try
+            {
+                Models.BloodPressure bloodPressure = new Models.BloodPressure
+                {
+                    Id = Guid.NewGuid(),
+                    BPsystolic = bpSystolic,
+                    BPdiastolic = bpDiastolic,
+                    BeginningEnd = beginningEnd,
+                    TimeOfDay = timeOfDay,
+                    PatientId = patientId
+                };
+                await Insert(bloodPressure, rollback);
+                return bloodPressure.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.BloodPressure bloodPressure, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblBloodPressure newrow = new tblBloodPressure();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.Bpsystolic = bloodPressure.BPsystolic;
+                    newrow.Bpdiastolic = bloodPressure.BPdiastolic;
+                    newrow.BeginningEnd = bloodPressure.BeginningEnd;
+                    newrow.TimeOfDay = bloodPressure.TimeOfDay;
+                    newrow.PatientId = bloodPressure.PatientId;
+
+                    bloodPressure.Id = newrow.Id;
+
+                    dc.tblBloodPressures.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Update(Models.BloodPressure bloodPressure, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblBloodPressure row = (from dt in dc.tblBloodPressures where dt.Id == bloodPressure.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
+
+                        row.Bpsystolic = bloodPressure.BPsystolic;
+                        row.Bpdiastolic = bloodPressure.BPdiastolic;
+                        row.BeginningEnd = bloodPressure.BeginningEnd;
+                        row.TimeOfDay = bloodPressure.TimeOfDay;
+                        row.PatientId = bloodPressure.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)

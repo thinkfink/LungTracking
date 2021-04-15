@@ -5,128 +5,171 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
 {
     public static class MedicationTimeManager
     {
-        public static List<MedicationTime> Load()
+        public async static Task<IEnumerable<Models.MedicationTime>> Load()
         {
-            using (LungTrackingEntities dc = new LungTrackingEntities())
+            try
             {
                 List<MedicationTime> medTime = new List<MedicationTime>();
 
-                dc.tblMedicationTimes
-                    .ToList()
-                    .ForEach(u => medTime.Add(new MedicationTime
-                    {
-                        Id = u.Id,
-                        PillTime = u.PillTime,
-                        MedicationId = u.MedicationId,
-                        PatientId = u.PatientId
-                    }));
-                return medTime;
-            }
-        }
-        public static int Insert(TimeSpan pillTime, Guid medId, Guid patientId)
-        {
-            try
-            {
                 using (LungTrackingEntities dc = new LungTrackingEntities())
                 {
-                    tblMedicationTime newMedTime = new tblMedicationTime
-                    {
-                        Id = Guid.NewGuid(),
-                        PillTime = pillTime,
-                        MedicationId = medId,
-                        PatientId = patientId
-                    };
-                    dc.tblMedicationTimes.Add(newMedTime);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Insert(MedicationTime medTime)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationTime newMedTime = new tblMedicationTime
-                    {
-                        Id = Guid.NewGuid(),
-                        PillTime = medTime.PillTime,
-                        MedicationId = medTime.MedicationId,
-                        PatientId = medTime.PatientId
-                    };
-                    dc.tblMedicationTimes.Add(newMedTime);
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public static int Update(Guid id, TimeSpan pillTime, Guid medId, Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    tblMedicationTime updaterow = (from dt in dc.tblMedicationTimes where dt.Id == id select dt).FirstOrDefault();
-                    updaterow.PillTime = pillTime;
-                    updaterow.MedicationId = medId;
-                    updaterow.PatientId = patientId;
-                    return dc.SaveChanges();
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public static int Update(MedicationTime medTime)
-        {
-            return Update(medTime.Id, medTime.PillTime, medTime.MedicationId, medTime.PatientId);
-        }
-
-        public static List<MedicationTime> LoadByPatientId(Guid patientId)
-        {
-            try
-            {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
-                {
-                    List<MedicationTime> medTime = new List<MedicationTime>();
-
-                    var results = (from mdt in dc.tblMedicationTimes
-                                   where mdt.PatientId == patientId
-                                   select new
-                                   {
-                                       mdt.Id,
-                                       mdt.PillTime,
-                                       mdt.MedicationId,
-                                       mdt.PatientId
-                                   }).ToList();
-
-                    results.ForEach(r => medTime.Add(new MedicationTime
-                    {
-                        Id = r.Id,
-                        PillTime = r.PillTime,
-                        MedicationId = r.MedicationId,
-                        PatientId = r.PatientId
-                    }));
-
+                    dc.tblMedicationTimes
+                        .ToList()
+                        .ForEach(u => medTime.Add(new MedicationTime
+                        {
+                            Id = u.Id,
+                            PillTime = u.PillTime,
+                            MedicationId = u.MedicationId,
+                            PatientId = u.PatientId
+                        }));
                     return medTime;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<IEnumerable<Models.MedicationTime>> LoadByPatientId(Guid patientId)
+        {
+            try
+            {
+                if (patientId != null)
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+
+                        List<MedicationTime> results = new List<MedicationTime>();
+
+                        var medTime = (from dt in dc.tblMedicationTimes
+                                          where dt.PatientId == patientId
+                                          select new
+                                          {
+                                              dt.Id,
+                                              dt.PillTime,
+                                              dt.MedicationId,
+                                              dt.PatientId
+                                          }).ToList();
+
+                        if (medTime != null)
+                        {
+                            medTime.ForEach(app => results.Add(new MedicationTime
+                            {
+                                Id = app.Id,
+                                PillTime = app.PillTime,
+                                MedicationId = app.MedicationId,
+                                PatientId = app.PatientId
+                            }));
+                            return results;
+                        }
+                        else
+                        {
+                            throw new Exception("MedicationTime was not found.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Please provide a patient Id.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async static Task<Guid> Insert(TimeSpan pillTime, Guid medId, Guid patientId, bool rollback = false)
+        {
+            try
+            {
+                Models.MedicationTime medTime = new Models.MedicationTime
+                {
+                    Id = Guid.NewGuid(),
+                    PillTime = pillTime,
+                    MedicationId = medId,
+                    PatientId = patientId
+                };
+                await Insert(medTime, rollback);
+                return medTime.Id;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Insert(Models.MedicationTime medTime, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                    tblMedicationTime newrow = new tblMedicationTime();
+
+                    newrow.Id = Guid.NewGuid();
+                    newrow.PillTime = medTime.PillTime;
+                    newrow.MedicationId = medTime.MedicationId;
+                    newrow.PatientId = medTime.PatientId;
+
+                    medTime.Id = newrow.Id;
+
+                    dc.tblMedicationTimes.Add(newrow);
+                    int results = dc.SaveChanges();
+
+                    if (rollback) transaction.Rollback();
+
+                    return results;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async static Task<int> Update(Models.MedicationTime medTime, bool rollback = false)
+        {
+            try
+            {
+                IDbContextTransaction transaction = null;
+
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    tblMedicationTime row = (from dt in dc.tblMedicationTimes where dt.Id == medTime.Id select dt).FirstOrDefault();
+                    int results = 0;
+                    if (row != null)
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
+
+                        row.PillTime = medTime.PillTime;
+                        row.MedicationId = medTime.MedicationId;
+                        row.PatientId = medTime.PatientId;
+
+                        results = dc.SaveChanges();
+                        if (rollback) transaction.Rollback();
+                        return results;
+                    }
+                    else
+                    {
+                        throw new Exception("Row was not found");
+                    }
                 }
             }
             catch (Exception)
