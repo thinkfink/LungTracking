@@ -16,20 +16,22 @@ namespace LungTracking.BL
             try
             {
                 List<MedicationTracking> medTracking = new List<MedicationTracking>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblMedicationTrackings
-                        .ToList()
-                        .ForEach(u => medTracking.Add(new MedicationTracking
-                        {
-                            Id = u.Id,
-                            PillTakenTime = u.PillTakenTime,
-                            MedicationId = u.MedicationId,
-                            PatientId = u.PatientId
-                        }));
-                    return medTracking;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblMedicationTrackings
+                            .ToList()
+                            .ForEach(u => medTracking.Add(new MedicationTracking
+                            {
+                                Id = u.Id,
+                                PillTakenTime = u.PillTakenTime,
+                                MedicationId = u.MedicationId,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return medTracking;
             }
             catch (Exception)
             {
@@ -42,44 +44,45 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<MedicationTracking> results = new List<MedicationTracking>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<MedicationTracking> results = new List<MedicationTracking>();
-
-                        var medTracking = (from dt in dc.tblMedicationTrackings
-                                       where dt.PatientId == patientId
-                                       select new
-                                       {
-                                           dt.Id,
-                                           dt.PillTakenTime,
-                                           dt.MedicationId,
-                                           dt.PatientId
-                                       }).ToList();
-
-                        if (medTracking != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            medTracking.ForEach(app => results.Add(new MedicationTracking
+                            var medTracking = (from dt in dc.tblMedicationTrackings
+                                               where dt.PatientId == patientId
+                                               select new
+                                               {
+                                                   dt.Id,
+                                                   dt.PillTakenTime,
+                                                   dt.MedicationId,
+                                                   dt.PatientId
+                                               }).ToList();
+
+                            if (medTracking != null)
                             {
-                                Id = app.Id,
-                                PillTakenTime = app.PillTakenTime,
-                                MedicationId = app.MedicationId,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("MedicationTracking was not found.");
+                                medTracking.ForEach(app => results.Add(new MedicationTracking
+                                {
+                                    Id = app.Id,
+                                    PillTakenTime = app.PillTakenTime,
+                                    MedicationId = app.MedicationId,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("MedicationTracking was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -115,27 +118,30 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblMedicationTracking newrow = new tblMedicationTracking();
+                        tblMedicationTracking newrow = new tblMedicationTracking();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.PillTakenTime = medTracking.PillTakenTime;
-                    newrow.MedicationId = medTracking.MedicationId;
-                    newrow.PatientId = medTracking.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.PillTakenTime = medTracking.PillTakenTime;
+                        newrow.MedicationId = medTracking.MedicationId;
+                        newrow.PatientId = medTracking.PatientId;
 
-                    medTracking.Id = newrow.Id;
+                        medTracking.Id = newrow.Id;
 
-                    dc.tblMedicationTrackings.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblMedicationTrackings.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
 
-                    return results;
-                }
             }
             catch (Exception)
             {
@@ -149,28 +155,31 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblMedicationTracking row = (from dt in dc.tblMedicationTrackings where dt.Id == medTracking.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblMedicationTracking row = (from dt in dc.tblMedicationTrackings where dt.Id == medTracking.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.PillTakenTime = medTracking.PillTakenTime;
-                        row.MedicationId = medTracking.MedicationId;
-                        row.PatientId = medTracking.PatientId;
+                            row.PillTakenTime = medTracking.PillTakenTime;
+                            row.MedicationId = medTracking.MedicationId;
+                            row.PatientId = medTracking.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

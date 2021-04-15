@@ -16,23 +16,25 @@ namespace LungTracking.BL
             try
             {
                 List<BloodSugar> bloodSugar = new List<BloodSugar>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblBloodSugars
-                        .ToList()
-                        .ForEach(u => bloodSugar.Add(new BloodSugar
-                        {
-                            Id = u.Id,
-                            BloodSugarNumber = u.BloodSugarNumber,
-                            TimeOfDay = u.TimeOfDay,
-                            UnitsOfInsulinGiven = u.UnitsOfInsulinGiven,
-                            TypeOfInsulinGiven = u.TypeOfInsulinGiven,
-                            Notes = u.Notes,
-                            PatientId = u.PatientId
-                        }));
-                    return bloodSugar;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblBloodSugars
+                            .ToList()
+                            .ForEach(u => bloodSugar.Add(new BloodSugar
+                            {
+                                Id = u.Id,
+                                BloodSugarNumber = u.BloodSugarNumber,
+                                TimeOfDay = u.TimeOfDay,
+                                UnitsOfInsulinGiven = u.UnitsOfInsulinGiven,
+                                TypeOfInsulinGiven = u.TypeOfInsulinGiven,
+                                Notes = u.Notes,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return bloodSugar;
             }
             catch (Exception)
             {
@@ -45,50 +47,51 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<BloodSugar> results = new List<BloodSugar>();
+                await Task.Run(() => 
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<BloodSugar> results = new List<BloodSugar>();
-
-                        var bloodSugar = (from dt in dc.tblBloodSugars
-                                             where dt.PatientId == patientId
-                                             select new
-                                             {
-                                                 dt.Id,
-                                                 dt.BloodSugarNumber,
-                                                 dt.TimeOfDay,
-                                                 dt.UnitsOfInsulinGiven,
-                                                 dt.TypeOfInsulinGiven,
-                                                 dt.Notes,
-                                                 dt.PatientId
-                                             }).ToList();
-
-                        if (bloodSugar != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            bloodSugar.ForEach(app => results.Add(new BloodSugar
+                            var bloodSugar = (from dt in dc.tblBloodSugars
+                                              where dt.PatientId == patientId
+                                              select new
+                                              {
+                                                  dt.Id,
+                                                  dt.BloodSugarNumber,
+                                                  dt.TimeOfDay,
+                                                  dt.UnitsOfInsulinGiven,
+                                                  dt.TypeOfInsulinGiven,
+                                                  dt.Notes,
+                                                  dt.PatientId
+                                              }).ToList();
+
+                            if (bloodSugar != null)
                             {
-                                Id = app.Id,
-                                BloodSugarNumber = app.BloodSugarNumber,
-                                TimeOfDay = app.TimeOfDay,
-                                UnitsOfInsulinGiven = app.UnitsOfInsulinGiven,
-                                TypeOfInsulinGiven = app.TypeOfInsulinGiven,
-                                Notes = app.Notes,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("BloodSugar was not found.");
+                                bloodSugar.ForEach(app => results.Add(new BloodSugar
+                                {
+                                    Id = app.Id,
+                                    BloodSugarNumber = app.BloodSugarNumber,
+                                    TimeOfDay = app.TimeOfDay,
+                                    UnitsOfInsulinGiven = app.UnitsOfInsulinGiven,
+                                    TypeOfInsulinGiven = app.TypeOfInsulinGiven,
+                                    Notes = app.Notes,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("BloodSugar was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -127,30 +130,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() => 
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblBloodSugar newrow = new tblBloodSugar();
+                        tblBloodSugar newrow = new tblBloodSugar();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.BloodSugarNumber = bloodSugar.BloodSugarNumber;
-                    newrow.TimeOfDay = bloodSugar.TimeOfDay;
-                    newrow.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
-                    newrow.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
-                    newrow.Notes = bloodSugar.Notes;
-                    newrow.PatientId = bloodSugar.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.BloodSugarNumber = bloodSugar.BloodSugarNumber;
+                        newrow.TimeOfDay = bloodSugar.TimeOfDay;
+                        newrow.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
+                        newrow.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
+                        newrow.Notes = bloodSugar.Notes;
+                        newrow.PatientId = bloodSugar.PatientId;
 
-                    bloodSugar.Id = newrow.Id;
+                        bloodSugar.Id = newrow.Id;
 
-                    dc.tblBloodSugars.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblBloodSugars.Add(newrow);
+                        int results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -164,31 +169,33 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() => 
                 {
-                    tblBloodSugar row = (from dt in dc.tblBloodSugars where dt.Id == bloodSugar.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblBloodSugar row = (from dt in dc.tblBloodSugars where dt.Id == bloodSugar.Id select dt).FirstOrDefault();
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.BloodSugarNumber = bloodSugar.BloodSugarNumber;
-                        row.TimeOfDay = bloodSugar.TimeOfDay;
-                        row.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
-                        row.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
-                        row.Notes = bloodSugar.Notes;
-                        row.PatientId = bloodSugar.PatientId;
+                            row.BloodSugarNumber = bloodSugar.BloodSugarNumber;
+                            row.TimeOfDay = bloodSugar.TimeOfDay;
+                            row.UnitsOfInsulinGiven = bloodSugar.UnitsOfInsulinGiven;
+                            row.TypeOfInsulinGiven = bloodSugar.TypeOfInsulinGiven;
+                            row.Notes = bloodSugar.Notes;
+                            row.PatientId = bloodSugar.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

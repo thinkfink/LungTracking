@@ -16,21 +16,23 @@ namespace LungTracking.BL
             try
             {
                 List<Pulse> pulse = new List<Pulse>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblPulses
-                        .ToList()
-                        .ForEach(u => pulse.Add(new Pulse
-                        {
-                            Id = u.Id,
-                            PulseNumber = u.PulseNumber,
-                            BeginningEnd = u.BeginningEnd,
-                            TimeOfDay = u.TimeOfDay,
-                            PatientId = u.PatientId
-                        }));
-                    return pulse;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblPulses
+                            .ToList()
+                            .ForEach(u => pulse.Add(new Pulse
+                            {
+                                Id = u.Id,
+                                PulseNumber = u.PulseNumber,
+                                BeginningEnd = u.BeginningEnd,
+                                TimeOfDay = u.TimeOfDay,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return pulse;
             }
             catch (Exception)
             {
@@ -43,46 +45,47 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<Pulse> results = new List<Pulse>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<Pulse> results = new List<Pulse>();
-
-                        var pulse = (from dt in dc.tblPulses
-                                   where dt.PatientId == patientId
-                                   select new
-                                   {
-                                       dt.Id,
-                                       dt.PulseNumber,
-                                       dt.BeginningEnd,
-                                       dt.TimeOfDay,
-                                       dt.PatientId
-                                   }).ToList();
-
-                        if (pulse != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            pulse.ForEach(app => results.Add(new Pulse
+                            var pulse = (from dt in dc.tblPulses
+                                         where dt.PatientId == patientId
+                                         select new
+                                         {
+                                             dt.Id,
+                                             dt.PulseNumber,
+                                             dt.BeginningEnd,
+                                             dt.TimeOfDay,
+                                             dt.PatientId
+                                         }).ToList();
+
+                            if (pulse != null)
                             {
-                                Id = app.Id,
-                                PulseNumber = app.PulseNumber,
-                                BeginningEnd = app.BeginningEnd,
-                                TimeOfDay = app.TimeOfDay,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("Pulse was not found.");
+                                pulse.ForEach(app => results.Add(new Pulse
+                                {
+                                    Id = app.Id,
+                                    PulseNumber = app.PulseNumber,
+                                    BeginningEnd = app.BeginningEnd,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("Pulse was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -119,28 +122,30 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblPulse newrow = new tblPulse();
+                        tblPulse newrow = new tblPulse();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.PulseNumber = pulse.PulseNumber;
-                    newrow.BeginningEnd = pulse.BeginningEnd;
-                    newrow.TimeOfDay = pulse.TimeOfDay;
-                    newrow.PatientId = pulse.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.PulseNumber = pulse.PulseNumber;
+                        newrow.BeginningEnd = pulse.BeginningEnd;
+                        newrow.TimeOfDay = pulse.TimeOfDay;
+                        newrow.PatientId = pulse.PatientId;
 
-                    pulse.Id = newrow.Id;
+                        pulse.Id = newrow.Id;
 
-                    dc.tblPulses.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblPulses.Add(newrow);
+                        int results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -154,29 +159,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblPulse row = (from dt in dc.tblPulses where dt.Id == pulse.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblPulse row = (from dt in dc.tblPulses where dt.Id == pulse.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.PulseNumber = pulse.PulseNumber;
-                        row.BeginningEnd = pulse.BeginningEnd;
-                        row.TimeOfDay = pulse.TimeOfDay;
-                        row.PatientId = pulse.PatientId;
+                            row.PulseNumber = pulse.PulseNumber;
+                            row.BeginningEnd = pulse.BeginningEnd;
+                            row.TimeOfDay = pulse.TimeOfDay;
+                            row.PatientId = pulse.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

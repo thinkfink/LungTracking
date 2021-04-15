@@ -16,25 +16,27 @@ namespace LungTracking.BL
             try
             {
                 List<Provider> providers = new List<Provider>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblProviders
-                        .ToList()
-                        .ForEach(u => providers.Add(new Provider
-                        {
-                            Id = u.Id,
-                            FirstName = u.FirstName,
-                            LastName = u.LastName,
-                            City = u.City,
-                            State = u.State,
-                            PhoneNumber = u.PhoneNumber,
-                            JobDescription = u.JobDescription,
-                            ImagePath = u.ImagePath,
-                            UserId = u.UserId
-                        }));
-                    return providers;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblProviders
+                            .ToList()
+                            .ForEach(u => providers.Add(new Provider
+                            {
+                                Id = u.Id,
+                                FirstName = u.FirstName,
+                                LastName = u.LastName,
+                                City = u.City,
+                                State = u.State,
+                                PhoneNumber = u.PhoneNumber,
+                                JobDescription = u.JobDescription,
+                                ImagePath = u.ImagePath,
+                                UserId = u.UserId
+                            }));
+                    }
+                });
+                return providers;
             }
             catch (Exception)
             {
@@ -47,29 +49,32 @@ namespace LungTracking.BL
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                Models.Provider provider = new Models.Provider();
+                await Task.Run(() =>
                 {
-                    tblProvider tblProvider = dc.tblProviders.FirstOrDefault(c => c.Id == providerId);
-                    Models.Provider provider = new Models.Provider();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblProvider tblProvider = dc.tblProviders.FirstOrDefault(c => c.Id == providerId);
 
-                    if (tblProvider != null)
-                    {
-                        provider.Id = tblProvider.Id;
-                        provider.FirstName = tblProvider.FirstName;
-                        provider.LastName = tblProvider.LastName;
-                        provider.City = tblProvider.City;
-                        provider.State = tblProvider.State;
-                        provider.PhoneNumber = tblProvider.PhoneNumber;
-                        provider.JobDescription = tblProvider.JobDescription;
-                        provider.ImagePath = tblProvider.ImagePath;
-                        provider.UserId = tblProvider.UserId;
-                        return provider;
+                        if (tblProvider != null)
+                        {
+                            provider.Id = tblProvider.Id;
+                            provider.FirstName = tblProvider.FirstName;
+                            provider.LastName = tblProvider.LastName;
+                            provider.City = tblProvider.City;
+                            provider.State = tblProvider.State;
+                            provider.PhoneNumber = tblProvider.PhoneNumber;
+                            provider.JobDescription = tblProvider.JobDescription;
+                            provider.ImagePath = tblProvider.ImagePath;
+                            provider.UserId = tblProvider.UserId;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the row");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Could not find the row");
-                    }
-                }
+                });
+                return provider;
             }
             catch (Exception)
             {
@@ -81,54 +86,57 @@ namespace LungTracking.BL
         {
             try
             {
-                if (userId != null)
+                List<Provider> results = new List<Provider>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (userId != null)
                     {
-
-                        List<Provider> results = new List<Provider>();
-
-                        var providers = (from dt in dc.tblProviders
-                                          where dt.UserId == userId
-                                          select new
-                                          {
-                                              dt.Id,
-                                              dt.FirstName,
-                                              dt.LastName,
-                                              dt.City,
-                                              dt.State,
-                                              dt.PhoneNumber,
-                                              dt.JobDescription,
-                                              dt.ImagePath,
-                                              dt.UserId
-                                          }).ToList();
-
-                        if (providers != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            providers.ForEach(app => results.Add(new Provider
+
+
+                            var providers = (from dt in dc.tblProviders
+                                             where dt.UserId == userId
+                                             select new
+                                             {
+                                                 dt.Id,
+                                                 dt.FirstName,
+                                                 dt.LastName,
+                                                 dt.City,
+                                                 dt.State,
+                                                 dt.PhoneNumber,
+                                                 dt.JobDescription,
+                                                 dt.ImagePath,
+                                                 dt.UserId
+                                             }).ToList();
+
+                            if (providers != null)
                             {
-                                Id = app.Id,
-                                FirstName = app.FirstName,
-                                LastName = app.LastName,
-                                City = app.City,
-                                State = app.State,
-                                PhoneNumber = app.PhoneNumber,
-                                JobDescription = app.JobDescription,
-                                ImagePath = app.ImagePath,
-                                UserId = app.UserId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("Provider was not found.");
+                                providers.ForEach(app => results.Add(new Provider
+                                {
+                                    Id = app.Id,
+                                    FirstName = app.FirstName,
+                                    LastName = app.LastName,
+                                    City = app.City,
+                                    State = app.State,
+                                    PhoneNumber = app.PhoneNumber,
+                                    JobDescription = app.JobDescription,
+                                    ImagePath = app.ImagePath,
+                                    UserId = app.UserId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("Provider was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a user Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a user Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -168,32 +176,35 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblProvider newrow = new tblProvider();
+                        tblProvider newrow = new tblProvider();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.FirstName = provider.FirstName;
-                    newrow.LastName = provider.LastName;
-                    newrow.City = provider.City;
-                    newrow.State = provider.State;
-                    newrow.PhoneNumber = provider.PhoneNumber;
-                    newrow.JobDescription = provider.JobDescription;
-                    newrow.ImagePath = provider.ImagePath;
-                    newrow.UserId = provider.UserId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.FirstName = provider.FirstName;
+                        newrow.LastName = provider.LastName;
+                        newrow.City = provider.City;
+                        newrow.State = provider.State;
+                        newrow.PhoneNumber = provider.PhoneNumber;
+                        newrow.JobDescription = provider.JobDescription;
+                        newrow.ImagePath = provider.ImagePath;
+                        newrow.UserId = provider.UserId;
 
-                    provider.Id = newrow.Id;
+                        provider.Id = newrow.Id;
 
-                    dc.tblProviders.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblProviders.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
+                        if (rollback) transaction.Rollback();
 
-                    return results;
-                }
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -207,33 +218,36 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblProvider row = (from dt in dc.tblProviders where dt.Id == provider.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblProvider row = (from dt in dc.tblProviders where dt.Id == provider.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.FirstName = provider.FirstName;
-                        row.LastName = provider.LastName;
-                        row.City = provider.City;
-                        row.State = provider.State;
-                        row.PhoneNumber = provider.PhoneNumber;
-                        row.JobDescription = provider.JobDescription;
-                        row.ImagePath = provider.ImagePath;
-                        row.UserId = provider.UserId;
+                            row.FirstName = provider.FirstName;
+                            row.LastName = provider.LastName;
+                            row.City = provider.City;
+                            row.State = provider.State;
+                            row.PhoneNumber = provider.PhoneNumber;
+                            row.JobDescription = provider.JobDescription;
+                            row.ImagePath = provider.ImagePath;
+                            row.UserId = provider.UserId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

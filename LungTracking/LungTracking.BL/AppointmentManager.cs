@@ -16,23 +16,25 @@ namespace LungTracking.BL
             try
             {
                 List<Appointment> appointments = new List<Appointment>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblAppointments
-                        .ToList()
-                        .ForEach(u => appointments.Add(new Appointment
-                        {
-                            Id = u.Id,
-                            Date = u.Date,
-                            TimeStart = u.TimeStart,
-                            TimeEnd = u.TimeEnd,
-                            Description = u.Description,
-                            Location = u.Location,
-                            PatientId = u.PatientId
-                        }));
-                    return appointments;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblAppointments
+                            .ToList()
+                            .ForEach(u => appointments.Add(new Appointment
+                            {
+                                Id = u.Id,
+                                Date = u.Date,
+                                TimeStart = u.TimeStart,
+                                TimeEnd = u.TimeEnd,
+                                Description = u.Description,
+                                Location = u.Location,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return appointments;
             }
             catch (Exception)
             {
@@ -45,27 +47,30 @@ namespace LungTracking.BL
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                Models.Appointment appointment = new Models.Appointment();
+                await Task.Run(() =>
                 {
-                    tblAppointment tblAppointment = dc.tblAppointments.FirstOrDefault(c => c.Id == appointmentId);
-                    Models.Appointment appointment = new Models.Appointment();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblAppointment tblAppointment = dc.tblAppointments.FirstOrDefault(c => c.Id == appointmentId);
 
-                    if (tblAppointment != null)
-                    {
-                        appointment.Id = tblAppointment.Id;
-                        appointment.Date = tblAppointment.Date;
-                        appointment.TimeStart = tblAppointment.TimeStart;
-                        appointment.TimeEnd = tblAppointment.TimeEnd;
-                        appointment.Description = tblAppointment.Description;
-                        appointment.Location = tblAppointment.Location;
-                        appointment.PatientId = tblAppointment.PatientId;
-                        return appointment;
+                        if (tblAppointment != null)
+                        {
+                            appointment.Id = tblAppointment.Id;
+                            appointment.Date = tblAppointment.Date;
+                            appointment.TimeStart = tblAppointment.TimeStart;
+                            appointment.TimeEnd = tblAppointment.TimeEnd;
+                            appointment.Description = tblAppointment.Description;
+                            appointment.Location = tblAppointment.Location;
+                            appointment.PatientId = tblAppointment.PatientId;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the row");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Could not find the row");
-                    }
-                }
+                });
+                return appointment;
             }
             catch (Exception)
             {
@@ -77,50 +82,51 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<Appointment> results = new List<Appointment>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<Appointment> results = new List<Appointment>();
-
-                        var appointments = (from dt in dc.tblAppointments
-                                            where dt.PatientId == patientId
-                                            select new
-                                            {
-                                                dt.Id,
-                                                dt.Date,
-                                                dt.TimeStart,
-                                                dt.TimeEnd,
-                                                dt.Description,
-                                                dt.Location,
-                                                dt.PatientId
-                                            }).ToList();
-
-                        if (appointments != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            appointments.ForEach(app => results.Add(new Appointment
+                            var appointments = (from dt in dc.tblAppointments
+                                                where dt.PatientId == patientId
+                                                select new
+                                                {
+                                                    dt.Id,
+                                                    dt.Date,
+                                                    dt.TimeStart,
+                                                    dt.TimeEnd,
+                                                    dt.Description,
+                                                    dt.Location,
+                                                    dt.PatientId
+                                                }).ToList();
+
+                            if (appointments != null)
                             {
-                                Id = app.Id,
-                                Date = app.Date,
-                                TimeStart = app.TimeStart,
-                                TimeEnd = app.TimeEnd,
-                                Description = app.Description,
-                                Location = app.Location,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("Appointment was not found.");
+                                appointments.ForEach(app => results.Add(new Appointment
+                                {
+                                    Id = app.Id,
+                                    Date = app.Date,
+                                    TimeStart = app.TimeStart,
+                                    TimeEnd = app.TimeEnd,
+                                    Description = app.Description,
+                                    Location = app.Location,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("Appointment was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -158,30 +164,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblAppointment newrow = new tblAppointment();
+                        tblAppointment newrow = new tblAppointment();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.Date = appointment.Date;
-                    newrow.TimeStart = appointment.TimeStart;
-                    newrow.TimeEnd = appointment.TimeEnd;
-                    newrow.Description = appointment.Description;
-                    newrow.Location = appointment.Location;
-                    newrow.PatientId = appointment.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.Date = appointment.Date;
+                        newrow.TimeStart = appointment.TimeStart;
+                        newrow.TimeEnd = appointment.TimeEnd;
+                        newrow.Description = appointment.Description;
+                        newrow.Location = appointment.Location;
+                        newrow.PatientId = appointment.PatientId;
 
-                    appointment.Id = newrow.Id;
+                        appointment.Id = newrow.Id;
 
-                    dc.tblAppointments.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblAppointments.Add(newrow);
+                        int results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -195,31 +203,34 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblAppointment row = (from dt in dc.tblAppointments where dt.Id == appointment.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblAppointment row = (from dt in dc.tblAppointments where dt.Id == appointment.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.Date = appointment.Date;
-                        row.TimeStart = appointment.TimeStart;
-                        row.TimeEnd = appointment.TimeEnd;
-                        row.Description = appointment.Description;
-                        row.Location = appointment.Location;
-                        row.PatientId = appointment.PatientId;
+                            row.Date = appointment.Date;
+                            row.TimeStart = appointment.TimeStart;
+                            row.TimeEnd = appointment.TimeEnd;
+                            row.Description = appointment.Description;
+                            row.Location = appointment.Location;
+                            row.PatientId = appointment.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

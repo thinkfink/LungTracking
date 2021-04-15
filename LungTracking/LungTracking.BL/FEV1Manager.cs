@@ -16,21 +16,23 @@ namespace LungTracking.BL
             try
             {
                 List<FEV1> fev1 = new List<FEV1>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() => 
                 {
-                    dc.tblFev1s
-                        .ToList()
-                        .ForEach(u => fev1.Add(new FEV1
-                        {
-                            Id = u.Id,
-                            FEV1Number = u.Fev1number,
-                            BeginningEnd = u.BeginningEnd,
-                            TimeOfDay = u.TimeOfDay,
-                            PatientId = u.PatientId
-                        }));
-                    return fev1;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblFev1s
+                            .ToList()
+                            .ForEach(u => fev1.Add(new FEV1
+                            {
+                                Id = u.Id,
+                                FEV1Number = u.Fev1number,
+                                BeginningEnd = u.BeginningEnd,
+                                TimeOfDay = u.TimeOfDay,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return fev1;
             }
             catch (Exception)
             {
@@ -43,46 +45,50 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<FEV1> results = new List<FEV1>();
+                await Task.Run(() => 
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<FEV1> results = new List<FEV1>();
-
-                        var fev1 = (from dt in dc.tblFev1s
-                                          where dt.PatientId == patientId
-                                          select new
-                                          {
-                                              dt.Id,
-                                              dt.Fev1number,
-                                              dt.BeginningEnd,
-                                              dt.TimeOfDay,
-                                              dt.PatientId
-                                          }).ToList();
-
-                        if (fev1 != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            fev1.ForEach(app => results.Add(new FEV1
+
+
+
+                            var fev1 = (from dt in dc.tblFev1s
+                                        where dt.PatientId == patientId
+                                        select new
+                                        {
+                                            dt.Id,
+                                            dt.Fev1number,
+                                            dt.BeginningEnd,
+                                            dt.TimeOfDay,
+                                            dt.PatientId
+                                        }).ToList();
+
+                            if (fev1 != null)
                             {
-                                Id = app.Id,
-                                FEV1Number = app.Fev1number,
-                                BeginningEnd = app.BeginningEnd,
-                                TimeOfDay = app.TimeOfDay,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("FEV1 was not found.");
+                                fev1.ForEach(app => results.Add(new FEV1
+                                {
+                                    Id = app.Id,
+                                    FEV1Number = app.Fev1number,
+                                    BeginningEnd = app.BeginningEnd,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("FEV1 was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -119,28 +125,31 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() => 
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblFev1 newrow = new tblFev1();
+                        tblFev1 newrow = new tblFev1();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.Fev1number = fev1.FEV1Number;
-                    newrow.BeginningEnd = fev1.BeginningEnd;
-                    newrow.TimeOfDay = fev1.TimeOfDay;
-                    newrow.PatientId = fev1.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.Fev1number = fev1.FEV1Number;
+                        newrow.BeginningEnd = fev1.BeginningEnd;
+                        newrow.TimeOfDay = fev1.TimeOfDay;
+                        newrow.PatientId = fev1.PatientId;
 
-                    fev1.Id = newrow.Id;
+                        fev1.Id = newrow.Id;
 
-                    dc.tblFev1s.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblFev1s.Add(newrow);
+                        int results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
 
-                    return results;
-                }
             }
             catch (Exception)
             {
@@ -154,29 +163,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() => 
                 {
-                    tblFev1 row = (from dt in dc.tblFev1s where dt.Id == fev1.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblFev1 row = (from dt in dc.tblFev1s where dt.Id == fev1.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.Fev1number = fev1.FEV1Number;
-                        row.BeginningEnd = fev1.BeginningEnd;
-                        row.TimeOfDay = fev1.TimeOfDay;
-                        row.PatientId = fev1.PatientId;
+                            row.Fev1number = fev1.FEV1Number;
+                            row.BeginningEnd = fev1.BeginningEnd;
+                            row.TimeOfDay = fev1.TimeOfDay;
+                            row.PatientId = fev1.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

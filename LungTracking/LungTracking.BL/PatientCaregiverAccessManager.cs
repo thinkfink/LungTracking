@@ -16,19 +16,21 @@ namespace LungTracking.BL
             try
             {
                 List<PatientCaregiverAccess> pcas = new List<PatientCaregiverAccess>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblPatientCaregiverAccesses
-                        .ToList()
-                        .ForEach(u => pcas.Add(new PatientCaregiverAccess
-                        {
-                            Id = u.Id,
-                            PatientId = u.PatientId,
-                            CaregiverId = u.CaregiverId
-                        }));
-                    return pcas;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblPatientCaregiverAccesses
+                            .ToList()
+                            .ForEach(u => pcas.Add(new PatientCaregiverAccess
+                            {
+                                Id = u.Id,
+                                PatientId = u.PatientId,
+                                CaregiverId = u.CaregiverId
+                            }));
+                    }
+                });
+                return pcas;
             }
             catch (Exception)
             {
@@ -41,23 +43,27 @@ namespace LungTracking.BL
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                Models.PatientCaregiverAccess pca = new Models.PatientCaregiverAccess();
+                await Task.Run(() =>
                 {
-                    tblPatientCaregiverAccess tblPatientCaregiverAccess = dc.tblPatientCaregiverAccesses.FirstOrDefault(c => c.PatientId == patientId && c.CaregiverId == caregiverId);
-                    Models.PatientCaregiverAccess pca = new Models.PatientCaregiverAccess();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblPatientCaregiverAccess tblPatientCaregiverAccess = dc.tblPatientCaregiverAccesses.FirstOrDefault(c => c.PatientId == patientId && c.CaregiverId == caregiverId);
 
-                    if (tblPatientCaregiverAccess != null)
-                    {
-                        pca.Id = tblPatientCaregiverAccess.Id;
-                        pca.PatientId = tblPatientCaregiverAccess.PatientId;
-                        pca.CaregiverId = tblPatientCaregiverAccess.CaregiverId;
-                        return pca;
+
+                        if (tblPatientCaregiverAccess != null)
+                        {
+                            pca.Id = tblPatientCaregiverAccess.Id;
+                            pca.PatientId = tblPatientCaregiverAccess.PatientId;
+                            pca.CaregiverId = tblPatientCaregiverAccess.CaregiverId;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the row");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Could not find the row");
-                    }
-                }
+                });
+                return pca;
             }
             catch (Exception)
             {
@@ -70,26 +76,28 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblPatientCaregiverAccess newrow = new tblPatientCaregiverAccess();
+                        tblPatientCaregiverAccess newrow = new tblPatientCaregiverAccess();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.PatientId = pca.PatientId;
-                    newrow.CaregiverId = pca.CaregiverId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.PatientId = pca.PatientId;
+                        newrow.CaregiverId = pca.CaregiverId;
 
-                    pca.Id = newrow.Id;
+                        pca.Id = newrow.Id;
 
-                    dc.tblPatientCaregiverAccesses.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblPatientCaregiverAccesses.Add(newrow);
+                        int results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {

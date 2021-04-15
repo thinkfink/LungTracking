@@ -16,21 +16,23 @@ namespace LungTracking.BL
             try
             {
                 List<Temperature> temp = new List<Temperature>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblTemperatures
-                        .ToList()
-                        .ForEach(u => temp.Add(new Temperature
-                        {
-                            Id = u.Id,
-                            TempNumber = u.TempNumber,
-                            BeginningEnd = u.BeginningEnd,
-                            TimeOfDay = u.TimeOfDay,
-                            PatientId = u.PatientId
-                        }));
-                    return temp;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblTemperatures
+                            .ToList()
+                            .ForEach(u => temp.Add(new Temperature
+                            {
+                                Id = u.Id,
+                                TempNumber = u.TempNumber,
+                                BeginningEnd = u.BeginningEnd,
+                                TimeOfDay = u.TimeOfDay,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return temp;
             }
             catch (Exception)
             {
@@ -43,46 +45,47 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<Temperature> results = new List<Temperature>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<Temperature> results = new List<Temperature>();
-
-                        var temp = (from dt in dc.tblTemperatures
-                                     where dt.PatientId == patientId
-                                     select new
-                                     {
-                                         dt.Id,
-                                         dt.TempNumber,
-                                         dt.BeginningEnd,
-                                         dt.TimeOfDay,
-                                         dt.PatientId
-                                     }).ToList();
-
-                        if (temp != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            temp.ForEach(app => results.Add(new Temperature
+                            var temp = (from dt in dc.tblTemperatures
+                                        where dt.PatientId == patientId
+                                        select new
+                                        {
+                                            dt.Id,
+                                            dt.TempNumber,
+                                            dt.BeginningEnd,
+                                            dt.TimeOfDay,
+                                            dt.PatientId
+                                        }).ToList();
+
+                            if (temp != null)
                             {
-                                Id = app.Id,
-                                TempNumber = app.TempNumber,
-                                BeginningEnd = app.BeginningEnd,
-                                TimeOfDay = app.TimeOfDay,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("Temperature was not found.");
+                                temp.ForEach(app => results.Add(new Temperature
+                                {
+                                    Id = app.Id,
+                                    TempNumber = app.TempNumber,
+                                    BeginningEnd = app.BeginningEnd,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("Temperature was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -119,28 +122,30 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblTemperature newrow = new tblTemperature();
+                        tblTemperature newrow = new tblTemperature();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.TempNumber = temp.TempNumber;
-                    newrow.BeginningEnd = temp.BeginningEnd;
-                    newrow.TimeOfDay = temp.TimeOfDay;
-                    newrow.PatientId = temp.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.TempNumber = temp.TempNumber;
+                        newrow.BeginningEnd = temp.BeginningEnd;
+                        newrow.TimeOfDay = temp.TimeOfDay;
+                        newrow.PatientId = temp.PatientId;
 
-                    temp.Id = newrow.Id;
+                        temp.Id = newrow.Id;
 
-                    dc.tblTemperatures.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblTemperatures.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -154,29 +159,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblTemperature row = (from dt in dc.tblTemperatures where dt.Id == temp.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblTemperature row = (from dt in dc.tblTemperatures where dt.Id == temp.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.TempNumber = temp.TempNumber;
-                        row.BeginningEnd = temp.BeginningEnd;
-                        row.TimeOfDay = temp.TimeOfDay;
-                        row.PatientId = temp.PatientId;
+                            row.TempNumber = temp.TempNumber;
+                            row.BeginningEnd = temp.BeginningEnd;
+                            row.TimeOfDay = temp.TimeOfDay;
+                            row.PatientId = temp.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

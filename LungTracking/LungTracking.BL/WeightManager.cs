@@ -16,20 +16,22 @@ namespace LungTracking.BL
             try
             {
                 List<Weight> weight = new List<Weight>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblWeights
-                        .ToList()
-                        .ForEach(u => weight.Add(new Weight
-                        {
-                            Id = u.Id,
-                            WeightNumberInPounds = u.WeightNumberInPounds,
-                            TimeOfDay = u.TimeOfDay,
-                            PatientId = u.PatientId
-                        }));
-                    return weight;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblWeights
+                            .ToList()
+                            .ForEach(u => weight.Add(new Weight
+                            {
+                                Id = u.Id,
+                                WeightNumberInPounds = u.WeightNumberInPounds,
+                                TimeOfDay = u.TimeOfDay,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return weight;
             }
             catch (Exception)
             {
@@ -42,44 +44,45 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<Weight> results = new List<Weight>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<Weight> results = new List<Weight>();
-
-                        var weight = (from dt in dc.tblWeights
-                                  where dt.PatientId == patientId
-                                  select new
-                                  {
-                                      dt.Id,
-                                      dt.WeightNumberInPounds,
-                                      dt.TimeOfDay,
-                                      dt.PatientId
-                                  }).ToList();
-
-                        if (weight != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            weight.ForEach(app => results.Add(new Weight
+                            var weight = (from dt in dc.tblWeights
+                                          where dt.PatientId == patientId
+                                          select new
+                                          {
+                                              dt.Id,
+                                              dt.WeightNumberInPounds,
+                                              dt.TimeOfDay,
+                                              dt.PatientId
+                                          }).ToList();
+
+                            if (weight != null)
                             {
-                                Id = app.Id,
-                                WeightNumberInPounds = app.WeightNumberInPounds,
-                                TimeOfDay = app.TimeOfDay,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("Weight was not found.");
+                                weight.ForEach(app => results.Add(new Weight
+                                {
+                                    Id = app.Id,
+                                    WeightNumberInPounds = app.WeightNumberInPounds,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("Weight was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -115,27 +118,29 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblWeight newrow = new tblWeight();
+                        tblWeight newrow = new tblWeight();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.WeightNumberInPounds = weight.WeightNumberInPounds;
-                    newrow.TimeOfDay = weight.TimeOfDay;
-                    newrow.PatientId = weight.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.WeightNumberInPounds = weight.WeightNumberInPounds;
+                        newrow.TimeOfDay = weight.TimeOfDay;
+                        newrow.PatientId = weight.PatientId;
 
-                    weight.Id = newrow.Id;
+                        weight.Id = newrow.Id;
 
-                    dc.tblWeights.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblWeights.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -149,28 +154,31 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblWeight row = (from dt in dc.tblWeights where dt.Id == weight.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblWeight row = (from dt in dc.tblWeights where dt.Id == weight.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.WeightNumberInPounds = weight.WeightNumberInPounds;
-                        row.TimeOfDay = weight.TimeOfDay;
-                        row.PatientId = weight.PatientId;
+                            row.WeightNumberInPounds = weight.WeightNumberInPounds;
+                            row.TimeOfDay = weight.TimeOfDay;
+                            row.PatientId = weight.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

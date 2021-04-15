@@ -16,20 +16,22 @@ namespace LungTracking.BL
             try
             {
                 List<SleepWake> sw = new List<SleepWake>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblSleepWakes
-                        .ToList()
-                        .ForEach(u => sw.Add(new SleepWake
-                        {
-                            Id = u.Id,
-                            SleepOrWake = u.SleepOrWake,
-                            TimeOfDay = u.TimeOfDay,
-                            PatientId = u.PatientId
-                        }));
-                    return sw;
-                }
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        dc.tblSleepWakes
+                            .ToList()
+                            .ForEach(u => sw.Add(new SleepWake
+                            {
+                                Id = u.Id,
+                                SleepOrWake = u.SleepOrWake,
+                                TimeOfDay = u.TimeOfDay,
+                                PatientId = u.PatientId
+                            }));
+                    }
+                });
+                return sw;
             }
             catch (Exception)
             {
@@ -42,44 +44,45 @@ namespace LungTracking.BL
         {
             try
             {
-                if (patientId != null)
+                List<SleepWake> results = new List<SleepWake>();
+                await Task.Run(() =>
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    if (patientId != null)
                     {
-
-                        List<SleepWake> results = new List<SleepWake>();
-
-                        var sw = (from dt in dc.tblSleepWakes
-                                    where dt.PatientId == patientId
-                                    select new
-                                    {
-                                        dt.Id,
-                                        dt.SleepOrWake,
-                                        dt.TimeOfDay,
-                                        dt.PatientId
-                                    }).ToList();
-
-                        if (sw != null)
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-                            sw.ForEach(app => results.Add(new SleepWake
+                            var sw = (from dt in dc.tblSleepWakes
+                                      where dt.PatientId == patientId
+                                      select new
+                                      {
+                                          dt.Id,
+                                          dt.SleepOrWake,
+                                          dt.TimeOfDay,
+                                          dt.PatientId
+                                      }).ToList();
+
+                            if (sw != null)
                             {
-                                Id = app.Id,
-                                SleepOrWake = app.SleepOrWake,
-                                TimeOfDay = app.TimeOfDay,
-                                PatientId = app.PatientId
-                            }));
-                            return results;
-                        }
-                        else
-                        {
-                            throw new Exception("SleepWake was not found.");
+                                sw.ForEach(app => results.Add(new SleepWake
+                                {
+                                    Id = app.Id,
+                                    SleepOrWake = app.SleepOrWake,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("SleepWake was not found.");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    throw new Exception("Please provide a patient Id.");
-                }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -115,27 +118,29 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblSleepWake newrow = new tblSleepWake();
+                        tblSleepWake newrow = new tblSleepWake();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.SleepOrWake = sw.SleepOrWake;
-                    newrow.TimeOfDay = sw.TimeOfDay;
-                    newrow.PatientId = sw.PatientId;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.SleepOrWake = sw.SleepOrWake;
+                        newrow.TimeOfDay = sw.TimeOfDay;
+                        newrow.PatientId = sw.PatientId;
 
-                    sw.Id = newrow.Id;
+                        sw.Id = newrow.Id;
 
-                    dc.tblSleepWakes.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblSleepWakes.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -149,28 +154,31 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblSleepWake row = (from dt in dc.tblSleepWakes where dt.Id == sw.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblSleepWake row = (from dt in dc.tblSleepWakes where dt.Id == sw.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.SleepOrWake = sw.SleepOrWake;
-                        row.TimeOfDay = sw.TimeOfDay;
-                        row.PatientId = sw.PatientId;
+                            row.SleepOrWake = sw.SleepOrWake;
+                            row.TimeOfDay = sw.TimeOfDay;
+                            row.PatientId = sw.PatientId;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {

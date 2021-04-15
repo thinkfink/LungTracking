@@ -11,7 +11,6 @@ namespace LungTracking.BL
 {
     public static class UserManager
     {
-
         private static string GetHash(string password)
         {
             using (var hash = new System.Security.Cryptography.SHA1Managed())
@@ -20,30 +19,30 @@ namespace LungTracking.BL
                 return Convert.ToBase64String(hash.ComputeHash(hashbytes));
             }
         }
-
-
         public async static Task<IEnumerable<Models.User>> Load()
         {
             try
             {
                 List<User> users = new List<User>();
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                await Task.Run(() =>
                 {
-                    dc.tblUsers
-                    .ToList()
-                    .ForEach(u => users.Add(new User
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        Id = u.Id,
-                        Username = u.Username,
-                        Password = u.Password,
-                        Role = u.Role,
-                        Email = u.Email,
-                        Created = u.Created,
-                        LastLogin = u.LastLogin
-                    }));
-                    return users;
-                }
+                        dc.tblUsers
+                        .ToList()
+                        .ForEach(u => users.Add(new User
+                        {
+                            Id = u.Id,
+                            Username = u.Username,
+                            Password = u.Password,
+                            Role = u.Role,
+                            Email = u.Email,
+                            Created = u.Created,
+                            LastLogin = u.LastLogin
+                        }));
+                    }
+                });
+                return users;
             }
             catch (Exception)
             {
@@ -56,27 +55,30 @@ namespace LungTracking.BL
         {
             try
             {
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                Models.User user = new Models.User();
+                await Task.Run(() =>
                 {
-                    tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Id == userId);
-                    Models.User user = new Models.User();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Id == userId);
 
-                    if (tblUser != null)
-                    {
-                        user.Id = tblUser.Id;
-                        user.Username = tblUser.Username;
-                        user.Password = tblUser.Password;
-                        user.Role = tblUser.Role;
-                        user.Email = tblUser.Email;
-                        user.Created = tblUser.Created;
-                        user.LastLogin = tblUser.LastLogin;
-                        return user;
+                        if (tblUser != null)
+                        {
+                            user.Id = tblUser.Id;
+                            user.Username = tblUser.Username;
+                            user.Password = tblUser.Password;
+                            user.Role = tblUser.Role;
+                            user.Email = tblUser.Email;
+                            user.Created = tblUser.Created;
+                            user.LastLogin = tblUser.LastLogin;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the row");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Could not find the row");
-                    }
-                }
+                });
+                return user;
             }
             catch (Exception)
             {
@@ -113,30 +115,32 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    if (rollback) transaction = dc.Database.BeginTransaction();
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        if (rollback) transaction = dc.Database.BeginTransaction();
 
-                    tblUser newrow = new tblUser();
+                        tblUser newrow = new tblUser();
 
-                    newrow.Id = Guid.NewGuid();
-                    newrow.Username = user.Username;
-                    newrow.Password = user.Password;
-                    newrow.Role = user.Role;
-                    newrow.Email = user.Email;
-                    newrow.Created = user.Created;
-                    newrow.LastLogin = user.LastLogin;
+                        newrow.Id = Guid.NewGuid();
+                        newrow.Username = user.Username;
+                        newrow.Password = user.Password;
+                        newrow.Role = user.Role;
+                        newrow.Email = user.Email;
+                        newrow.Created = user.Created;
+                        newrow.LastLogin = user.LastLogin;
 
-                    user.Id = newrow.Id;
+                        user.Id = newrow.Id;
 
-                    dc.tblUsers.Add(newrow);
-                    int results = dc.SaveChanges();
+                        dc.tblUsers.Add(newrow);
+                        results = dc.SaveChanges();
 
-                    if (rollback) transaction.Rollback();
-
-                    return results;
-                }
+                        if (rollback) transaction.Rollback();
+                    }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -150,31 +154,34 @@ namespace LungTracking.BL
             try
             {
                 IDbContextTransaction transaction = null;
-
-                using (LungTrackingEntities dc = new LungTrackingEntities())
+                int results = 0;
+                await Task.Run(() =>
                 {
-                    tblUser row = (from dt in dc.tblUsers where dt.Id == user.Id select dt).FirstOrDefault();
-                    int results = 0;
-                    if (row != null)
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
-                        if (rollback) transaction = dc.Database.BeginTransaction();
+                        tblUser row = (from dt in dc.tblUsers where dt.Id == user.Id select dt).FirstOrDefault();
+                        int results = 0;
+                        if (row != null)
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        row.Username = user.Username;
-                        row.Password = user.Password;
-                        row.Role = user.Role;
-                        row.Email = user.Email;
-                        row.Created = user.Created;
-                        row.LastLogin = user.LastLogin;
+                            row.Username = user.Username;
+                            row.Password = user.Password;
+                            row.Role = user.Role;
+                            row.Email = user.Email;
+                            row.Created = user.Created;
+                            row.LastLogin = user.LastLogin;
 
-                        results = dc.SaveChanges();
-                        if (rollback) transaction.Rollback();
-                        return results;
+                            results = dc.SaveChanges();
+                            if (rollback) transaction.Rollback();
+                        }
+                        else
+                        {
+                            throw new Exception("Row was not found");
+                        }
                     }
-                    else
-                    {
-                        throw new Exception("Row was not found");
-                    }
-                }
+                });
+                return results;
             }
             catch (Exception)
             {
@@ -183,7 +190,7 @@ namespace LungTracking.BL
             }
         }
 
-        public static bool Login(User user)
+        public async static Task<bool> Login(User user, bool rollback = false)
         {
             // Check if a username was entered
             // Check if a password was entered
@@ -192,41 +199,51 @@ namespace LungTracking.BL
             // Log in if all 4 checks above passes
             try
             {
-                if (!string.IsNullOrEmpty(user.Username))
+                IDbContextTransaction transaction = null;
+                bool loggedIn = false;
+                await Task.Run(() =>
                 {
-                    if (!string.IsNullOrEmpty(user.Password))
+                    if (!string.IsNullOrEmpty(user.Username))
                     {
-                        using (LungTrackingEntities dc = new LungTrackingEntities())
+                        if (!string.IsNullOrEmpty(user.Password))
                         {
-                            tblUser tblUser = dc.tblUsers.FirstOrDefault(u => u.Username == user.Username);
-                            if (tblUser != null)
+                            using (LungTrackingEntities dc = new LungTrackingEntities())
                             {
-                                if (tblUser.Password == user.Password || GetHash(tblUser.Password) == GetHash(user.Password) || tblUser.Password == GetHash(user.Password))
+                                tblUser tblUser = dc.tblUsers.FirstOrDefault(u => u.Username == user.Username);
+                                if (tblUser != null)
                                 {
-                                    user.Id = tblUser.Id;
-                                    tblUser.LastLogin = DateTime.Now;
-                                    return true;
+                                    if (rollback) transaction = dc.Database.BeginTransaction();
+
+                                    if (tblUser.Password == user.Password || GetHash(tblUser.Password) == GetHash(user.Password) || tblUser.Password == GetHash(user.Password))
+                                    {
+                                        user.Id = tblUser.Id;
+                                        tblUser.LastLogin = DateTime.Now;
+                                        loggedIn = true;
+
+                                        if (rollback) transaction.Rollback();
+                                    }
+                                    else
+                                    {
+                                        loggedIn = false;
+                                    }
                                 }
                                 else
                                 {
-                                    return false;
+                                    throw new Exception("Username could not be found.");
                                 }
                             }
-                            else
-                            {
-                                throw new Exception("Username could not be found.");
-                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Please enter your password");
                         }
                     }
                     else
                     {
-                        throw new Exception("Please enter your password");
+                        throw new Exception("Please enter your username");
                     }
-                }
-                else
-                {
-                    throw new Exception("Please enter your username");
-                }
+                });
+                return loggedIn;
             }
             catch (Exception)
             {
@@ -235,27 +252,36 @@ namespace LungTracking.BL
             }
         }
 
-        public static int UpdatePassword(Guid id, string password, string newPassword, string confirmPassword)
+        public async static Task<int> UpdatePassword(Guid id, string password, string newPassword, string confirmPassword, bool rollback = false)
         {
 
             if (newPassword == confirmPassword)
             {
                 try
                 {
-                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    IDbContextTransaction transaction = null;
+                    int results = 0;
+                    await Task.Run(() => 
                     {
-                        tblUser updaterow = (from dt in dc.tblUsers where dt.Id == id select dt).FirstOrDefault();
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
+                        {
+                            if (rollback) transaction = dc.Database.BeginTransaction();
 
-                        if (GetHash(password) == GetHash(updaterow.Password) || password == updaterow.Password || GetHash(password) == updaterow.Password)
-                        {
-                            updaterow.Password = GetHash(newPassword);
-                            return dc.SaveChanges();
+                            tblUser updaterow = (from dt in dc.tblUsers where dt.Id == id select dt).FirstOrDefault();
+
+                            if (GetHash(password) == GetHash(updaterow.Password) || password == updaterow.Password || GetHash(password) == updaterow.Password)
+                            {
+                                updaterow.Password = GetHash(newPassword);
+                                results = dc.SaveChanges();
+                                if (rollback) transaction.Rollback();
+                            }
+                            else
+                            {
+                                throw new Exception("Password does not match existing user password.");
+                            }
                         }
-                        else
-                        {
-                            throw new Exception("Password does not match existing user password.");
-                        }
-                    }
+                    });
+                    return results;
                 }
                 catch (Exception)
                 {
