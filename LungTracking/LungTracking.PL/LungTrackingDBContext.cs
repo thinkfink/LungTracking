@@ -115,7 +115,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblCaregiver");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D89D1EAFB")
+                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D616C4F13")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -229,7 +229,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblPatient");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D7504F940")
+                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D530D314E")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -287,7 +287,7 @@ namespace LungTracking.PL
             modelBuilder.Entity<tblPatientProviderAccess>(entity =>
             {
                 entity.HasKey(e => new { e.PatientId, e.ProviderId })
-                    .HasName("PK__tblPatie__5C5A05E17C9A72AF");
+                    .HasName("PK__tblPatie__5C5A05E1A2F3FCD2");
 
                 entity.ToTable("tblPatientProviderAccess");
             });
@@ -314,7 +314,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblProvider");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4DE707EB05")
+                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4DC32296EE")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -405,10 +405,10 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblUser");
 
-                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4B78EAF0C")
+                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4FC3C49A2")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534EDFCC026")
+                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534B36E3A9E")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -446,6 +446,9 @@ namespace LungTracking.PL
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblWeight_PatientId");
             });
+
+            // Manually add this for the stored proc.
+            modelBuilder.Entity<spFindPatientAppsAndPills>().HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }

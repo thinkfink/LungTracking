@@ -89,7 +89,7 @@
     <Build Include="Tables\tblMedicationDetail.sql" />
     <Build Include="Tables\tblMedicationTime.sql" />
     <Build Include="Tables\tblMedicationTracking.sql" />
-    <Build Include="StoredProcedures\spFindAllPatientData.sql" />
+    <Build Include="StoredProcedures\spFindPatientAppsAndPills.sql" />
     <Build Include="Tables\tblPatientProviderAccess.sql" />
     <Build Include="Tables\tblCaregiver.sql" />
     <Build Include="Tables\tblPatientCaregiverAccess.sql" />
