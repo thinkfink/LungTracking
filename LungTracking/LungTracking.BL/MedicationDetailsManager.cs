@@ -96,9 +96,6 @@ namespace LungTracking.BL
                     {
                         using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-
-
-
                             var medDetails = (from dt in dc.tblMedicationDetails
                                               where dt.PatientId == patientId
                                               select new
@@ -209,10 +206,9 @@ namespace LungTracking.BL
                         int results = dc.SaveChanges();
 
                         if (rollback) transaction.Rollback();
-
-                        return results;
                     }
                 });
+                return results;
             }
             catch (Exception)
             {

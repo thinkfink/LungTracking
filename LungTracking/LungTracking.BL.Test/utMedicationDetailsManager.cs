@@ -63,7 +63,7 @@ namespace LungTracking.BL.Test
                 var task = MedicationDetailsManager.Load();
                 IEnumerable<Models.MedicationDetails> mdts = task.Result;
                 Models.MedicationDetails mdt = mdts.FirstOrDefault(a => a.MedicationInstructions == "Just testing");
-                mdt.MedicationInstructions = "More testing"
+                mdt.MedicationInstructions = "More testing";
                 var results = MedicationDetailsManager.Update(mdt);
                 Assert.IsTrue(results.Result > 0);
             });

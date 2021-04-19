@@ -124,13 +124,12 @@ namespace LungTracking.BL
                             }
                         }
                     }
+                    else
+                    {
+                        throw new Exception("Please provide a user Id.");
+                    }
                 });
                 return results;
-
-                else
-                {
-                    throw new Exception("Please provide a user Id.");
-                }
             }
             catch (Exception)
             {
