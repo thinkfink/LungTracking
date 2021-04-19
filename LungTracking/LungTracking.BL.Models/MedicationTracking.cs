@@ -12,5 +12,8 @@ namespace LungTracking.BL.Models
         public DateTime PillTakenTime { get; set; }
         public Guid MedicationId { get; set; }
         public Guid PatientId { get; set; }
+
+        // for "stored procedure" functionality
+        public string Alert { get; set; }
     }
 }

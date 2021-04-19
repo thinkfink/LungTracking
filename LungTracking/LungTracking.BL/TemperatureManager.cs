@@ -107,6 +107,12 @@ namespace LungTracking.BL
                     TimeOfDay = timeOfDay,
                     PatientId = patientId
                 };
+
+                if (tempNumber >= 100)
+                {
+                    temp.Alert = "Temperature above 100 degrees. Call your transplant coordinator.";
+                }
+
                 await Insert(temp, rollback);
                 return temp.Id;
             }
@@ -145,6 +151,12 @@ namespace LungTracking.BL
                         if (rollback) transaction.Rollback();
                     }
                 });
+
+                if (temp.TempNumber >= 100)
+                {
+                    temp.Alert = "Temperature above 100 degrees. Call your transplant coordinator.";
+                }
+
                 return results;
             }
             catch (Exception)
@@ -164,6 +176,11 @@ namespace LungTracking.BL
                 {
                     using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
+                        if (temp.TempNumber >= 100)
+                        {
+                            temp.Alert = "Temperature above 100 degrees. Call your transplant coordinator.";
+                        }
+
                         tblTemperature row = (from dt in dc.tblTemperatures where dt.Id == temp.Id select dt).FirstOrDefault();
                         int results = 0;
                         if (row != null)

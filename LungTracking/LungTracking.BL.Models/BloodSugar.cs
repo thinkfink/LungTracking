@@ -15,5 +15,8 @@ namespace LungTracking.BL.Models
         public string TypeOfInsulinGiven { get; set; }
         public string Notes { get; set; }
         public Guid PatientId { get; set; }
+
+        // for "stored procedure" functionality
+        public string Alert { get; set; }
     }
 }

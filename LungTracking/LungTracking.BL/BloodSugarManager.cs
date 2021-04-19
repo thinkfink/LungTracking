@@ -115,6 +115,12 @@ namespace LungTracking.BL
                     Notes = notes,
                     PatientId = patientId
                 };
+
+                if (bloodSugarNumber < 50)
+                {
+                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                }
+
                 await Insert(bloodSugar, rollback);
                 return bloodSugar.Id;
             }
@@ -155,6 +161,12 @@ namespace LungTracking.BL
                         if (rollback) transaction.Rollback();
                     }
                 });
+
+                if (bloodSugar.BloodSugarNumber < 50)
+                {
+                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                }
+
                 return results;
             }
             catch (Exception)
@@ -195,6 +207,12 @@ namespace LungTracking.BL
                         }
                     }
                 });
+
+                if (bloodSugar.BloodSugarNumber < 50)
+                {
+                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                }
+
                 return results;
             }
             catch (Exception)
