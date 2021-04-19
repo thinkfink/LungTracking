@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,71 +17,81 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Patient> patients = new List<Patient>();
-            patients = PatientManager.Load();
-            int expected = 90;
-            Assert.AreEqual(expected, patients.Count);
+            Task.Run(async () =>
+            {
+                var task = await PatientManager.Load();
+                IEnumerable<Models.Patient> patients = task;
+                Assert.AreEqual(90, patients.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            Patient patient = new Patient();
-            patient = PatientManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(patient);
+            Task.Run(async () =>
+            {
+                var results = await PatientManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void LoadByUserIdTest()
         {
-            Patient patient = new Patient();
-            patient = PatientManager.LoadByUserId(userId);
-            Assert.IsNotNull(patient);
+            Task.Run(async () =>
+            {
+                var results = await PatientManager.LoadByUserId(userId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Patient patient = new Patient();
-            patient.FirstName = "newfirstname";
-            patient.LastName = "newlastname";
-            patient.Sex = "M";
-            patient.DateOfBirth = DateTime.Parse("1980-01-01");
-            patient.StreetAddress = "123 Test Street";
-            patient.City = "Testopolis";
-            patient.State = "WI";
-            patient.PhoneNumber = "(555)555-2345";
-            patient.UserId = Guid.Parse("a007c7f2-cbd7-48dd-8fd3-adb871b55c25");
+            Task.Run(async () =>
+            {
+                Patient patient = new Patient();
+                patient.FirstName = "newfirstname";
+                patient.LastName = "newlastname";
+                patient.Sex = "M";
+                patient.DateOfBirth = DateTime.Parse("1980-01-01");
+                patient.StreetAddress = "123 Test Street";
+                patient.City = "Testopolis";
+                patient.State = "WI";
+                patient.PhoneNumber = "(555)555-2345";
+                patient.UserId = Guid.Parse("a007c7f2-cbd7-48dd-8fd3-adb871b55c25");
 
-            int result = PatientManager.Insert(patient);
-            Assert.IsTrue(result > 0);
-
+                int results = await PatientManager.Insert(patient);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Patient> patients = PatientManager.Load();
-
-            Patient patient = patients.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            patient.LastName = "updatedlastname";
-
-            PatientManager.Update(patient);
-
-            Patient updatedpatient = patients.FirstOrDefault(p => p.FirstName == patient.FirstName);
-
-            Assert.AreEqual(patient.LastName, updatedpatient.LastName);
+            Task.Run(async () =>
+            {
+                var task = PatientManager.Load();
+                IEnumerable<Models.Patient> patients = task.Result;
+                Models.Patient patient = patients.FirstOrDefault(p => p.FirstName == "newfirstname");
+                patient.LastName = "updatedlastname";
+                var results = PatientManager.Update(patient);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Patient> patients = PatientManager.Load();
-            Patient patient = patients.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            int results = PatientManager.Delete(patient.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = PatientManager.Load();
+                IEnumerable<Models.Patient> patients = task.Result;
+                task.Wait();
+                Models.Patient patient = patients.FirstOrDefault(p => p.FirstName == "newfirstname");
+                var results = PatientManager.Delete(patient.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

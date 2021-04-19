@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,58 +17,66 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Pulse> pulses = new List<Pulse>();
-            pulses = PulseManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, pulses.Count);
+            Task.Run(async () =>
+            {
+                var task = await PulseManager.Load();
+                IEnumerable<Models.Pulse> pulses = task;
+                Assert.AreEqual(300, pulses.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<Pulse> pulses = new List<Pulse>();
-            pulses = PulseManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(pulses);
+            Task.Run(async () =>
+            {
+                var results = await PulseManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Pulse pulse = new Pulse();
-            pulse.PulseNumber = 90;
-            pulse.BeginningEnd = true;
-            pulse.TimeOfDay = timeOfDay;
-            pulse.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                Pulse pulse = new Pulse();
+                pulse.PulseNumber = 90;
+                pulse.BeginningEnd = true;
+                pulse.TimeOfDay = timeOfDay;
+                pulse.PatientId = patientId;
 
-            int result = PulseManager.Insert(pulse);
-            Assert.IsTrue(result > 0);
-
+                int results = await PulseManager.Insert(pulse);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Pulse> pulses = PulseManager.Load();
-
-            Pulse pulse = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            pulse.PulseNumber = 100;
-
-            PulseManager.Update(pulse);
-
-            Pulse updatedpulse = pulses.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(pulse.PulseNumber, updatedpulse.PulseNumber);
+            Task.Run(async () =>
+            {
+                var task = PulseManager.Load();
+                IEnumerable<Models.Pulse> pulses = task.Result;
+                Models.Pulse pulse = pulses.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                pulse.PulseNumber = 100;
+                var results = PulseManager.Update(pulse);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Pulse> pulses = PulseManager.Load();
-            Pulse pulse = pulses.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = PulseManager.Delete(pulse.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = PulseManager.Load();
+                IEnumerable<Models.Pulse> pulses = task.Result;
+                task.Wait();
+                Models.Pulse pulse = pulses.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = PulseManager.Delete(pulse.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

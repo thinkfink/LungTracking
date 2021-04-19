@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,70 +17,80 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Provider> providers = new List<Provider>();
-            providers = ProviderManager.Load();
-            int expected = 50;
-            Assert.AreEqual(expected, providers.Count);
+            Task.Run(async () =>
+            {
+                var task = await ProviderManager.Load();
+                IEnumerable<Models.Provider> providers = task;
+                Assert.AreEqual(300, providers.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByProviderIdTest()
         {
-            Provider provider = new Provider();
-            provider = ProviderManager.LoadByProviderId(providerId);
-            Assert.IsNotNull(provider);
+            Task.Run(async () =>
+            {
+                var results = await ProviderManager.LoadByProviderId(providerId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void LoadByUserIdTest()
         {
-            Provider provider = new Provider();
-            provider = ProviderManager.LoadByUserId(userId);
-            Assert.IsNotNull(provider);
+            Task.Run(async () =>
+            {
+                var results = await ProviderManager.LoadByUserId(userId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Provider provider = new Provider();
-            provider.FirstName = "newfirstname";
-            provider.LastName = "newlastname";
-            provider.City = "Testopolis";
-            provider.State = "WI";
-            provider.PhoneNumber = "(555)555-2345";
-            provider.JobDescription = "Doctor of Testing";
-            provider.ImagePath = "doctor.jpg";
-            provider.UserId = Guid.Parse("798c8bdc-86ef-4935-ad2f-b8df92eeafc4");
+            Task.Run(async () =>
+            {
+                Provider provider = new Provider();
+                provider.FirstName = "newfirstname";
+                provider.LastName = "newlastname";
+                provider.City = "Testopolis";
+                provider.State = "WI";
+                provider.PhoneNumber = "(555)555-2345";
+                provider.JobDescription = "Doctor of Testing";
+                provider.ImagePath = "doctor.jpg";
+                provider.UserId = Guid.Parse("798c8bdc-86ef-4935-ad2f-b8df92eeafc4");
 
-            int result = ProviderManager.Insert(provider);
-            Assert.IsTrue(result > 0);
-
+                int results = await ProviderManager.Insert(provider);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Provider> providers = ProviderManager.Load();
-
-            Provider provider = providers.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            provider.LastName = "updatedlastname";
-
-            ProviderManager.Update(provider);
-
-            Provider updatedprovider = providers.FirstOrDefault(p => p.FirstName == provider.FirstName);
-
-            Assert.AreEqual(provider.LastName, updatedprovider.LastName);
+            Task.Run(async () =>
+            {
+                var task = ProviderManager.Load();
+                IEnumerable<Models.Provider> providers = task.Result;
+                Models.Provider provider = providers.FirstOrDefault(p => p.FirstName == "newfirstname");
+                provider.LastName = "updatedlastname";
+                var results = ProviderManager.Update(provider);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Provider> providers = ProviderManager.Load();
-            Provider provider = providers.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            int results = ProviderManager.Delete(provider.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = ProviderManager.Load();
+                IEnumerable<Models.Provider> providers = task.Result;
+                task.Wait();
+                Models.Provider provider = providers.FirstOrDefault(p => p.FirstName == "newfirstname");
+                var results = ProviderManager.Delete(provider.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

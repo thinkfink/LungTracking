@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,68 +17,78 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Caregiver> caregivers = new List<Caregiver>();
-            caregivers = CaregiverManager.Load();
-            int expected = 46;
-            Assert.AreEqual(expected, caregivers.Count);
+            Task.Run(async () =>
+            {
+                var task = await CaregiverManager.Load();
+                IEnumerable<Models.Caregiver> caregivers = task;
+                Assert.AreEqual(300, caregivers.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByCaregiverIdTest()
         {
-            Caregiver caregiver = new Caregiver();
-            caregiver = CaregiverManager.LoadByCaregiverId(caregiverId);
-            Assert.IsNotNull(caregiver);
+            Task.Run(async () =>
+            {
+                var results = await CaregiverManager.LoadByCaregiverId(caregiverId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void LoadByUserIdTest()
         {
-            Caregiver caregiver = new Caregiver();
-            caregiver = CaregiverManager.LoadByUserId(userId);
-            Assert.IsNotNull(caregiver);
+            Task.Run(async () =>
+            {
+                var results = await CaregiverManager.LoadByUserId(userId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Caregiver caregiver = new Caregiver();
-            caregiver.FirstName = "newfirstname";
-            caregiver.LastName = "newlastname";
-            caregiver.City = "Testopolis";
-            caregiver.State = "WI";
-            caregiver.PhoneNumber = "(555)555-2345";
-            caregiver.UserId = Guid.Parse("798c8bdc-86ef-4935-ad2f-b8df92eeafc4");
+            Task.Run(async () =>
+            {
+                Caregiver caregiver = new Caregiver();
+                caregiver.FirstName = "newfirstname";
+                caregiver.LastName = "newlastname";
+                caregiver.City = "Testopolis";
+                caregiver.State = "WI";
+                caregiver.PhoneNumber = "(555)555-2345";
+                caregiver.UserId = Guid.Parse("798c8bdc-86ef-4935-ad2f-b8df92eeafc4");
 
-            int result = CaregiverManager.Insert(caregiver);
-            Assert.IsTrue(result > 0);
-
+                int results = await CaregiverManager.Insert(caregiver);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Caregiver> caregivers = CaregiverManager.Load();
-
-            Caregiver caregiver = caregivers.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            caregiver.LastName = "updatedlastname";
-
-            CaregiverManager.Update(caregiver);
-
-            Caregiver updatedcaregiver = caregivers.FirstOrDefault(p => p.FirstName == caregiver.FirstName);
-
-            Assert.AreEqual(caregiver.LastName, updatedcaregiver.LastName);
+            Task.Run(async () =>
+            {
+                var task = CaregiverManager.Load();
+                IEnumerable<Models.Caregiver> caregivers = task.Result;
+                Models.Caregiver caregiver = caregivers.FirstOrDefault(p => p.FirstName == "newfirstname");
+                caregiver.LastName = "updatedlastname";
+                var results = CaregiverManager.Update(caregiver);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Caregiver> caregivers = CaregiverManager.Load();
-            Caregiver caregiver = caregivers.Where(p => p.FirstName == "newfirstname").FirstOrDefault();
-
-            int results = CaregiverManager.Delete(caregiver.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = CaregiverManager.Load();
+                IEnumerable<Models.Caregiver> caregivers = task.Result;
+                task.Wait();
+                Models.Caregiver caregiver = caregivers.FirstOrDefault(p => p.FirstName == "newfirstname");
+                var results = CaregiverManager.Delete(caregiver.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

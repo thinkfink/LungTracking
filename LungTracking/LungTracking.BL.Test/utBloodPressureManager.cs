@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,60 +17,68 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<BloodPressure> bps = new List<BloodPressure>();
-            bps = BloodPressureManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, bps.Count);
+            Task.Run(async () =>
+            {
+                var task = await BloodPressureManager.Load();
+                IEnumerable<Models.BloodPressure> appointments = task;
+                Assert.AreEqual(300, appointments.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<BloodPressure> bps = new List<BloodPressure>();
-            bps = BloodPressureManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(bps);
+            Task.Run(async () =>
+            {
+                var results = await BloodPressureManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            BloodPressure bp = new BloodPressure();
-            bp.BPsystolic = 120;
-            bp.BPdiastolic = 80;
-            bp.BeginningEnd = true;
-            bp.TimeOfDay = timeOfDay;
-            bp.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                BloodPressure bp = new BloodPressure();
+                bp.BPsystolic = 120;
+                bp.BPdiastolic = 80;
+                bp.BeginningEnd = true;
+                bp.TimeOfDay = timeOfDay;
+                bp.PatientId = patientId;
 
-            int result = BloodPressureManager.Insert(bp);
-            Assert.IsTrue(result > 0);
-
+                int results = await BloodPressureManager.Insert(bp);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<BloodPressure> bps = BloodPressureManager.Load();
-
-            BloodPressure bp = bps.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            bp.BPsystolic = 110;
-            bp.BPdiastolic = 70;
-
-            BloodPressureManager.Update(bp);
-
-            BloodPressure updatedbp = bps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(bp.TimeOfDay, updatedbp.TimeOfDay);
+            Task.Run(async () =>
+            {
+                var task = BloodPressureManager.Load();
+                IEnumerable<Models.BloodPressure> bps = task.Result;
+                Models.BloodPressure bp = bps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                bp.BPsystolic = 110;
+                bp.BPdiastolic = 70;
+                var results = BloodPressureManager.Update(bp);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<BloodPressure> bps = BloodPressureManager.Load();
-            BloodPressure bp = bps.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = BloodPressureManager.Delete(bp.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = BloodPressureManager.Load();
+                IEnumerable<Models.BloodPressure> bps = task.Result;
+                task.Wait();
+                Models.BloodPressure bp = bps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = BloodPressureManager.Delete(bp.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

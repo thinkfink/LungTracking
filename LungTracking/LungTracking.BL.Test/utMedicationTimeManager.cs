@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,57 +17,65 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<MedicationTime> mts = new List<MedicationTime>();
-            mts = MedicationTimeManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, mts.Count);
+            Task.Run(async () =>
+            {
+                var task = await MedicationTimeManager.Load();
+                IEnumerable<Models.MedicationTime> mts = task;
+                Assert.AreEqual(300, mts.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<MedicationTime> mts = new List<MedicationTime>();
-            mts = MedicationTimeManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(mts);
+            Task.Run(async () =>
+            {
+                var results = await MedicationTimeManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            MedicationTime mt = new MedicationTime();
-            mt.PillTime = TimeSpan.Parse("11:00:00");
-            mt.MedicationId = medicationId;
-            mt.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                MedicationTime mt = new MedicationTime();
+                mt.PillTime = TimeSpan.Parse("11:00:00");
+                mt.MedicationId = medicationId;
+                mt.PatientId = patientId;
 
-            int result = MedicationTimeManager.Insert(mt);
-            Assert.IsTrue(result > 0);
-
+                int results = await MedicationTimeManager.Insert(mt);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<MedicationTime> mts = MedicationTimeManager.Load();
-
-            MedicationTime mt = mts.Where(a => a.MedicationId == medicationId && a.PatientId == patientId).FirstOrDefault();
-
-            mt.PillTime = TimeSpan.Parse("12:00:00");
-
-            MedicationTimeManager.Update(mt);
-
-            MedicationTime updatedmt = mts.FirstOrDefault(a => a.MedicationId == medicationId && a.PatientId == patientId);
-
-            Assert.AreEqual(mt.PillTime, updatedmt.PillTime);
+            Task.Run(async () =>
+            {
+                var task = MedicationTimeManager.Load();
+                IEnumerable<Models.MedicationTime> mts = task.Result;
+                Models.MedicationTime mt = mts.FirstOrDefault(a => a.MedicationId == medicationId && a.PatientId == patientId);
+                mt.PillTime = TimeSpan.Parse("12:00:00");
+                var results = MedicationTimeManager.Update(mt);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<MedicationTime> mts = MedicationTimeManager.Load();
-            MedicationTime mt = mts.Where(a => a.MedicationId == medicationId && a.PatientId == patientId).FirstOrDefault();
-
-            int results = MedicationTimeManager.Delete(mt.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = MedicationTimeManager.Load();
+                IEnumerable<Models.MedicationTime> mts = task.Result;
+                task.Wait();
+                Models.MedicationTime mt = mts.FirstOrDefault(a => a.MedicationId == medicationId && a.PatientId == patientId);
+                var results = MedicationTimeManager.Delete(mt.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

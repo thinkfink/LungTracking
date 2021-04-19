@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -21,40 +22,50 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<PatientProviderAccess> ppas = new List<PatientProviderAccess>();
-            ppas = PatientProviderAccessManager.Load();
-            int expected = 40;
-            Assert.AreEqual(expected, ppas.Count);
+            Task.Run(async () =>
+            {
+                var task = await PatientProviderAccessManager.Load();
+                IEnumerable<Models.PatientProviderAccess> pcas = task;
+                Assert.AreEqual(300, pcas.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByIdTest()
         {
-            PatientProviderAccess ppas = new PatientProviderAccess();
-            ppas = PatientProviderAccessManager.LoadById(oldPatientId, oldProviderId);
-            Assert.IsNotNull(ppas);
+            Task.Run(async () =>
+            {
+                var results = await PatientProviderAccessManager.LoadById(oldPatientId, oldProviderId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            PatientProviderAccess ppa = new PatientProviderAccess();
-            ppa.PatientId = patientId;
-            ppa.ProviderId = providerId;
+            Task.Run(async () =>
+            {
+                PatientProviderAccess pca = new PatientProviderAccess();
+                pca.PatientId = patientId;
+                pca.ProviderId = providerId;
 
-            int result = PatientProviderAccessManager.Insert(ppa);
-            Assert.IsTrue(result > 0);
-
+                int results = await PatientProviderAccessManager.Insert(pca);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<PatientProviderAccess> ppas = PatientProviderAccessManager.Load();
-            PatientProviderAccess ppa = ppas.Where(p => p.PatientId == patientId && p.ProviderId == providerId).FirstOrDefault();
-
-            int results = PatientProviderAccessManager.Delete(ppa.PatientId, ppa.ProviderId);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = PatientProviderAccessManager.Load();
+                IEnumerable<Models.PatientProviderAccess> pcas = task.Result;
+                task.Wait();
+                Models.PatientProviderAccess pca = pcas.FirstOrDefault(p => p.PatientId == patientId && p.ProviderId == providerId);
+                var results = PatientProviderAccessManager.Delete(pca.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

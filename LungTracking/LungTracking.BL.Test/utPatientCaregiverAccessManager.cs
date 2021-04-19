@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -21,40 +22,50 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<PatientCaregiverAccess> pcas = new List<PatientCaregiverAccess>();
-            pcas = PatientCaregiverAccessManager.Load();
-            int expected = 40;
-            Assert.AreEqual(expected, pcas.Count);
+            Task.Run(async () =>
+            {
+                var task = await PatientCaregiverAccessManager.Load();
+                IEnumerable<Models.PatientCaregiverAccess> pcas = task;
+                Assert.AreEqual(300, pcas.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByIdTest()
         {
-            PatientCaregiverAccess pcas = new PatientCaregiverAccess();
-            pcas = PatientCaregiverAccessManager.LoadById(oldPatientId, oldCaregiverId);
-            Assert.IsNotNull(pcas);
+            Task.Run(async () =>
+            {
+                var results = await PatientCaregiverAccessManager.LoadById(oldPatientId, oldCaregiverId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            PatientCaregiverAccess pca = new PatientCaregiverAccess();
-            pca.PatientId = patientId;
-            pca.CaregiverId = caregiverId;
+            Task.Run(async () =>
+            {
+                PatientCaregiverAccess pca = new PatientCaregiverAccess();
+                pca.PatientId = patientId;
+                pca.CaregiverId = caregiverId;
 
-            int result = PatientCaregiverAccessManager.Insert(pca);
-            Assert.IsTrue(result > 0);
-
+                int results = await PatientCaregiverAccessManager.Insert(pca);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<PatientCaregiverAccess> pcas = PatientCaregiverAccessManager.Load();
-            PatientCaregiverAccess pca = pcas.Where(p => p.PatientId == patientId && p.CaregiverId == caregiverId).FirstOrDefault();
-
-            int results = PatientCaregiverAccessManager.Delete(pca.PatientId, pca.CaregiverId);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = PatientCaregiverAccessManager.Load();
+                IEnumerable<Models.PatientCaregiverAccess> pcas = task.Result;
+                task.Wait();
+                Models.PatientCaregiverAccess pca = pcas.FirstOrDefault(p => p.PatientId == patientId && p.CaregiverId == caregiverId);
+                var results = PatientCaregiverAccessManager.Delete(pca.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,58 +17,66 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Temperature> temps = new List<Temperature>();
-            temps = TemperatureManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, temps.Count);
+            Task.Run(async () =>
+            {
+                var task = await TemperatureManager.Load();
+                IEnumerable<Models.Temperature> temps = task;
+                Assert.AreEqual(300, temps.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<Temperature> temps = new List<Temperature>();
-            temps = TemperatureManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(temps);
+            Task.Run(async () =>
+            {
+                var results = await TemperatureManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Temperature temp = new Temperature();
-            temp.TempNumber = 98.6M;
-            temp.BeginningEnd = true;
-            temp.TimeOfDay = timeOfDay;
-            temp.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                Temperature temp = new Temperature();
+                temp.TempNumber = 98.6M;
+                temp.BeginningEnd = true;
+                temp.TimeOfDay = timeOfDay;
+                temp.PatientId = patientId;
 
-            int result = TemperatureManager.Insert(temp);
-            Assert.IsTrue(result > 0);
-
+                int results = await TemperatureManager.Insert(temp);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Temperature> temps = TemperatureManager.Load();
-
-            Temperature temp = temps.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            temp.TempNumber = 99.1M;
-
-            TemperatureManager.Update(temp);
-
-            Temperature updatedtemp = temps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(temp.TempNumber, updatedtemp.TempNumber);
+            Task.Run(async () =>
+            {
+                var task = TemperatureManager.Load();
+                IEnumerable<Models.Temperature> temps = task.Result;
+                Models.Temperature temp = temps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                temp.TempNumber = 99.1M;
+                var results = TemperatureManager.Update(temp);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Temperature> temps = TemperatureManager.Load();
-            Temperature temp = temps.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = TemperatureManager.Delete(temp.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = TemperatureManager.Load();
+                IEnumerable<Models.Temperature> temps = task.Result;
+                task.Wait();
+                Models.Temperature temp = temps.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = TemperatureManager.Delete(temp.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

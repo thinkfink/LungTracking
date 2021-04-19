@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -15,60 +16,68 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<Appointment> appts = new List<Appointment>();
-            appts = AppointmentManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, appts.Count);
+            Task.Run(async () => 
+            {
+                var task = await AppointmentManager.Load();
+                IEnumerable<Models.Appointment> appointments = task;
+                Assert.AreEqual(300, appointments.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<Appointment> appt = new List<Appointment>();
-            appt = AppointmentManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(appt);
+            Task.Run(async () => 
+            {
+                var results = await AppointmentManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            Appointment appt = new Appointment();
-            appt.Date = DateTime.Parse("2021-05-01");
-            appt.TimeStart = TimeSpan.Parse("11:00:00");
-            appt.TimeEnd = TimeSpan.Parse("12:00:00");
-            appt.Description = "Testing";
-            appt.Location = "Test Facility";
-            appt.PatientId = patientId;
+            Task.Run(async () => 
+            {
+                Appointment appt = new Appointment();
+                appt.Date = DateTime.Parse("2021-05-01");
+                appt.TimeStart = TimeSpan.Parse("11:00:00");
+                appt.TimeEnd = TimeSpan.Parse("12:00:00");
+                appt.Description = "Testing";
+                appt.Location = "Test Facility";
+                appt.PatientId = patientId;
 
-            int result = AppointmentManager.Insert(appt);
-            Assert.IsTrue(result > 0);
-
+                int results = await AppointmentManager.Insert(appt);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<Appointment> appts = AppointmentManager.Load();
-
-            Appointment appt = appts.Where(a => a.Location == "Test Facility").FirstOrDefault();
-
-            appt.Location = "Updated Test Facility";
-
-            AppointmentManager.Update(appt);
-
-            Appointment updatedappt = appts.FirstOrDefault(a => a.Description == "Testing");
-
-            Assert.AreEqual(appt.Location, updatedappt.Location);
+            Task.Run(async () => 
+            { 
+                var task = AppointmentManager.Load();
+                IEnumerable<Models.Appointment> appts = task.Result;
+                Models.Appointment appt = appts.FirstOrDefault(a => a.Location == "Test Facility");
+                appt.Location = "Updated Test Facility";
+                var results = AppointmentManager.Update(appt);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<Appointment> appts = AppointmentManager.Load();
-            Appointment appt = appts.Where(a => a.Location == "Updated Test Facility").FirstOrDefault();
-
-            int results = AppointmentManager.Delete(appt.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () => 
+            {
+                var task = AppointmentManager.Load();
+                IEnumerable<Models.Appointment> appts = task.Result;
+                task.Wait();
+                Models.Appointment appt = appts.FirstOrDefault(a => a.Location == "Updated Test Facility");
+                var results = AppointmentManager.Delete(appt.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

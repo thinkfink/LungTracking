@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,60 +17,68 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<BloodSugar> bss = new List<BloodSugar>();
-            bss = BloodSugarManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, bss.Count);
+            Task.Run(async () =>
+            {
+                var task = await BloodSugarManager.Load();
+                IEnumerable<Models.BloodSugar> bss = task;
+                Assert.AreEqual(300, bss.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<BloodSugar> bss = new List<BloodSugar>();
-            bss = BloodSugarManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(bss);
+            Task.Run(async () =>
+            {
+                var results = await BloodSugarManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            BloodSugar bs = new BloodSugar();
-            bs.BloodSugarNumber = 120;
-            bs.TimeOfDay = timeOfDay;
-            bs.UnitsOfInsulinGiven = 1;
-            bs.TypeOfInsulinGiven = "A";
-            bs.Notes = "Testing";
-            bs.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                BloodSugar bs = new BloodSugar();
+                bs.BloodSugarNumber = 120;
+                bs.TimeOfDay = timeOfDay;
+                bs.UnitsOfInsulinGiven = 1;
+                bs.TypeOfInsulinGiven = "A";
+                bs.Notes = "Testing";
+                bs.PatientId = patientId;
 
-            int result = BloodSugarManager.Insert(bs);
-            Assert.IsTrue(result > 0);
-
+                int results = await BloodSugarManager.Insert(bs);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<BloodSugar> bss = BloodSugarManager.Load();
-
-            BloodSugar bs = bss.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            bs.Notes = "Additional testing";
-
-            BloodSugarManager.Update(bs);
-
-            BloodSugar updatedbs = bss.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(bs.Notes, updatedbs.Notes);
+            Task.Run(async () =>
+            {
+                var task = BloodSugarManager.Load();
+                IEnumerable<Models.BloodSugar> bss = task.Result;
+                Models.BloodSugar bs = bss.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                bs.Notes = "Additional testing";
+                var results = BloodSugarManager.Update(bs);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<BloodSugar> bss = BloodSugarManager.Load();
-            BloodSugar bs = bss.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = BloodSugarManager.Delete(bs.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = BloodSugarManager.Load();
+                IEnumerable<Models.BloodSugar> bss = task.Result;
+                task.Wait();
+                Models.BloodSugar bs = bss.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = BloodSugarManager.Delete(bs.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

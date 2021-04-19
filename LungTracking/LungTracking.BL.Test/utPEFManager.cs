@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,58 +17,66 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<PEF> pefs = new List<PEF>();
-            pefs = PEFManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, pefs.Count);
+            Task.Run(async () =>
+            {
+                var task = await PEFManager.Load();
+                IEnumerable<Models.PEF> pefs = task;
+                Assert.AreEqual(300, pefs.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<PEF> pefs = new List<PEF>();
-            pefs = PEFManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(pefs);
+            Task.Run(async () =>
+            {
+                var results = await PEFManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            PEF pef = new PEF();
-            pef.PEFNumber = 330;
-            pef.BeginningEnd = true;
-            pef.TimeOfDay = timeOfDay;
-            pef.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                PEF pef = new PEF();
+                pef.PEFNumber = 330;
+                pef.BeginningEnd = true;
+                pef.TimeOfDay = timeOfDay;
+                pef.PatientId = patientId;
 
-            int result = PEFManager.Insert(pef);
-            Assert.IsTrue(result > 0);
-
+                int results = await PEFManager.Insert(pef);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<PEF> pefs = PEFManager.Load();
-
-            PEF pef = pefs.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            pef.PEFNumber = 340.1M;
-
-            PEFManager.Update(pef);
-
-            PEF updatedpef = pefs.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(pef.PEFNumber, updatedpef.PEFNumber);
+            Task.Run(async () =>
+            {
+                var task = PEFManager.Load();
+                IEnumerable<Models.PEF> pefs = task.Result;
+                Models.PEF pef = pefs.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                pef.PEFNumber = 340.1M;
+                var results = PEFManager.Update(pef);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<PEF> pefs = PEFManager.Load();
-            PEF pef = pefs.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = PEFManager.Delete(pef.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = PEFManager.Load();
+                IEnumerable<Models.PEF> pefs = task.Result;
+                task.Wait();
+                Models.PEF pef = pefs.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = PEFManager.Delete(pef.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }

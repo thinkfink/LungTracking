@@ -4,6 +4,7 @@ using LungTracking.BL;
 using LungTracking.BL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LungTracking.BL.Test
 {
@@ -16,57 +17,65 @@ namespace LungTracking.BL.Test
         [TestMethod]
         public void LoadTest()
         {
-            List<SleepWake> sws = new List<SleepWake>();
-            sws = SleepWakeManager.Load();
-            int expected = 300;
-            Assert.AreEqual(expected, sws.Count);
+            Task.Run(async () =>
+            {
+                var task = await SleepWakeManager.Load();
+                IEnumerable<Models.SleepWake> sws = task;
+                Assert.AreEqual(300, sws.ToList().Count);
+            });
         }
 
         [TestMethod]
         public void LoadByPatientIdTest()
         {
-            List<SleepWake> sws = new List<SleepWake>();
-            sws = SleepWakeManager.LoadByPatientId(patientId);
-            Assert.IsNotNull(sws);
+            Task.Run(async () =>
+            {
+                var results = await SleepWakeManager.LoadByPatientId(patientId);
+                Assert.IsNotNull(results);
+            });
         }
 
         [TestMethod]
         public void InsertTest()
         {
-            SleepWake sw = new SleepWake();
-            sw.SleepOrWake = true;
-            sw.TimeOfDay = timeOfDay;
-            sw.PatientId = patientId;
+            Task.Run(async () =>
+            {
+                SleepWake sw = new SleepWake();
+                sw.SleepOrWake = true;
+                sw.TimeOfDay = timeOfDay;
+                sw.PatientId = patientId;
 
-            int result = SleepWakeManager.Insert(sw);
-            Assert.IsTrue(result > 0);
-
+                int results = await SleepWakeManager.Insert(sw);
+                Assert.IsTrue(results > 0);
+            });
         }
 
         [TestMethod]
         public void UpdateTest()
         {
-            List<SleepWake> sws = SleepWakeManager.Load();
-
-            SleepWake sw = sws.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            sw.SleepOrWake = false;
-
-            SleepWakeManager.Update(sw);
-
-            SleepWake updatedsw = sws.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
-
-            Assert.AreEqual(sw.SleepOrWake, updatedsw.SleepOrWake);
+            Task.Run(async () =>
+            {
+                var task = SleepWakeManager.Load();
+                IEnumerable<Models.SleepWake> sws = task.Result;
+                Models.SleepWake sw = sws.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                sw.SleepOrWake = false;
+                var results = SleepWakeManager.Update(sw);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
 
         [TestMethod]
         public void DeleteTest()
         {
-            List<SleepWake> sws = SleepWakeManager.Load();
-            SleepWake sw = sws.Where(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId).FirstOrDefault();
-
-            int results = SleepWakeManager.Delete(sw.Id);
-            Assert.IsTrue(results > 0);
+            Task.Run(async () =>
+            {
+                var task = SleepWakeManager.Load();
+                IEnumerable<Models.SleepWake> sws = task.Result;
+                task.Wait();
+                Models.SleepWake sw = sws.FirstOrDefault(a => a.TimeOfDay == timeOfDay && a.PatientId == patientId);
+                var results = SleepWakeManager.Delete(sw.Id, true);
+                Assert.IsTrue(results.Result > 0);
+            });
         }
     }
 }
