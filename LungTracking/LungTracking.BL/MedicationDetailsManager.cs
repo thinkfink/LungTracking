@@ -139,6 +139,19 @@ namespace LungTracking.BL
                         throw new Exception("Please provide a patient Id.");
                     }
                 });
+
+                foreach (MedicationDetails result in results)
+                {
+                    DateTime refillDate = result.RefillDate;
+                    DateTime now = DateTime.Now;
+                    double refillDays = refillDate.Subtract(now).TotalDays;
+
+                    if (refillDays < 7)
+                    {
+                        result.Reminder = "Reminder: Your " + result.MedicationName + " is due for a refill in " + refillDays + " days.";
+                    }
+                }
+
                 return results;
             }
             catch (Exception)
