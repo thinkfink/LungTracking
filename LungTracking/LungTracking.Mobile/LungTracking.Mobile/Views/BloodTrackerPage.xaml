@@ -8,13 +8,13 @@
              ios:Page.UseSafeArea="true">
     <ContentPage.Content>
         <StackLayout Spacing="3" Padding="15">
-            <Label Text="Track Blood Sugar" FontSize="Medium" />
-            <Entry Text="{Binding BloodSugarNumber, Mode=TwoWay}" FontSize="Medium" />
-            <Label Text="Track Insulin" FontSize="Medium" />
-            <Entry Text="{Binding UnitsOfInsulinGiven, Mode=TwoWay}" FontSize="Medium" />
+            <Label Text="Track Blood Sugar" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtBloodSugarNumber" Text="{Binding BloodSugarNumber, Mode=TwoWay}" FontSize="Medium" BackgroundColor="LightGray"/>
+            <Label Text="Track Insulin" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtUnitsOfInsulinGiven" Text="{Binding UnitsOfInsulinGiven, Mode=TwoWay}" FontSize="Medium" BackgroundColor="LightGray"/>
             <StackLayout Orientation="Horizontal">
                 <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-                <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" ></Button>
+                <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" Clicked="Button_Clicked"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
