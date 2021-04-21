@@ -223,7 +223,7 @@ namespace LungTracking.BL
                 });
 
                 // grab recent FEV1 entries and put them into an array
-                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
+                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(fev1.PatientId);
                 List<FEV1> fev1Array = fev1List.ToList();
 
                 // compare fev1Number values between entered entry and recent entries - check if 10% drop
@@ -282,7 +282,7 @@ namespace LungTracking.BL
                 });
 
                 // grab recent FEV1 entries and put them into an array
-                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
+                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(fev1.PatientId);
                 List<FEV1> fev1Array = fev1List.ToList();
 
                 // compare fev1Number values between entered entry and recent entries - check if 10% drop
