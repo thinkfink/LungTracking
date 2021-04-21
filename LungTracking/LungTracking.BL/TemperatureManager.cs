@@ -178,7 +178,7 @@ namespace LungTracking.BL
                     {
                         if (temp.TempNumber >= 100)
                         {
-                            temp.Alert = "Temperature above 100 degrees. Call your transplant coordinator.";
+                            temp.Alert = "Warning: Temperature above 100 degrees. Call your transplant coordinator.";
                         }
 
                         tblTemperature row = (from dt in dc.tblTemperatures where dt.Id == temp.Id select dt).FirstOrDefault();

@@ -14,7 +14,7 @@ namespace LungTracking.BL.Models
         public DateTime TimeOfDay { get; set; }
         public Guid PatientId { get; set; }
 
-        // for "stored procedure" functionality
+        // for "stored procedure" functionality - warning if temperature is 100 degrees or higher
         public string Alert { get; set; }
     }
 }

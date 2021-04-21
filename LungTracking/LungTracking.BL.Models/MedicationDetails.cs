@@ -20,7 +20,7 @@ namespace LungTracking.BL.Models
         public DateTime RefillDate { get; set; }
         public Guid PatientId { get; set; }
 
-        // Reminder for if it's 7 or fewer days before refill date 
+        // for "stored procedure" functionality - reminder for if it's 7 or fewer days before refill date 
         public string Reminder { get; set; }
     }
 }

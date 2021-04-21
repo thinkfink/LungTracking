@@ -97,6 +97,60 @@ namespace LungTracking.BL
             }
         }
 
+        public async static Task<IEnumerable<Models.FEV1>> LoadRecentByPatientId(Guid patientId)
+        {
+            try
+            {
+                List<FEV1> results = new List<FEV1>();
+                await Task.Run(() =>
+                {
+                    if (patientId != null)
+                    {
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
+                        {
+                            var fev1 = (from dt in dc.tblFev1s
+                                        where dt.PatientId == patientId
+                                        orderby dt.TimeOfDay descending
+                                        select new
+                                        {
+                                            dt.Id,
+                                            dt.Fev1number,
+                                            dt.BeginningEnd,
+                                            dt.TimeOfDay,
+                                            dt.PatientId
+                                        }).Take(2).ToList();
+
+                            if (fev1 != null)
+                            {
+                                fev1.ForEach(app => results.Add(new FEV1
+                                {
+                                    Id = app.Id,
+                                    FEV1Number = app.Fev1number,
+                                    BeginningEnd = app.BeginningEnd,
+                                    TimeOfDay = app.TimeOfDay,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("FEV1 was not found.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
         public async static Task<Guid> Insert(decimal fev1Number, bool beginningEnd, DateTime timeOfDay, Guid patientId, bool rollback = false)
         {
@@ -110,6 +164,25 @@ namespace LungTracking.BL
                     TimeOfDay = timeOfDay,
                     PatientId = patientId
                 };
+
+                // grab recent FEV1 entries and put them into an array
+                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
+                List<FEV1> fev1Array = fev1List.ToList();
+
+                // compare fev1Number values between entered entry and recent entries - check if 10% drop
+                if (((fev1Array[0].FEV1Number - fev1.FEV1Number) / 100) <= -0.1M )
+                {
+                    // check if user's entry constitutes a second consecutive 10% drop
+                    if (((fev1Array[1].FEV1Number - fev1Array[0].FEV1Number) / 100) < -0.1M)
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more for two consecutive entries. Call your transplant coordinator.";
+                    }
+                    else
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more since last entry.";
+                    }
+                }
+
                 await Insert(fev1, rollback);
                 return fev1.Id;
             }
@@ -148,6 +221,25 @@ namespace LungTracking.BL
                         if (rollback) transaction.Rollback();
                     }
                 });
+
+                // grab recent FEV1 entries and put them into an array
+                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
+                List<FEV1> fev1Array = fev1List.ToList();
+
+                // compare fev1Number values between entered entry and recent entries - check if 10% drop
+                if (((fev1Array[0].FEV1Number - fev1.FEV1Number) / 100) <= -0.1M)
+                {
+                    // check if user's entry constitutes a second consecutive 10% drop
+                    if (((fev1Array[1].FEV1Number - fev1Array[0].FEV1Number) / 100) < -0.1M)
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more for two consecutive entries. Call your transplant coordinator.";
+                    }
+                    else
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more since last entry.";
+                    }
+                }
+
                 return results;
 
             }
@@ -188,6 +280,25 @@ namespace LungTracking.BL
                         }
                     }
                 });
+
+                // grab recent FEV1 entries and put them into an array
+                IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
+                List<FEV1> fev1Array = fev1List.ToList();
+
+                // compare fev1Number values between entered entry and recent entries - check if 10% drop
+                if (((fev1Array[0].FEV1Number - fev1.FEV1Number) / 100) <= -0.1M)
+                {
+                    // check if user's entry constitutes a second consecutive 10% drop
+                    if (((fev1Array[1].FEV1Number - fev1Array[0].FEV1Number) / 100) < -0.1M)
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more for two consecutive entries. Call your transplant coordinator.";
+                    }
+                    else
+                    {
+                        fev1.Alert = "Warning: FEV1 dropped by 10% or more since last entry.";
+                    }
+                }
+
                 return results;
             }
             catch (Exception)

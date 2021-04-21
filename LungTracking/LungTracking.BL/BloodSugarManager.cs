@@ -118,7 +118,7 @@ namespace LungTracking.BL
 
                 if (bloodSugarNumber < 50)
                 {
-                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                    bloodSugar.Alert = "Warning: Blood sugar critically low. Call 911!";
                 }
 
                 await Insert(bloodSugar, rollback);
@@ -164,7 +164,7 @@ namespace LungTracking.BL
 
                 if (bloodSugar.BloodSugarNumber < 50)
                 {
-                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                    bloodSugar.Alert = "Warning: Blood sugar critically low. Call 911!";
                 }
 
                 return results;
@@ -210,7 +210,7 @@ namespace LungTracking.BL
 
                 if (bloodSugar.BloodSugarNumber < 50)
                 {
-                    bloodSugar.Alert = "Blood sugar critically low. Call 911!";
+                    bloodSugar.Alert = "Warning: Blood sugar critically low. Call 911!";
                 }
 
                 return results;

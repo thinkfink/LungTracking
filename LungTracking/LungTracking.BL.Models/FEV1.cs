@@ -13,5 +13,8 @@ namespace LungTracking.BL.Models
         public bool BeginningEnd { get; set; }
         public DateTime TimeOfDay { get; set; }
         public Guid PatientId { get; set; }
+
+        // for "stored procedure" functionality - warning at 10% drop
+        public string Alert { get; set; }
     }
 }

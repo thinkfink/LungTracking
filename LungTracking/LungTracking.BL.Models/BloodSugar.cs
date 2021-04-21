@@ -16,7 +16,7 @@ namespace LungTracking.BL.Models
         public string Notes { get; set; }
         public Guid PatientId { get; set; }
 
-        // for "stored procedure" functionality
+        // for "stored procedure" functionality - warning if blood sugar is below 50
         public string Alert { get; set; }
     }
 }
