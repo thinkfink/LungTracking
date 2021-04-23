@@ -67,6 +67,19 @@ namespace LungTracking.BL.Test
             });
         }
 
+        // stored procedure test
+        [TestMethod]
+        public void CalcMAPTest()
+        {
+            int expected = 100;
+            BL.Models.BloodPressure bloodPressure = new Models.BloodPressure();
+            bloodPressure.BPsystolic = 140;
+            bloodPressure.BPdiastolic = 80;
+            BloodPressureManager.CalcMAP(bloodPressure);
+
+            Assert.AreEqual(expected, bloodPressure.MAP);
+        }
+
         [TestMethod]
         public void DeleteTest()
         {

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using LungTracking.PL;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LungTracking.BL
@@ -231,6 +233,42 @@ namespace LungTracking.BL
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        // stored procedure
+        public static void CalcMAP(BL.Models.BloodPressure bloodPressure)
+        {
+            try
+            {
+                using (LungTrackingEntities dc = new LungTrackingEntities())
+                {
+                    var parameterBPsystolic = new SqlParameter
+                    {
+                        ParameterName = "BPsystolic",
+                        SqlDbType = System.Data.SqlDbType.Int,
+                        Value = bloodPressure.BPsystolic
+                    };
+
+                    var parameterBPdiastolic = new SqlParameter
+                    {
+                        ParameterName = "BPdiastolic",
+                        SqlDbType = System.Data.SqlDbType.Int,
+                        Value = bloodPressure.BPdiastolic
+                    };
+
+                    var results = dc.Set<spCalcMAPResult>().FromSqlRaw("exec spCalcMAP @BPsystolic, @BPdiastolic", parameterBPsystolic, parameterBPdiastolic).ToList();
+
+                    foreach (var r in results)
+                    {
+                        bloodPressure.MAP = r.MAP;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
