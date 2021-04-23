@@ -81,6 +81,10 @@ namespace LungTracking.PL
 
                 entity.Property(e => e.Bpsystolic).HasColumnName("BPsystolic");
 
+                entity.Property(e => e.Map)
+                    .HasColumnType("decimal(7, 2)")
+                    .HasColumnName("MAP");
+
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
@@ -115,7 +119,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblCaregiver");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D616C4F13")
+                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D87ACEE03")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -229,7 +233,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblPatient");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D530D314E")
+                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D86FE2835")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -287,7 +291,7 @@ namespace LungTracking.PL
             modelBuilder.Entity<tblPatientProviderAccess>(entity =>
             {
                 entity.HasKey(e => new { e.PatientId, e.ProviderId })
-                    .HasName("PK__tblPatie__5C5A05E1A2F3FCD2");
+                    .HasName("PK__tblPatie__5C5A05E138952BC2");
 
                 entity.ToTable("tblPatientProviderAccess");
             });
@@ -314,7 +318,7 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblProvider");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4DC32296EE")
+                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4D8EBB081F")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -405,10 +409,10 @@ namespace LungTracking.PL
             {
                 entity.ToTable("tblUser");
 
-                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4FC3C49A2")
+                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E41A810D0C")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534B36E3A9E")
+                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534240C04A8")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -448,7 +452,7 @@ namespace LungTracking.PL
             });
 
             // Manually add this for the stored proc.
-            modelBuilder.Entity<spFindPatientAppsAndPills>().HasNoKey();
+            modelBuilder.Entity<spCalcMAPResult>().HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }

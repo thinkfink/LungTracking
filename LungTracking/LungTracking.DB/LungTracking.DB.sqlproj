@@ -89,10 +89,10 @@
     <Build Include="Tables\tblMedicationDetail.sql" />
     <Build Include="Tables\tblMedicationTime.sql" />
     <Build Include="Tables\tblMedicationTracking.sql" />
-    <Build Include="StoredProcedures\spFindPatientAppsAndPills.sql" />
     <Build Include="Tables\tblPatientProviderAccess.sql" />
     <Build Include="Tables\tblCaregiver.sql" />
     <Build Include="Tables\tblPatientCaregiverAccess.sql" />
+    <Build Include="StoredProcedures\spCalcMAP.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeploy\DefaultData\Users.sql" />
