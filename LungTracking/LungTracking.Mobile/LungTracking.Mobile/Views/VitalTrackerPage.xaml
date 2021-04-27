@@ -9,16 +9,22 @@
              BackgroundColor="#ecf8f8">
     <ContentPage.Content>
         <StackLayout Spacing="3" Padding="15">
-            <Label Text="Track PEF" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtPEFNumber" Text="{Binding PEFNumber, Mode=TwoWay}" FontSize="Medium" BackgroundColor="#ecf8f8" TextColor="#001233"/>
-            <Label Text="Track FEV1" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtFEV1Number" Text="{Binding FEV1Number, Mode=TwoWay}" FontSize="Medium" BackgroundColor="#ecf8f8" TextColor="#001233"/>
-            <Label Text="Track Pulse" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtPulseNumber" Text="{Binding PulseNumber, Mode=TwoWay}" FontSize="Medium" BackgroundColor="#ecf8f8" TextColor="#001233"/>
-            <Label Text="Track Temperature" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtTempNumber" Text="{Binding TempNumber, Mode=TwoWay}" FontSize="Medium" BackgroundColor="#ecf8f8" TextColor="#001233"/>
-            <Label Text="Track Time" FontSize="Medium" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtTime" Text="{Binding Description, Mode=TwoWay}" FontSize="Medium" BackgroundColor="#ecf8f8" TextColor="#001233"/>
+            <Label Text="Track PEF" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtPEFNumber" Text="{Binding Text, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track FEV1" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtFEV1Number" Text="{Binding Text1, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track Blood Pressure(Systolic)" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtBPSNumber" Text="{Binding Text2, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track Blood Pressure(Diastolic)" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtBPDNumber" Text="{Binding Text3, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track Pulse" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtPulseNumber" Text="{Binding Text4, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track Temperature" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtTempNumber" Text="{Binding Text5, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Beginning or End of Day" FontSize="Small" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtBeginningEndNumber" Text="{Binding Text6, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
+            <Label Text="Track Time" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtTime" Text="{Binding Description, Mode=TwoWay}" FontSize="Small" BackgroundColor="#ecf8f8" TextColor="#001233" HorizontalTextAlignment="Center"/>
             <StackLayout Orientation="Horizontal">
                 <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
                 <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" Clicked="Button_Clicked"></Button>

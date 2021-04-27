@@ -10,7 +10,14 @@ namespace LungTracking.Mobile.ViewModels
     public class NewItemViewModel : BaseViewModel
     {
         private string text;
+        private string text1;
+        private string text2;
+        private string text3;
+        private string text4;
+        private string text5;
+        private string text6;
         private string description;
+        
 
         public NewItemViewModel()
         {
@@ -30,6 +37,42 @@ namespace LungTracking.Mobile.ViewModels
         {
             get => text;
             set => SetProperty(ref text, value);
+        }
+
+        public string Text1
+        {
+            get => text1;
+            set => SetProperty(ref text1, value);
+        }
+
+        public string Text2
+        {
+            get => text2;
+            set => SetProperty(ref text2, value);
+        }
+
+        public string Text3
+        {
+            get => text3;
+            set => SetProperty(ref text3, value);
+        }
+
+        public string Text4
+        {
+            get => text4;
+            set => SetProperty(ref text4, value);
+        }
+
+        public string Text5
+        {
+            get => text5;
+            set => SetProperty(ref text5, value);
+        }
+
+        public string Text6
+        {
+            get => text6;
+            set => SetProperty(ref text6, value);
         }
 
         public string Description
