@@ -21,6 +21,7 @@ namespace LungTracking.Mobile.Views
         {
             InitializeComponent();
             BindingContext = new NewItemViewModel();
+            txtTime.Text = DateTime.Now.ToString();
         }
 
         private static HttpClient InitializeClient()
