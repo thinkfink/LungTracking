@@ -61,7 +61,7 @@ namespace LungTracking.Mobile.Services
             items = new List<Item>();
             foreach (var w in weights)
             {
-                items.Add(new Item { Id = w.Id.ToString(), Description = w.WeightNumberInPounds.ToString(), Text = w.TimeOfDay.ToString() });
+                items.Add(new Item { Id = w.Id.ToString(), Number = w.WeightNumberInPounds.ToString(), Time = w.TimeOfDay.ToString() });
             }
 
         }

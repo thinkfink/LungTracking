@@ -45,8 +45,8 @@ namespace LungTracking.Mobile.ViewModels
             {
                 var item = await DataStore.GetItemAsync(itemId);
                 Id = item.Id;
-                Text = item.Text;
-                Description = item.Description;
+                Text = item.Number;
+                Description = item.Time;
             }
             catch (Exception)
             {

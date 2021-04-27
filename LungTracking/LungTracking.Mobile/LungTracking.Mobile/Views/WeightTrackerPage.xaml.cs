@@ -22,6 +22,7 @@ namespace LungTracking.Mobile.Views
         {
             InitializeComponent();
             BindingContext = new NewItemViewModel();
+            txtTime.Text = DateTime.Now.ToString();
         }
 
         private static HttpClient InitializeClient()
@@ -34,7 +35,7 @@ namespace LungTracking.Mobile.Views
         private void Button_Clicked(object sender, EventArgs e)
         {
             HttpClient client = InitializeClient();
-            Weight weight = new Models.Weight { WeightNumberInPounds = Convert.ToInt32(txtNumber.Text), TimeOfDay = DateTime.Now };
+            Weight weight = new Models.Weight { WeightNumberInPounds = Convert.ToInt32(txtNumber.Text), TimeOfDay = DateTime.Now, PatientId = Guid.NewGuid() };
             string serializedObject = JsonConvert.SerializeObject(weight);
             var content = new StringContent(serializedObject);
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");

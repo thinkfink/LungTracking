@@ -9,7 +9,9 @@
     <ContentPage.Content>
         <StackLayout Spacing="3" Padding="15">
             <Label Text="Track Weight" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtNumber" Text="{Binding WeightNumberInPounds, Mode=TwoWay}" FontSize="Medium" BackgroundColor="LightGray"/>
+            <Entry x:Name="txtNumber" Text="{Binding Text, Mode=TwoWay}" FontSize="Medium" BackgroundColor="LightGray"/>
+            <Label Text="Track Time" FontSize="Medium" TextColor="RoyalBlue" HorizontalOptions="CenterAndExpand"/>
+            <Entry x:Name="txtTime" Text="{Binding Description, Mode=TwoWay}" FontSize="Medium" BackgroundColor="LightGray"/>
             <StackLayout Orientation="Horizontal">
                 <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
                 <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" Clicked="Button_Clicked"></Button>

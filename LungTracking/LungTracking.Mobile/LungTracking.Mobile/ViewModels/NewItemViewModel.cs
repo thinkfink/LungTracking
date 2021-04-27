@@ -52,8 +52,8 @@ namespace LungTracking.Mobile.ViewModels
             Item newItem = new Item()
             {
                 Id = Guid.NewGuid().ToString(),
-                Text = Text,
-                Description = Description
+                Number = Text,
+                Time = Description
             };
 
             await DataStore.AddItemAsync(newItem);
