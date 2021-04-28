@@ -21,9 +21,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LungTracking.BL", "LungTrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LungTracking.BL.Test", "LungTracking.BL.Test\LungTracking.BL.Test.csproj", "{C0902190-0631-4E8F-A3AD-EF23FF1101F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LungTracking.API", "LungTracking.API\LungTracking.API.csproj", "{4132606E-6A9B-4B5B-9E4A-5053187C2E10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LungTracking.API", "LungTracking.API\LungTracking.API.csproj", "{4132606E-6A9B-4B5B-9E4A-5053187C2E10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LungTracking.API.Test", "LungTracking.API.Test\LungTracking.API.Test.csproj", "{8069D1DC-F311-48C1-B622-147712BE3C1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LungTracking.API.Test", "LungTracking.API.Test\LungTracking.API.Test.csproj", "{8069D1DC-F311-48C1-B622-147712BE3C1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DBBAC014-6550-465B-B546-D2A4DA507ADA}"
+	ProjectSection(SolutionItems) = preProject
+		TextFile1.txt = TextFile1.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

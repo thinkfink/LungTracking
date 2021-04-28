@@ -16,7 +16,7 @@ namespace LungTracking.Mobile.ViewModels
         private string text4;
         private string text5;
         private string text6;
-        private string description;
+        private string time;
         
 
         public NewItemViewModel()
@@ -30,7 +30,7 @@ namespace LungTracking.Mobile.ViewModels
         private bool ValidateSave()
         {
             return !String.IsNullOrWhiteSpace(text)
-                && !String.IsNullOrWhiteSpace(description);
+                && !String.IsNullOrWhiteSpace(time);
         }
 
         public string Text
@@ -75,10 +75,10 @@ namespace LungTracking.Mobile.ViewModels
             set => SetProperty(ref text6, value);
         }
 
-        public string Description
+        public string Time
         {
-            get => description;
-            set => SetProperty(ref description, value);
+            get => time;
+            set => SetProperty(ref time, value);
         }
 
         public Command SaveCommand { get; }
@@ -96,7 +96,7 @@ namespace LungTracking.Mobile.ViewModels
             {
                 Id = Guid.NewGuid().ToString(),
                 Number = Text,
-                Time = Description
+                Time = Time
             };
 
             await DataStore.AddItemAsync(newItem);

@@ -38,7 +38,8 @@ namespace LungTracking.Mobile.Services
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44364/");
+            client.BaseAddress = new Uri("http://19bc72669525.ngrok.io/");
+            //client.BaseAddress = new Uri("https://localhost:44364/");
             return client;
         }
 
