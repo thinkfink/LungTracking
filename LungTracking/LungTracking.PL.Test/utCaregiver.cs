@@ -9,6 +9,8 @@ namespace LungTracking.PL.Test
     [TestClass]
     public class utCaregiver
     {
+        Guid userId = Guid.Parse("31edb120-b27a-4ec6-b8e2-058f58089a92");
+
         protected LungTrackingEntities dc;
         protected IDbContextTransaction transaction;
 
@@ -51,7 +53,7 @@ namespace LungTracking.PL.Test
             newrow.City = "Testopolis";
             newrow.State = "WI";
             newrow.PhoneNumber = "(555)555-2345";
-            newrow.UserId = Guid.Parse("31edb120-b27a-4ec6-b8e2-058f58089a92");
+            newrow.UserId = userId;
 
             dc.tblCaregivers.Add(newrow);
             int result = dc.SaveChanges();
@@ -64,7 +66,7 @@ namespace LungTracking.PL.Test
         {
             InsertTest();
 
-            tblCaregiver existingrow = dc.tblCaregivers.FirstOrDefault(r => r.FirstName == "newfirstname");
+            tblCaregiver existingrow = dc.tblCaregivers.FirstOrDefault(r => r.UserId == userId);
 
             if (existingrow != null)
             {
@@ -72,7 +74,7 @@ namespace LungTracking.PL.Test
                 dc.SaveChanges();
             }
 
-            tblCaregiver row = dc.tblCaregivers.FirstOrDefault(r => r.FirstName == "newfirstname");
+            tblCaregiver row = dc.tblCaregivers.FirstOrDefault(r => r.UserId == userId);
 
             Assert.AreEqual(existingrow.LastName, row.LastName);
         }
@@ -82,7 +84,7 @@ namespace LungTracking.PL.Test
         {
             InsertTest();
 
-            tblCaregiver row = dc.tblCaregivers.FirstOrDefault(r => r.FirstName == "newfirstname");
+            tblCaregiver row = dc.tblCaregivers.FirstOrDefault(r => r.UserId == userId);
 
             if (row != null)
             {
@@ -90,7 +92,7 @@ namespace LungTracking.PL.Test
                 dc.SaveChanges();
             }
 
-            tblCaregiver deletedrow = dc.tblCaregivers.FirstOrDefault(r => r.FirstName == "newfirstname");
+            tblCaregiver deletedrow = dc.tblCaregivers.FirstOrDefault(r => r.UserId == userId);
 
             Assert.IsNull(deletedrow);
         }
