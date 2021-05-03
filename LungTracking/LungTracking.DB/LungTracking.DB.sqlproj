@@ -104,7 +104,6 @@
     <None Include="PostDeploy\DefaultData\BloodPressures.sql" />
     <None Include="PostDeploy\DefaultData\Pulses.sql" />
     <None Include="PostDeploy\DefaultData\BloodSugars.sql" />
-    <None Include="local.publish.xml" />
     <None Include="PostDeploy\DefaultData\Weights.sql" />
     <None Include="PostDeploy\DefaultData\SleepWakes.sql" />
     <None Include="PostDeploy\DefaultData\Appointments.sql" />
@@ -123,6 +122,7 @@
     <None Include="PostDeploy\DefaultData\PatientCaregiverAccesses.sql" />
     <None Include="ForeignKeys\tblPatientCaregiverAccess_CaregiverId.sql" />
     <None Include="ForeignKeys\tblPatientCaregiverAccess_PatientId.sql" />
+    <None Include="local.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeploy\Script.PreDeployment1.sql" />
