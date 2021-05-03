@@ -16,7 +16,7 @@ namespace LungTracking.API.Controllers
     public class UserController : ControllerBase
     {
         // POST api/<UserController>
-        [HttpPost]
+        [HttpGet("login")]
         public async Task<IActionResult> Login([FromBody] User user)
         {
             try
@@ -87,7 +87,7 @@ namespace LungTracking.API.Controllers
         }
 
         // PUT api/<UserController>/5
-        [HttpPut]
+        [HttpGet("updatepassword")]
         public async Task<IActionResult> UpdatePassword([FromBody] Guid id, string password, string newPassword, string confirmPassword)
         {
             try

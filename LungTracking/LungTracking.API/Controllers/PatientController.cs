@@ -31,7 +31,7 @@ namespace LungTracking.API.Controllers
         }
 
         // GET api/<PatientController>/5
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{patientId:Guid}")]
         public async Task<ActionResult<Patient>> GetByPatientId(Guid patientId)
         {
             try
@@ -45,7 +45,7 @@ namespace LungTracking.API.Controllers
         }
 
         // GET api/<PatientController>/5
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{userId:Guid}")]
         public async Task<ActionResult<Patient>> GetByUserId(Guid userId)
         {
             try
