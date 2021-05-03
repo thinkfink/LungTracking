@@ -18,6 +18,7 @@ namespace LungTracking.Mobile.Views
     {
         public Item Item { get; set; }
         enum BeginningEnd { Beginning = 0, End = 1 };
+        BeginningEnd beginningEnd;
         public VitalTrackerPage()
         {
             InitializeComponent();
@@ -37,12 +38,12 @@ namespace LungTracking.Mobile.Views
         {
             HttpClient client = InitializeClient();
 
-            PEF pef = new Models.PEF { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };
-            FEV1 fev1 = new Models.FEV1 { FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };
+            PEF pef = new Models.PEF { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), BeginningEnd = beginningEnd, TimeOfDay = DateTime.Now };
+            FEV1 fev1 = new Models.FEV1 { FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
             BloodPressure bloodPressure = new Models.BloodPressure { BPsystolic = Convert.ToInt32(txtBPSNumber.Text), BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), 
-                                                                     BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };
-            Pulse pulse = new Models.Pulse { PulseNumber = Convert.ToInt32(txtPulseNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };
-            Temperature temperature = new Models.Temperature { TempNumber = Convert.ToInt32(txtTempNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };
+                                                                     BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
+            Pulse pulse = new Models.Pulse { PulseNumber = Convert.ToInt32(txtPulseNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
+            Temperature temperature = new Models.Temperature { TempNumber = Convert.ToInt32(txtTempNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
 
             /*Vitals vitals = new Models.Vitals { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BPsystolic = Convert.ToInt32(txtBPSNumber.Text), 
                                                 BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), PulseNumber = Convert.ToInt32(txtPulseNumber.Text), TempNumber = Convert.ToInt32(txtTempNumber.Text),
@@ -72,6 +73,21 @@ namespace LungTracking.Mobile.Views
             var temperatureContent = new StringContent(serializedTemperature);
             temperatureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             HttpResponseMessage temperatureResponse = client.PutAsync("Temperature/" + temperature.Id, temperatureContent).Result;
+        }
+
+        private void btnBeginning_Clicked(object sender, EventArgs e)
+        {
+            beginningEnd = BeginningEnd.Beginning;
+        }
+
+        private void txtTempNumber_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEnd_Clicked(object sender, EventArgs e)
+        {
+            beginningEnd = BeginningEnd.End;
         }
     }
 }

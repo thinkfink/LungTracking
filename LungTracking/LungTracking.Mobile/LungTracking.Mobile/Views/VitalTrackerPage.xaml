@@ -8,21 +8,37 @@
              ios:Page.UseSafeArea="true">
     <ContentPage.Content>
         <StackLayout Spacing="3" Padding="15">
-            <Label Text="Track PEF" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track PEF" FontSize="Small" TextColor="#0077b6" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtPEFNumber" Text="{Binding Text, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track FEV1" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track FEV1" FontSize="Small" TextColor="#0077b6" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtFEV1Number" Text="{Binding Text1, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track Blood Pressure(Systolic)" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track Blood Pressure(Systolic)" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtBPSNumber" Text="{Binding Text2, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track Blood Pressure(Diastolic)" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track Blood Pressure(Diastolic)" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtBPDNumber" Text="{Binding Text3, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track Pulse" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track Pulse" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtPulseNumber" Text="{Binding Text4, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track Temperature" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Track Temperature" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtTempNumber" Text="{Binding Text5, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Beginning or End of Day" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
-            <Entry x:Name="txtBeginningEndNumber" Text="{Binding Text6, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
-            <Label Text="Track Time" FontSize="Small" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <Label Text="Beginning or End of Day" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
+            <!--<Entry x:Name="txtBeginningEndNumber" Text="{Binding Text6, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>-->
+            <StackLayout Orientation="Horizontal">
+                <Grid HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="35*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="35*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="btnBeginning" Grid.Column="1" Grid.Row="0"  Text="Beginning" FontSize="Small" TextColor="#0077b6" HorizontalOptions="FillAndExpand" Clicked="btnBeginning_Clicked"/>
+                    <Button x:Name="btnEnd" Grid.Column="3" Grid.Row="0" Text="End" FontSize="Small" TextColor="#0077b6" HorizontalOptions="FillAndExpand" Clicked="btnEnd_Clicked"/>
+                </Grid>
+            </StackLayout>
+            <Label Text="Track Time" FontSize="Small" FontAttributes="Bold" TextColor="#0077b6" HorizontalOptions="CenterAndExpand"/>
             <Entry x:Name="txtTime" Text="{Binding Time, Mode=TwoWay}" FontSize="Small" BackgroundColor="#FFFFFF" TextColor="#03045e" HorizontalTextAlignment="Center"/>
             <StackLayout Orientation="Horizontal">
                 <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
