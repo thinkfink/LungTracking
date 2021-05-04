@@ -25,9 +25,8 @@ namespace LungTracking.BL
                             .ForEach(u => appointments.Add(new Appointment
                             {
                                 Id = u.Id,
-                                Date = u.Date,
-                                TimeStart = u.TimeStart,
-                                TimeEnd = u.TimeEnd,
+                                StartDateTime = u.StartDateTime,
+                                EndDateTime = u.EndDateTime,
                                 Description = u.Description,
                                 Location = u.Location,
                                 PatientId = u.PatientId
@@ -57,9 +56,8 @@ namespace LungTracking.BL
                         if (tblAppointment != null)
                         {
                             appointment.Id = tblAppointment.Id;
-                            appointment.Date = tblAppointment.Date;
-                            appointment.TimeStart = tblAppointment.TimeStart;
-                            appointment.TimeEnd = tblAppointment.TimeEnd;
+                            appointment.StartDateTime = tblAppointment.StartDateTime;
+                            appointment.EndDateTime = tblAppointment.EndDateTime;
                             appointment.Description = tblAppointment.Description;
                             appointment.Location = tblAppointment.Location;
                             appointment.PatientId = tblAppointment.PatientId;
@@ -94,9 +92,8 @@ namespace LungTracking.BL
                                                 select new
                                                 {
                                                     dt.Id,
-                                                    dt.Date,
-                                                    dt.TimeStart,
-                                                    dt.TimeEnd,
+                                                    dt.StartDateTime,
+                                                    dt.EndDateTime,
                                                     dt.Description,
                                                     dt.Location,
                                                     dt.PatientId
@@ -107,9 +104,8 @@ namespace LungTracking.BL
                                 appointments.ForEach(app => results.Add(new Appointment
                                 {
                                     Id = app.Id,
-                                    Date = app.Date,
-                                    TimeStart = app.TimeStart,
-                                    TimeEnd = app.TimeEnd,
+                                    StartDateTime = app.StartDateTime,
+                                    EndDateTime = app.EndDateTime,
                                     Description = app.Description,
                                     Location = app.Location,
                                     PatientId = app.PatientId
@@ -136,15 +132,14 @@ namespace LungTracking.BL
         }
 
 
-        public async static Task<Guid> Insert(DateTime date, TimeSpan timeStart, TimeSpan timeEnd, string description, string location, Guid patientId, bool rollback = false)
+        public async static Task<Guid> Insert(DateTime startDateTime, DateTime endDateTime, string description, string location, Guid patientId, bool rollback = false)
         {
             try
             {
                 Models.Appointment appointment = new Models.Appointment
                 {
-                    Date = date,
-                    TimeStart = timeStart,
-                    TimeEnd = timeEnd,
+                    StartDateTime = startDateTime,
+                    EndDateTime = endDateTime,
                     Description = description,
                     Location = location,
                     PatientId = patientId
@@ -174,9 +169,8 @@ namespace LungTracking.BL
                         tblAppointment newrow = new tblAppointment();
 
                         newrow.Id = Guid.NewGuid();
-                        newrow.Date = appointment.Date;
-                        newrow.TimeStart = appointment.TimeStart;
-                        newrow.TimeEnd = appointment.TimeEnd;
+                        newrow.StartDateTime = appointment.StartDateTime;
+                        newrow.EndDateTime = appointment.EndDateTime;
                         newrow.Description = appointment.Description;
                         newrow.Location = appointment.Location;
                         newrow.PatientId = appointment.PatientId;
@@ -214,9 +208,8 @@ namespace LungTracking.BL
                         {
                             if (rollback) transaction = dc.Database.BeginTransaction();
 
-                            row.Date = appointment.Date;
-                            row.TimeStart = appointment.TimeStart;
-                            row.TimeEnd = appointment.TimeEnd;
+                            row.StartDateTime = appointment.StartDateTime;
+                            row.EndDateTime = appointment.EndDateTime;
                             row.Description = appointment.Description;
                             row.Location = appointment.Location;
                             row.PatientId = appointment.PatientId;
