@@ -9,7 +9,7 @@ namespace LungTracking.BL.Models
     public class MedicationTime
     {
         public Guid Id { get; set; }
-        public TimeSpan PillTime { get; set; }
+        public DateTime PillTime { get; set; }
         public Guid MedicationId { get; set; }
         public Guid PatientId { get; set; }
     }

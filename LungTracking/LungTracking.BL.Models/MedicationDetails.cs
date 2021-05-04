@@ -14,7 +14,6 @@ namespace LungTracking.BL.Models
         public string MedicationDosagePerPill { get; set; }
         public string MedicationInstructions { get; set; }
         public int NumberOfPills { get; set; }
-        public bool ConfirmTaken { get; set; }
         public DateTime DateFilled { get; set; }
         public int QuantityOfFill { get; set; }
         public DateTime RefillDate { get; set; }

@@ -73,8 +73,8 @@ namespace LungTracking.API.Controllers
         }
 
         // PUT api/<AppointmentController>/5
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] Appointment appointment)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(Guid id, [FromBody] Appointment appointment)
         {
             try
             {
