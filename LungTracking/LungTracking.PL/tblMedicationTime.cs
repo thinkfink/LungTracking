@@ -8,7 +8,7 @@ namespace LungTracking.PL
     public partial class tblMedicationTime
     {
         public Guid Id { get; set; }
-        public TimeSpan PillTime { get; set; }
+        public DateTime PillTime { get; set; }
         public Guid MedicationId { get; set; }
         public Guid PatientId { get; set; }
 
