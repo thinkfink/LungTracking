@@ -20,6 +20,53 @@ namespace LungTracking.BL
                 {
                     using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
+                        var pts = (from dt in dc.tblPatients
+                                          join du in dc.tblUsers on dt.UserId equals du.Id
+                                          where dt.UserId == du.Id
+                                          select new
+                                          {
+                                              dt.Id,
+                                              dt.FirstName,
+                                              dt.LastName,
+                                              dt.Sex,
+                                              dt.DateOfBirth,
+                                              dt.StreetAddress,
+                                              dt.City,
+                                              dt.State,
+                                              dt.PhoneNumber,
+                                              dt.UserId,
+                                              du.Username,
+                                              du.Password,
+                                              du.Role,
+                                              du.Email,
+                                              du.Created,
+                                              du.LastLogin
+                                          }).ToList();
+
+                        if (pts != null)
+                        {
+                            pts.ForEach(app => patients.Add(new Patient
+                            {
+                                Id = app.Id,
+                                FirstName = app.FirstName,
+                                LastName = app.LastName,
+                                Sex = app.Sex,
+                                DateOfBirth = app.DateOfBirth,
+                                StreetAddress = app.StreetAddress,
+                                City = app.City,
+                                State = app.State,
+                                PhoneNumber = app.PhoneNumber,
+                                UserId = app.UserId,
+                                Username = app.Username,
+                                Password = app.Password,
+                                Role = app.Role,
+                                Email = app.Email,
+                                Created = app.Created,
+                                LastLogin = app.LastLogin
+                            }));
+                        }
+
+                        /*
                         dc.tblPatients
                             .ToList()
                             .ForEach(u => patients.Add(new Patient
@@ -35,6 +82,7 @@ namespace LungTracking.BL
                                 PhoneNumber = u.PhoneNumber,
                                 UserId = u.UserId
                             }));
+                        */
                     }
                 });
                 return patients;
@@ -57,15 +105,11 @@ namespace LungTracking.BL
                     {
                         tblPatient tblPatient = dc.tblPatients.FirstOrDefault(c => c.Id == patientId);
 
-
                         if (tblPatient != null)
                         {
                             patient.Id = tblPatient.Id;
                             patient.FirstName = tblPatient.FirstName;
                             patient.LastName = tblPatient.LastName;
-                            patient.Sex = tblPatient.Sex;
-                            patient.DateOfBirth = tblPatient.DateOfBirth;
-                            patient.StreetAddress = tblPatient.StreetAddress;
                             patient.City = tblPatient.City;
                             patient.State = tblPatient.State;
                             patient.PhoneNumber = tblPatient.PhoneNumber;
@@ -73,7 +117,23 @@ namespace LungTracking.BL
                         }
                         else
                         {
-                            throw new Exception("Could not find the row");
+                            throw new Exception("Could not find the patient row");
+                        }
+
+                        tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Id == patient.UserId);
+
+                        if (tblUser != null)
+                        {
+                            patient.Username = tblUser.Username;
+                            patient.Password = tblUser.Password;
+                            patient.Role = tblUser.Role;
+                            patient.Email = tblUser.Email;
+                            patient.Created = tblUser.Created;
+                            patient.LastLogin = tblUser.LastLogin;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the user row");
                         }
                     }
                 });
@@ -98,20 +158,27 @@ namespace LungTracking.BL
                         {
 
                             var patients = (from dt in dc.tblPatients
-                                            where dt.UserId == userId
-                                            select new
-                                            {
-                                                dt.Id,
-                                                dt.FirstName,
-                                                dt.LastName,
-                                                dt.Sex,
-                                                dt.DateOfBirth,
-                                                dt.StreetAddress,
-                                                dt.City,
-                                                dt.State,
-                                                dt.PhoneNumber,
-                                                dt.UserId
-                                            }).ToList();
+                                              join du in dc.tblUsers on dt.UserId equals du.Id
+                                              where dt.UserId == userId
+                                              select new
+                                              {
+                                                  dt.Id,
+                                                  dt.FirstName,
+                                                  dt.LastName,
+                                                  dt.Sex,
+                                                  dt.DateOfBirth,
+                                                  dt.StreetAddress,
+                                                  dt.City,
+                                                  dt.State,
+                                                  dt.PhoneNumber,
+                                                  dt.UserId,
+                                                  du.Username,
+                                                  du.Password,
+                                                  du.Role,
+                                                  du.Email,
+                                                  du.Created,
+                                                  du.LastLogin
+                                              }).ToList();
 
                             if (patients != null)
                             {
@@ -126,7 +193,13 @@ namespace LungTracking.BL
                                     City = app.City,
                                     State = app.State,
                                     PhoneNumber = app.PhoneNumber,
-                                    UserId = app.UserId
+                                    UserId = app.UserId,
+                                    Username = app.Username,
+                                    Password = app.Password,
+                                    Role = app.Role,
+                                    Email = app.Email,
+                                    Created = app.Created,
+                                    LastLogin = app.LastLogin
                                 }));
                             }
                             else
