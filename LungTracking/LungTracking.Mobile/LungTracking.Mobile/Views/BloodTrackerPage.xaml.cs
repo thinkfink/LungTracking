@@ -36,7 +36,8 @@ namespace LungTracking.Mobile.Views
         private void Button_Clicked(object sender, EventArgs e)
         {
             HttpClient client = InitializeClient();
-            BloodSugar bloodSugar = new Models.BloodSugar { BloodSugarNumber = Convert.ToInt32(txtBloodSugarNumber.Text), TimeOfDay = DateTime.Now, UnitsOfInsulinGiven = Convert.ToInt32(txtUnitsOfInsulinGiven.Text), PatientId = Guid.NewGuid() };
+            BloodSugar bloodSugar = new Models.BloodSugar { BloodSugarNumber = Convert.ToInt32(txtBloodSugarNumber.Text), TimeOfDay = DateTime.Now, UnitsOfInsulinGiven = Convert.ToInt32(txtUnitsOfInsulinGiven.Text),
+                                                            TypeOfInsulinGiven = txtTypeOfInsulinGiven.Text, PatientId = Guid.NewGuid() };
             string serializedObject = JsonConvert.SerializeObject(bloodSugar);
             var content = new StringContent(serializedObject);
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");

@@ -38,16 +38,23 @@ namespace LungTracking.Mobile.Views
         {
             HttpClient client = InitializeClient();
 
-            PEF pef = new Models.PEF { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), BeginningEnd = beginningEnd, TimeOfDay = DateTime.Now };
-            FEV1 fev1 = new Models.FEV1 { FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
+            Weight weight = new Models.Weight { WeightNumberInPounds = Convert.ToInt32(txtWeight.Text), TimeOfDay = DateTime.Now, PatientId = Guid.NewGuid() };
+            PEF pef = new Models.PEF { PEFNumber = Convert.ToDecimal(txtPEFNumber.Text), BeginningEnd = beginningEnd, TimeOfDay = DateTime.Now };
+            FEV1 fev1 = new Models.FEV1 { FEV1Number = Convert.ToDecimal(txtFEV1Number.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
             BloodPressure bloodPressure = new Models.BloodPressure { BPsystolic = Convert.ToInt32(txtBPSNumber.Text), BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), 
                                                                      BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
             Pulse pulse = new Models.Pulse { PulseNumber = Convert.ToInt32(txtPulseNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
-            Temperature temperature = new Models.Temperature { TempNumber = Convert.ToInt32(txtTempNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
+            Temperature temperature = new Models.Temperature { TempNumber = Convert.ToDecimal(txtTempNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
 
             /*Vitals vitals = new Models.Vitals { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BPsystolic = Convert.ToInt32(txtBPSNumber.Text), 
                                                 BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), PulseNumber = Convert.ToInt32(txtPulseNumber.Text), TempNumber = Convert.ToInt32(txtTempNumber.Text),
                                                 , BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };*/
+
+            
+            string serializedWeight = JsonConvert.SerializeObject(weight);
+            var WeightContent = new StringContent(serializedWeight);
+            WeightContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            HttpResponseMessage weigtResponse = client.PutAsync("Weight/" + weight.Id, WeightContent).Result;
 
             string serializedPEF = JsonConvert.SerializeObject(pef);
             var pefContent = new StringContent(serializedPEF);
