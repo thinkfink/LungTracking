@@ -59,9 +59,8 @@ namespace AJP.SurveyMaker.API.Test
         {
             Task.Run(async () =>
             {
-                appt.Date = DateTime.Parse("2021-05-01");
-                appt.TimeStart = TimeSpan.Parse("11:00:00");
-                appt.TimeEnd = TimeSpan.Parse("12:00:00");
+                appt.StartDateTime = DateTime.Parse("2020-04-10 11:00:00");
+                appt.EndDateTime = DateTime.Parse("2020-04-10 12:00:00");
                 appt.Description = "Testing";
                 appt.Location = "Test Facility";
                 appt.PatientId = patientId;
@@ -82,7 +81,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new AppointmentController();
-                var task = controller.Put(appt);
+                var task = controller.Put(appt.Id, appt);
                 IHttpActionResult actionResult = (IHttpActionResult)task;
                 var createdResult = actionResult as OkNegotiatedContentResult<Appointment>;
                 Assert.IsNotNull(createdResult);
