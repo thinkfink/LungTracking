@@ -30,10 +30,10 @@ namespace LungTracking.API.Controllers
             }
         }
 
-        [HttpGet("{activationCode}")]
+        [HttpGet("{appointmentId}")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetByAppointmentId(Guid appointmentId)
         {
-            // Return all the appointments by activation code
+            // Return all the appointments by appointmentId
             try
             {
                 return Ok(await AppointmentManager.LoadByAppointmentId(appointmentId));
