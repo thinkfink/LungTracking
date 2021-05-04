@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace LungTracking.PL
+namespace LungTracking.UI
 {
-    public partial class tblAppointment
+    public partial class TblAppointment
     {
         public Guid Id { get; set; }
         public DateTime StartDateTime { get; set; }
@@ -14,6 +14,6 @@ namespace LungTracking.PL
         public string Location { get; set; }
         public Guid PatientId { get; set; }
 
-        public virtual tblPatient Patient { get; set; }
+        public virtual TblPatient Patient { get; set; }
     }
 }

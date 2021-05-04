@@ -9,9 +9,8 @@ namespace LungTracking.BL.Models
     public class Appointment
     {
         public Guid Id { get; set; }
-        public DateTime Date { get; set; }
-        public TimeSpan TimeStart { get; set; }
-        public TimeSpan TimeEnd { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
         public Guid PatientId { get; set; }

@@ -20,6 +20,48 @@ namespace LungTracking.BL
                 {
                     using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
+                        var cgivers = (from dt in dc.tblCaregivers
+                                          join du in dc.tblUsers on dt.UserId equals du.Id
+                                          where dt.UserId == du.Id
+                                          select new
+                                          {
+                                              dt.Id,
+                                              dt.FirstName,
+                                              dt.LastName,
+                                              dt.City,
+                                              dt.State,
+                                              dt.PhoneNumber,
+                                              dt.UserId,
+                                              du.Username,
+                                              du.Password,
+                                              du.Role,
+                                              du.Email,
+                                              du.Created,
+                                              du.LastLogin
+                                          }).ToList();
+
+                        if (cgivers != null)
+                        {
+                            cgivers.ForEach(app => caregivers.Add(new Caregiver
+                            {
+                                Id = app.Id,
+                                FirstName = app.FirstName,
+                                LastName = app.LastName,
+                                City = app.City,
+                                State = app.State,
+                                PhoneNumber = app.PhoneNumber,
+                                UserId = app.UserId,
+                                Username = app.Username,
+                                Password = app.Password,
+                                Role = app.Role,
+                                Email = app.Email,
+                                Created = app.Created,
+                                LastLogin = app.LastLogin
+                            }));
+                        }
+
+
+                        /*
                         dc.tblCaregivers
                             .ToList()
                             .ForEach(u => caregivers.Add(new Caregiver
@@ -32,6 +74,7 @@ namespace LungTracking.BL
                                 PhoneNumber = u.PhoneNumber,
                                 UserId = u.UserId
                             }));
+                        */
                     }
                 });
                 return caregivers;
@@ -66,7 +109,23 @@ namespace LungTracking.BL
                         }
                         else
                         {
-                            throw new Exception("Could not find the row");
+                            throw new Exception("Could not find the caregiver row");
+                        }
+
+                        tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Id == caregiver.UserId);
+                        
+                        if (tblUser != null)
+                        {
+                            caregiver.Username = tblUser.Username;
+                            caregiver.Password = tblUser.Password;
+                            caregiver.Role = tblUser.Role;
+                            caregiver.Email = tblUser.Email;
+                            caregiver.Created = tblUser.Created;
+                            caregiver.LastLogin = tblUser.LastLogin;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the user row");
                         }
                     }
                 });
@@ -89,10 +148,8 @@ namespace LungTracking.BL
                     {
                         using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-
-
-
                             var caregivers = (from dt in dc.tblCaregivers
+                                              join du in dc.tblUsers on dt.UserId equals du.Id
                                               where dt.UserId == userId
                                               select new
                                               {
@@ -102,7 +159,13 @@ namespace LungTracking.BL
                                                   dt.City,
                                                   dt.State,
                                                   dt.PhoneNumber,
-                                                  dt.UserId
+                                                  dt.UserId,
+                                                  du.Username,
+                                                  du.Password,
+                                                  du.Role,
+                                                  du.Email,
+                                                  du.Created,
+                                                  du.LastLogin
                                               }).ToList();
 
                             if (caregivers != null)
@@ -115,7 +178,13 @@ namespace LungTracking.BL
                                     City = app.City,
                                     State = app.State,
                                     PhoneNumber = app.PhoneNumber,
-                                    UserId = app.UserId
+                                    UserId = app.UserId,
+                                    Username = app.Username,
+                                    Password = app.Password,
+                                    Role = app.Role,
+                                    Email = app.Email,
+                                    Created = app.Created,
+                                    LastLogin = app.LastLogin
                                 }));
                             }
                             else

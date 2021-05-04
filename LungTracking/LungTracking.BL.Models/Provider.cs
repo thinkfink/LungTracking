@@ -18,5 +18,7 @@ namespace LungTracking.BL.Models
         public string JobDescription { get; set; }
         public string ImagePath { get; set; }
         public Guid UserId { get; set; }
+
+        public User User { get; set; }
     }
 }

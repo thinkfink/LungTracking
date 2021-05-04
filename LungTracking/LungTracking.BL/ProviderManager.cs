@@ -20,6 +20,51 @@ namespace LungTracking.BL
                 {
                     using (LungTrackingEntities dc = new LungTrackingEntities())
                     {
+                        var pviders = (from dt in dc.tblProviders
+                                       join du in dc.tblUsers on dt.UserId equals du.Id
+                                       where dt.UserId == du.Id
+                                       select new
+                                       {
+                                           dt.Id,
+                                           dt.FirstName,
+                                           dt.LastName,
+                                           dt.City,
+                                           dt.State,
+                                           dt.PhoneNumber,
+                                           dt.JobDescription,
+                                           dt.ImagePath,
+                                           dt.UserId,
+                                           du.Username,
+                                           du.Password,
+                                           du.Role,
+                                           du.Email,
+                                           du.Created,
+                                           du.LastLogin
+                                       }).ToList();
+
+                        if (pviders != null)
+                        {
+                            pviders.ForEach(app => providers.Add(new Provider
+                            {
+                                Id = app.Id,
+                                FirstName = app.FirstName,
+                                LastName = app.LastName,
+                                City = app.City,
+                                State = app.State,
+                                PhoneNumber = app.PhoneNumber,
+                                JobDescription = app.JobDescription,
+                                ImagePath = app.ImagePath,
+                                UserId = app.UserId,
+                                Username = app.Username,
+                                Password = app.Password,
+                                Role = app.Role,
+                                Email = app.Email,
+                                Created = app.Created,
+                                LastLogin = app.LastLogin
+                            }));
+                        }
+
+                        /*
                         dc.tblProviders
                             .ToList()
                             .ForEach(u => providers.Add(new Provider
@@ -34,6 +79,7 @@ namespace LungTracking.BL
                                 ImagePath = u.ImagePath,
                                 UserId = u.UserId
                             }));
+                        */
                     }
                 });
                 return providers;
@@ -64,13 +110,27 @@ namespace LungTracking.BL
                             provider.City = tblProvider.City;
                             provider.State = tblProvider.State;
                             provider.PhoneNumber = tblProvider.PhoneNumber;
-                            provider.JobDescription = tblProvider.JobDescription;
-                            provider.ImagePath = tblProvider.ImagePath;
                             provider.UserId = tblProvider.UserId;
                         }
                         else
                         {
-                            throw new Exception("Could not find the row");
+                            throw new Exception("Could not find the provider row");
+                        }
+
+                        tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Id == provider.UserId);
+
+                        if (tblUser != null)
+                        {
+                            provider.Username = tblUser.Username;
+                            provider.Password = tblUser.Password;
+                            provider.Role = tblUser.Role;
+                            provider.Email = tblUser.Email;
+                            provider.Created = tblUser.Created;
+                            provider.LastLogin = tblUser.LastLogin;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the user row");
                         }
                     }
                 });
@@ -93,22 +153,27 @@ namespace LungTracking.BL
                     {
                         using (LungTrackingEntities dc = new LungTrackingEntities())
                         {
-
-
                             var providers = (from dt in dc.tblProviders
-                                             where dt.UserId == userId
-                                             select new
-                                             {
-                                                 dt.Id,
-                                                 dt.FirstName,
-                                                 dt.LastName,
-                                                 dt.City,
-                                                 dt.State,
-                                                 dt.PhoneNumber,
-                                                 dt.JobDescription,
-                                                 dt.ImagePath,
-                                                 dt.UserId
-                                             }).ToList();
+                                              join du in dc.tblUsers on dt.UserId equals du.Id
+                                              where dt.UserId == userId
+                                              select new
+                                              {
+                                                  dt.Id,
+                                                  dt.FirstName,
+                                                  dt.LastName,
+                                                  dt.City,
+                                                  dt.State,
+                                                  dt.PhoneNumber,
+                                                  dt.JobDescription,
+                                                  dt.ImagePath,
+                                                  dt.UserId,
+                                                  du.Username,
+                                                  du.Password,
+                                                  du.Role,
+                                                  du.Email,
+                                                  du.Created,
+                                                  du.LastLogin
+                                              }).ToList();
 
                             if (providers != null)
                             {
@@ -122,7 +187,13 @@ namespace LungTracking.BL
                                     PhoneNumber = app.PhoneNumber,
                                     JobDescription = app.JobDescription,
                                     ImagePath = app.ImagePath,
-                                    UserId = app.UserId
+                                    UserId = app.UserId,
+                                    Username = app.Username,
+                                    Password = app.Password,
+                                    Role = app.Role,
+                                    Email = app.Email,
+                                    Created = app.Created,
+                                    LastLogin = app.LastLogin
                                 }));
                             }
                             else

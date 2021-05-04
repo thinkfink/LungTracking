@@ -1,40 +1,41 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace LungTracking.PL
+namespace LungTracking.UI
 {
-    public partial class LungTrackingEntities : DbContext
+    public partial class LungTrackingDBContext : IdentityDbContext
     {
-        public LungTrackingEntities()
+        public LungTrackingDBContext()
         {
         }
 
-        public LungTrackingEntities(DbContextOptions<LungTrackingEntities> options)
+        public LungTrackingDBContext(DbContextOptions<LungTrackingDBContext> options)
             : base(options)
         {
         }
 
-        public virtual DbSet<tblAppointment> tblAppointments { get; set; }
-        public virtual DbSet<tblBloodPressure> tblBloodPressures { get; set; }
-        public virtual DbSet<tblBloodSugar> tblBloodSugars { get; set; }
-        public virtual DbSet<tblCaregiver> tblCaregivers { get; set; }
-        public virtual DbSet<tblFev1> tblFev1s { get; set; }
-        public virtual DbSet<tblMedicationDetail> tblMedicationDetails { get; set; }
-        public virtual DbSet<tblMedicationTime> tblMedicationTimes { get; set; }
-        public virtual DbSet<tblMedicationTracking> tblMedicationTrackings { get; set; }
-        public virtual DbSet<tblPatient> tblPatients { get; set; }
-        public virtual DbSet<tblPatientCaregiverAccess> tblPatientCaregiverAccesses { get; set; }
-        public virtual DbSet<tblPatientProviderAccess> tblPatientProviderAccesses { get; set; }
-        public virtual DbSet<tblPef> tblPefs { get; set; }
-        public virtual DbSet<tblProvider> tblProviders { get; set; }
-        public virtual DbSet<tblPulse> tblPulses { get; set; }
-        public virtual DbSet<tblSleepWake> tblSleepWakes { get; set; }
-        public virtual DbSet<tblTemperature> tblTemperatures { get; set; }
-        public virtual DbSet<tblUser> tblUsers { get; set; }
-        public virtual DbSet<tblWeight> tblWeights { get; set; }
+        public virtual DbSet<TblAppointment> TblAppointments { get; set; }
+        public virtual DbSet<TblBloodPressure> TblBloodPressures { get; set; }
+        public virtual DbSet<TblBloodSugar> TblBloodSugars { get; set; }
+        public virtual DbSet<TblCaregiver> TblCaregivers { get; set; }
+        public virtual DbSet<TblFev1> TblFev1s { get; set; }
+        public virtual DbSet<TblMedicationDetail> TblMedicationDetails { get; set; }
+        public virtual DbSet<TblMedicationTime> TblMedicationTimes { get; set; }
+        public virtual DbSet<TblMedicationTracking> TblMedicationTrackings { get; set; }
+        public virtual DbSet<TblPatient> TblPatients { get; set; }
+        public virtual DbSet<TblPatientCaregiverAccess> TblPatientCaregiverAccesses { get; set; }
+        public virtual DbSet<TblPatientProviderAccess> TblPatientProviderAccesses { get; set; }
+        public virtual DbSet<TblPef> TblPefs { get; set; }
+        public virtual DbSet<TblProvider> TblProviders { get; set; }
+        public virtual DbSet<TblPulse> TblPulses { get; set; }
+        public virtual DbSet<TblSleepWake> TblSleepWakes { get; set; }
+        public virtual DbSet<TblTemperature> TblTemperatures { get; set; }
+        public virtual DbSet<TblUser> TblUsers { get; set; }
+        public virtual DbSet<TblWeight> TblWeights { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,7 +43,6 @@ namespace LungTracking.PL
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\ProjectsV13;Database=LungTracking.DB;Integrated Security=True");
-                optionsBuilder.UseLazyLoadingProxies();
             }
         }
 
@@ -50,7 +50,7 @@ namespace LungTracking.PL
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<tblAppointment>(entity =>
+            modelBuilder.Entity<TblAppointment>(entity =>
             {
                 entity.ToTable("tblAppointment");
 
@@ -69,12 +69,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.StartDateTime).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblAppointments)
+                    .WithMany(p => p.TblAppointments)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblAppointment_PatientId");
             });
 
-            modelBuilder.Entity<tblBloodPressure>(entity =>
+            modelBuilder.Entity<TblBloodPressure>(entity =>
             {
                 entity.ToTable("tblBloodPressure");
 
@@ -91,12 +91,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblBloodPressures)
+                    .WithMany(p => p.TblBloodPressures)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblBloodPressure_PatientId");
             });
 
-            modelBuilder.Entity<tblBloodSugar>(entity =>
+            modelBuilder.Entity<TblBloodSugar>(entity =>
             {
                 entity.ToTable("tblBloodSugar");
 
@@ -113,16 +113,16 @@ namespace LungTracking.PL
                     .IsFixedLength(true);
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblBloodSugars)
+                    .WithMany(p => p.TblBloodSugars)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblBloodSugar_PatientId");
             });
 
-            modelBuilder.Entity<tblCaregiver>(entity =>
+            modelBuilder.Entity<TblCaregiver>(entity =>
             {
                 entity.ToTable("tblCaregiver");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4D94D6F544")
+                entity.HasIndex(e => e.UserId, "UQ__tblCareg__1788CC4DDE26ABDD")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -154,12 +154,12 @@ namespace LungTracking.PL
                     .IsFixedLength(true);
 
                 entity.HasOne(d => d.User)
-                    .WithOne(p => p.tblCaregiver)
-                    .HasForeignKey<tblCaregiver>(d => d.UserId)
+                    .WithOne(p => p.TblCaregiver)
+                    .HasForeignKey<TblCaregiver>(d => d.UserId)
                     .HasConstraintName("tblCaregiver_UserId");
             });
 
-            modelBuilder.Entity<tblFev1>(entity =>
+            modelBuilder.Entity<TblFev1>(entity =>
             {
                 entity.ToTable("tblFEV1");
 
@@ -172,12 +172,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblFev1s)
+                    .WithMany(p => p.TblFev1s)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblFEV1_PatientId");
             });
 
-            modelBuilder.Entity<tblMedicationDetail>(entity =>
+            modelBuilder.Entity<TblMedicationDetail>(entity =>
             {
                 entity.ToTable("tblMedicationDetail");
 
@@ -206,12 +206,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.RefillDate).HasColumnType("date");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblMedicationDetails)
+                    .WithMany(p => p.TblMedicationDetails)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblMedicationDetail_PatientId");
             });
 
-            modelBuilder.Entity<tblMedicationTime>(entity =>
+            modelBuilder.Entity<TblMedicationTime>(entity =>
             {
                 entity.ToTable("tblMedicationTime");
 
@@ -220,12 +220,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.PillTime).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblMedicationTimes)
+                    .WithMany(p => p.TblMedicationTimes)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblMedicationTime_PatientId");
             });
 
-            modelBuilder.Entity<tblMedicationTracking>(entity =>
+            modelBuilder.Entity<TblMedicationTracking>(entity =>
             {
                 entity.ToTable("tblMedicationTracking");
 
@@ -234,11 +234,11 @@ namespace LungTracking.PL
                 entity.Property(e => e.PillTakenTime).HasColumnType("datetime");
             });
 
-            modelBuilder.Entity<tblPatient>(entity =>
+            modelBuilder.Entity<TblPatient>(entity =>
             {
                 entity.ToTable("tblPatient");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4D75D7FE34")
+                entity.HasIndex(e => e.UserId, "UQ__tblPatie__1788CC4DA6753C0D")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -281,27 +281,27 @@ namespace LungTracking.PL
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.User)
-                    .WithOne(p => p.tblPatient)
-                    .HasForeignKey<tblPatient>(d => d.UserId)
+                    .WithOne(p => p.TblPatient)
+                    .HasForeignKey<TblPatient>(d => d.UserId)
                     .HasConstraintName("tblPatient_UserId");
             });
 
-            modelBuilder.Entity<tblPatientCaregiverAccess>(entity =>
+            modelBuilder.Entity<TblPatientCaregiverAccess>(entity =>
             {
                 entity.ToTable("tblPatientCaregiverAccess");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<tblPatientProviderAccess>(entity =>
+            modelBuilder.Entity<TblPatientProviderAccess>(entity =>
             {
                 entity.HasKey(e => new { e.PatientId, e.ProviderId })
-                    .HasName("PK__tblPatie__5C5A05E1489AA1FF");
+                    .HasName("PK__tblPatie__5C5A05E1E186CD3B");
 
                 entity.ToTable("tblPatientProviderAccess");
             });
 
-            modelBuilder.Entity<tblPef>(entity =>
+            modelBuilder.Entity<TblPef>(entity =>
             {
                 entity.ToTable("tblPEF");
 
@@ -314,16 +314,16 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblPefs)
+                    .WithMany(p => p.TblPefs)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblPEF_PatientId");
             });
 
-            modelBuilder.Entity<tblProvider>(entity =>
+            modelBuilder.Entity<TblProvider>(entity =>
             {
                 entity.ToTable("tblProvider");
 
-                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4D0F993B2B")
+                entity.HasIndex(e => e.UserId, "UQ__tblProvi__1788CC4D9240DC62")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -361,12 +361,12 @@ namespace LungTracking.PL
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.User)
-                    .WithOne(p => p.tblProvider)
-                    .HasForeignKey<tblProvider>(d => d.UserId)
+                    .WithOne(p => p.TblProvider)
+                    .HasForeignKey<TblProvider>(d => d.UserId)
                     .HasConstraintName("tblProvider_UserId");
             });
 
-            modelBuilder.Entity<tblPulse>(entity =>
+            modelBuilder.Entity<TblPulse>(entity =>
             {
                 entity.ToTable("tblPulse");
 
@@ -375,12 +375,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblPulses)
+                    .WithMany(p => p.TblPulses)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblPulse_PatientId");
             });
 
-            modelBuilder.Entity<tblSleepWake>(entity =>
+            modelBuilder.Entity<TblSleepWake>(entity =>
             {
                 entity.ToTable("tblSleepWake");
 
@@ -389,12 +389,12 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblSleepWakes)
+                    .WithMany(p => p.TblSleepWakes)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblSleepWake_PatientId");
             });
 
-            modelBuilder.Entity<tblTemperature>(entity =>
+            modelBuilder.Entity<TblTemperature>(entity =>
             {
                 entity.ToTable("tblTemperature");
 
@@ -405,19 +405,19 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblTemperatures)
+                    .WithMany(p => p.TblTemperatures)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblTemperature_PatientId");
             });
 
-            modelBuilder.Entity<tblUser>(entity =>
+            modelBuilder.Entity<TblUser>(entity =>
             {
                 entity.ToTable("tblUser");
 
-                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4A5D5E153")
+                entity.HasIndex(e => e.Username, "UQ__tblUser__536C85E4BD25323C")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534A2F7FBB8")
+                entity.HasIndex(e => e.Email, "UQ__tblUser__A9D10534B155C261")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -442,7 +442,7 @@ namespace LungTracking.PL
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<tblWeight>(entity =>
+            modelBuilder.Entity<TblWeight>(entity =>
             {
                 entity.ToTable("tblWeight");
 
@@ -451,13 +451,10 @@ namespace LungTracking.PL
                 entity.Property(e => e.TimeOfDay).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.tblWeights)
+                    .WithMany(p => p.TblWeights)
                     .HasForeignKey(d => d.PatientId)
                     .HasConstraintName("tblWeight_PatientId");
             });
-
-            // Manually add this for the stored proc.
-            modelBuilder.Entity<spCalcMAPResult>().HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }

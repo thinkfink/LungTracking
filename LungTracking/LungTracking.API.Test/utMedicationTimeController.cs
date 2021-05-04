@@ -47,7 +47,7 @@ namespace AJP.SurveyMaker.API.Test
         {
             Task.Run(async () =>
             {
-                mt.PillTime = TimeSpan.Parse("11:00:00");
+                mt.PillTime = DateTime.Parse("2020-04-10 12:00:00");
                 mt.MedicationId = medicationId;
                 mt.PatientId = patientId;
 
@@ -62,7 +62,7 @@ namespace AJP.SurveyMaker.API.Test
         [TestMethod]
         public void PutTest()
         {
-            mt.PillTime = TimeSpan.Parse("12:00:00");
+            mt.PillTime = DateTime.Parse("2020-04-10 13:00:00");
 
             Task.Run(async () =>
             {

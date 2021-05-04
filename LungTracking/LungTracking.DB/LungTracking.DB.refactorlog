@@ -7,4 +7,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="AppointmentDateTimeStart" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="14694956-f0d2-4699-97c5-7a2645e1bf24" ChangeDateTime="05/04/2021 06:01:42">
+    <Property Name="ElementName" Value="[dbo].[tblAppointment].[TimeStart]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tblAppointment]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="StartDateTime" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c48f2b37-cf98-4313-8105-2df61b1393dc" ChangeDateTime="05/04/2021 06:01:50">
+    <Property Name="ElementName" Value="[dbo].[tblAppointment].[TimeEnd]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[tblAppointment]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EndDateTime" />
+  </Operation>
 </Operations>

@@ -30,10 +30,10 @@ namespace LungTracking.API.Controllers
             }
         }
 
-        [HttpGet("{activationCode}")]
+        [HttpGet("{appointmentId}")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetByAppointmentId(Guid appointmentId)
         {
-            // Return all the appointments by activation code
+            // Return all the appointments by appointmentId
             try
             {
                 return Ok(await AppointmentManager.LoadByAppointmentId(appointmentId));
@@ -73,8 +73,8 @@ namespace LungTracking.API.Controllers
         }
 
         // PUT api/<AppointmentController>/5
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] Appointment appointment)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(Guid id, [FromBody] Appointment appointment)
         {
             try
             {

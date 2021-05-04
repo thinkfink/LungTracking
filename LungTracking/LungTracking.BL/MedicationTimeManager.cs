@@ -93,7 +93,7 @@ namespace LungTracking.BL
         }
 
 
-        public async static Task<Guid> Insert(TimeSpan pillTime, Guid medId, Guid patientId, bool rollback = false)
+        public async static Task<Guid> Insert(DateTime pillTime, Guid medId, Guid patientId, bool rollback = false)
         {
             try
             {

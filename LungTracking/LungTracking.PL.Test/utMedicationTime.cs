@@ -51,7 +51,7 @@ namespace LungTracking.PL.Test
         {
             tblMedicationTime newrow = new tblMedicationTime();
             newrow.Id = id;
-            newrow.PillTime = TimeSpan.Parse("12:00:00");
+            newrow.PillTime = DateTime.Parse("2020-04-10 12:00:00");
             newrow.MedicationId = medicationId;
             newrow.PatientId = patientId;
 
@@ -70,7 +70,7 @@ namespace LungTracking.PL.Test
 
             if (existingrow != null)
             {
-                existingrow.PillTime = TimeSpan.Parse("13:00:00");
+                existingrow.PillTime = DateTime.Parse("2020-04-10 13:00:00");
                 dc.SaveChanges();
             }
 

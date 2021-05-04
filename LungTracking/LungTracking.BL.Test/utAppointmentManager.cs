@@ -40,9 +40,8 @@ namespace LungTracking.BL.Test
             Task.Run(async () => 
             {
                 Appointment appt = new Appointment();
-                appt.Date = DateTime.Parse("2021-05-01");
-                appt.TimeStart = TimeSpan.Parse("11:00:00");
-                appt.TimeEnd = TimeSpan.Parse("12:00:00");
+                appt.StartDateTime = DateTime.Parse("2020-04-10 12:00:00");
+                appt.EndDateTime = DateTime.Parse("2020-04-10 13:00:00");
                 appt.Description = "Testing";
                 appt.Location = "Test Facility";
                 appt.PatientId = patientId;

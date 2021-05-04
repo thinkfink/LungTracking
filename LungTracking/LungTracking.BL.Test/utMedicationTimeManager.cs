@@ -41,7 +41,7 @@ namespace LungTracking.BL.Test
             Task.Run(async () =>
             {
                 MedicationTime mt = new MedicationTime();
-                mt.PillTime = TimeSpan.Parse("11:00:00");
+                mt.PillTime = DateTime.Parse("2020-04-10 12:00:00");
                 mt.MedicationId = medicationId;
                 mt.PatientId = patientId;
 
@@ -58,7 +58,7 @@ namespace LungTracking.BL.Test
                 var task = MedicationTimeManager.Load();
                 IEnumerable<Models.MedicationTime> mts = task.Result;
                 Models.MedicationTime mt = mts.FirstOrDefault(a => a.MedicationId == medicationId && a.PatientId == patientId);
-                mt.PillTime = TimeSpan.Parse("12:00:00");
+                mt.PillTime = DateTime.Parse("2020-04-10 13:00:00");
                 var results = MedicationTimeManager.Update(mt);
                 Assert.IsTrue(results.Result > 0);
             });

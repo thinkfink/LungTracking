@@ -50,9 +50,8 @@ namespace LungTracking.PL.Test
         {
             tblAppointment newrow = new tblAppointment();
             newrow.Id = id;
-            newrow.Date = DateTime.Parse("2020-04-10");
-            newrow.TimeStart = TimeSpan.Parse("11:00:00");
-            newrow.TimeEnd = TimeSpan.Parse("12:00:00");
+            newrow.StartDateTime = DateTime.Parse("2020-04-10 12:00:00");
+            newrow.EndDateTime = DateTime.Parse("2020-04-10 13:00:00");
             newrow.Description = "Doing some testing";
             newrow.Location = "Test Place";
             newrow.PatientId = patientId;

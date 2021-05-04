@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace LungTracking.PL
+namespace LungTracking.UI
 {
-    public partial class tblMedicationTime
+    public partial class TblMedicationTime
     {
         public Guid Id { get; set; }
         public DateTime PillTime { get; set; }
         public Guid MedicationId { get; set; }
         public Guid PatientId { get; set; }
 
-        public virtual tblPatient Patient { get; set; }
+        public virtual TblPatient Patient { get; set; }
     }
 }
