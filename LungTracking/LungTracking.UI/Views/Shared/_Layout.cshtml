@@ -3,28 +3,100 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LungTracking.UI</title>
+    <title>@ViewData["Title"] - Lung Tracking</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .mynav_navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+            .mynav_navbar a {
+                float: left;
+                font-size: 16px;
+                color: white;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+        .mynav_dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+            .mynav_dropdown .mynav_dropbtn {
+                font-size: 16px;
+                border: none;
+                outline: none;
+                color: white;
+                padding: 14px 16px;
+                background-color: inherit;
+                font-family: inherit;
+                margin: 0;
+            }
+
+            .mynav_navbar a:hover, .mynav_dropdown:hover .mynav_dropbtn {
+                background-color: purple;
+            }
+
+        .mynav_dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+            .mynav_dropdown-content a {
+                float: none;
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                text-align: left;
+            }
+
+                .mynav_dropdown-content a:hover {
+                    background-color: #ddd;
+                }
+
+        .mynav_dropdown:hover .mynav_dropdown-content {
+            display: block;
+        }
+    </style>
+
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LungTracking.UI</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="mynav_navbar">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Lung Tracking Home</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Medications</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Blood Sugars</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Appointments</a>
+                    <div class="mynav_dropdown">
+                        <button class="mynav_dropbtn">
+                            Vitals Spirometry
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                        <div class="mynav_dropdown-content">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Weight</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Blood Pressure</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Pulse</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Temperature</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">FEV1</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">PEF</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -37,7 +109,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2021 - LungTracking.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2021 - Lung Tracking
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
