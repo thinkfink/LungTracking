@@ -16,5 +16,7 @@ namespace LungTracking.BL.Models
         public string State { get; set; }
         public string PhoneNumber { get; set; }
         public Guid UserId { get; set; }
+
+        public User User { get; set; }
     }
 }
