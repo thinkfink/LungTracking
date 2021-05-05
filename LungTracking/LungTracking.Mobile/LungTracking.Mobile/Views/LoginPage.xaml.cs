@@ -12,10 +12,10 @@ namespace LungTracking.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
     {
-        public LoginPage()
+        /*public LoginPage()
         {
             InitializeComponent();
             this.BindingContext = new LoginViewModel();
-        }
+        }*/
     }
 }

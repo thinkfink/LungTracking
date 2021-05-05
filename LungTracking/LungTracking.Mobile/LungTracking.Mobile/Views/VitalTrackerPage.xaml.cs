@@ -17,8 +17,7 @@ namespace LungTracking.Mobile.Views
     public partial class VitalTrackerPage : ContentPage
     {
         public Item Item { get; set; }
-        enum BeginningEnd { Beginning = 0, End = 1 };
-        BeginningEnd beginningEnd;
+        bool beginningEnd;
         public VitalTrackerPage()
         {
             InitializeComponent();
@@ -29,62 +28,111 @@ namespace LungTracking.Mobile.Views
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://19bc72669525.ngrok.io/");
+            client.BaseAddress = new Uri("https://ee52cf2d1e58.ngrok.io/");
             //client.BaseAddress = new Uri("https://localhost:44364/");
             return client;
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            HttpClient client = InitializeClient();
+            try
+            {
+                HttpClient client = InitializeClient();
 
-            Weight weight = new Models.Weight { WeightNumberInPounds = Convert.ToInt32(txtWeight.Text), TimeOfDay = DateTime.Now, PatientId = Guid.NewGuid() };
-            PEF pef = new Models.PEF { PEFNumber = Convert.ToDecimal(txtPEFNumber.Text), BeginningEnd = beginningEnd, TimeOfDay = DateTime.Now };
-            FEV1 fev1 = new Models.FEV1 { FEV1Number = Convert.ToDecimal(txtFEV1Number.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
-            BloodPressure bloodPressure = new Models.BloodPressure { BPsystolic = Convert.ToInt32(txtBPSNumber.Text), BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), 
-                                                                     BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
-            Pulse pulse = new Models.Pulse { PulseNumber = Convert.ToInt32(txtPulseNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
-            Temperature temperature = new Models.Temperature { TempNumber = Convert.ToDecimal(txtTempNumber.Text), BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), beginningEnd.ToString()), TimeOfDay = DateTime.Now };
+                Weight weight = new Models.Weight 
+                {
+                    Id = Guid.NewGuid(),
+                    WeightNumberInPounds = Convert.ToInt32(txtWeight.Text), 
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            /*Vitals vitals = new Models.Vitals { PEFNumber = Convert.ToInt32(txtPEFNumber.Text), FEV1Number = Convert.ToInt32(txtFEV1Number.Text), BPsystolic = Convert.ToInt32(txtBPSNumber.Text), 
-                                                BPdiastolic = Convert.ToInt32(txtBPDNumber.Text), PulseNumber = Convert.ToInt32(txtPulseNumber.Text), TempNumber = Convert.ToInt32(txtTempNumber.Text),
-                                                , BeginningEnd = (Enum)Enum.Parse(typeof(BeginningEnd), txtBeginningEndNumber.Text), TimeOfDay = DateTime.Now };*/
+                PEF pef = new Models.PEF 
+                {
+                    Id = Guid.NewGuid(),
+                    PEFNumber = Convert.ToDecimal(txtPEFNumber.Text), 
+                    BeginningEnd = beginningEnd, 
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            
-            string serializedWeight = JsonConvert.SerializeObject(weight);
-            var WeightContent = new StringContent(serializedWeight);
-            WeightContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage weigtResponse = client.PutAsync("Weight/" + weight.Id, WeightContent).Result;
+                FEV1 fev1 = new Models.FEV1
+                {
+                    Id = Guid.NewGuid(),
+                    FEV1Number = Convert.ToDecimal(txtFEV1Number.Text),
+                    BeginningEnd = beginningEnd,
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            string serializedPEF = JsonConvert.SerializeObject(pef);
-            var pefContent = new StringContent(serializedPEF);
-            pefContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage pefResponse = client.PutAsync("PEF/" + pef.Id, pefContent).Result;
+                BloodPressure bloodPressure = new Models.BloodPressure
+                {
+                    Id = Guid.NewGuid(),
+                    BPsystolic = Convert.ToInt32(txtBPSNumber.Text),
+                    BPdiastolic = Convert.ToInt32(txtBPDNumber.Text),
+                    BeginningEnd = beginningEnd,
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            string serializedFEV1 = JsonConvert.SerializeObject(fev1);
-            var fev1Content = new StringContent(serializedFEV1);
-            pefContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage fev1Response = client.PutAsync("FEV1/" + fev1.Id, fev1Content).Result;
+                Pulse pulse = new Models.Pulse 
+                {
+                    Id = Guid.NewGuid(),
+                    PulseNumber = Convert.ToInt32(txtPulseNumber.Text), 
+                    BeginningEnd = beginningEnd, 
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            string serializedBloodPressure = JsonConvert.SerializeObject(bloodPressure);
-            var bloodPressureContent = new StringContent(serializedBloodPressure);
-            bloodPressureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage bloodPressureResponse = client.PutAsync("BloodPressure/" + bloodPressure.Id, bloodPressureContent).Result;
+                Temperature temperature = new Models.Temperature { 
+                    Id = Guid.NewGuid(),
+                    TempNumber = Convert.ToDecimal(txtTempNumber.Text), 
+                    BeginningEnd = beginningEnd, 
+                    TimeOfDay = DateTime.Parse(txtTime.Text),
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                };
 
-            string serializedPulse = JsonConvert.SerializeObject(pulse);
-            var pulseContent = new StringContent(serializedPulse);
-            pulseContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage pulseResponse = client.PutAsync("Pulse/" + pulse.Id, pulseContent).Result;
+                string serializedWeight = JsonConvert.SerializeObject(weight);
+                var WeightContent = new StringContent(serializedWeight);
+                WeightContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage weigtResponse = client.PostAsync("Weight/", WeightContent).Result;
 
-            string serializedTemperature = JsonConvert.SerializeObject(temperature);
-            var temperatureContent = new StringContent(serializedTemperature);
-            temperatureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            HttpResponseMessage temperatureResponse = client.PutAsync("Temperature/" + temperature.Id, temperatureContent).Result;
+                string serializedPEF = JsonConvert.SerializeObject(pef);
+                var pefContent = new StringContent(serializedPEF);
+                pefContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage pefResponse = client.PostAsync("PEF/", pefContent).Result;
+
+                string serializedFEV1 = JsonConvert.SerializeObject(fev1);
+                var fev1Content = new StringContent(serializedFEV1);
+                pefContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage fev1Response = client.PostAsync("FEV1/", fev1Content).Result;
+
+                string serializedBloodPressure = JsonConvert.SerializeObject(bloodPressure);
+                var bloodPressureContent = new StringContent(serializedBloodPressure);
+                bloodPressureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage bloodPressureResponse = client.PostAsync("BloodPressure/", bloodPressureContent).Result;
+
+                string serializedPulse = JsonConvert.SerializeObject(pulse);
+                var pulseContent = new StringContent(serializedPulse);
+                pulseContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage pulseResponse = client.PostAsync("Pulse/", pulseContent).Result;
+
+                string serializedTemperature = JsonConvert.SerializeObject(temperature);
+                var temperatureContent = new StringContent(serializedTemperature);
+                temperatureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage temperatureResponse = client.PostAsync("Temperature/", temperatureContent).Result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private void btnBeginning_Clicked(object sender, EventArgs e)
         {
-            beginningEnd = BeginningEnd.Beginning;
+            beginningEnd = true;
+            btnBeginning.BackgroundColor = Color.FromHex("#ff0057");
+            btnEnd.BackgroundColor = Color.FromHex("#ffbdd4");
         }
 
         private void txtTempNumber_Clicked(object sender, EventArgs e)
@@ -94,7 +142,9 @@ namespace LungTracking.Mobile.Views
 
         private void btnEnd_Clicked(object sender, EventArgs e)
         {
-            beginningEnd = BeginningEnd.End;
+            beginningEnd = false;
+            btnEnd.BackgroundColor = Color.FromHex("#ff0057");
+            btnBeginning.BackgroundColor = Color.FromHex("#ffbdd4");
         }
     }
 }
