@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LungTracking.API\LungTracking.API.csproj" />
     <ProjectReference Include="..\LungTracking.BL.Models\LungTracking.BL.Models.csproj" />
   </ItemGroup>
 

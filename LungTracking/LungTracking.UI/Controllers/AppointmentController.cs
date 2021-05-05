@@ -8,26 +8,43 @@ using System.Threading.Tasks;
 using LungTracking.BL.Models;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Extensions;
+using LungTracking.UI.Models;
 
 namespace LungTracking.UI.Controllers
 {
     public class AppointmentController : Controller
     {
+        private readonly IWebHostEnvironment _host;
+
         // GET: AppointmentController
-        public ActionResult Index()
+        public AppointmentController(IWebHostEnvironment host)
         {
-            HttpResponseMessage response;
-            string result;
-            dynamic items;
-            
-            HttpClient client = InitializeClient();
+            _host = host;
+        }
 
-            response = client.GetAsync("Appointment").Result;
-            result = response.Content.ReadAsStringAsync().Result;
-            items = (JArray)JsonConvert.DeserializeObject(result);
-            List<Appointment> appointments = items.ToObject<List<Appointment>>();
+        public ActionResult Index(Guid patiendId)
+        {
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                HttpResponseMessage response;
+                string result;
+                dynamic items;
 
-            return View(appointments);
+                HttpClient client = InitializeClient();
+
+                response = client.GetAsync("Appointment/" + patiendId).Result;
+                result = response.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<Appointment> appointments = items.ToObject<List<Appointment>>();
+
+                return View(appointments);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
         }
 
         // GET: AppointmentController/Details/5
