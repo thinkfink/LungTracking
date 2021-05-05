@@ -36,7 +36,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new PEFController();
-                var task = controller.GetByPatientId(patientId);
+                var task = controller.Get(patientId);
                 IEnumerable<PEF> appointments = (IEnumerable<PEF>)task;
                 Assert.AreEqual(1, appointments.ToList().Count);
             });

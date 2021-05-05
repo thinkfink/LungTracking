@@ -32,7 +32,7 @@ namespace LungTracking.API.Controllers
 
         // GET api/<PulseController>/5
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<Pulse>> GetByPatientId(Guid patientId)
+        public async Task<ActionResult<Pulse>> Get(Guid patientId)
         {
             try
             {

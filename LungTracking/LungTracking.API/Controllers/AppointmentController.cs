@@ -30,23 +30,9 @@ namespace LungTracking.API.Controllers
             }
         }
 
-        [HttpGet("{appointmentId}")]
-        public async Task<ActionResult<IEnumerable<Appointment>>> GetByAppointmentId(Guid appointmentId)
-        {
-            // Return all the appointments by appointmentId
-            try
-            {
-                return Ok(await AppointmentManager.LoadByAppointmentId(appointmentId));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         // GET api/<AppointmentController>/5
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<Appointment>> GetByPatientId(Guid patientId)
+        public async Task<ActionResult<Appointment>> Get(Guid patientId)
         {
             try
             {

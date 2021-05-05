@@ -35,7 +35,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new MedicationDetailsController();
-                var task = controller.GetByPatientId(patientId);
+                var task = controller.Get(patientId);
                 IEnumerable<MedicationDetails> appointments = (IEnumerable<MedicationDetails>)task;
                 Assert.AreEqual(1, appointments.ToList().Count);
             });

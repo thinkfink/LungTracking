@@ -31,24 +31,12 @@ namespace AJP.SurveyMaker.API.Test
         }
 
         [TestMethod]
-        public void GetByCaregiverIdTest()
-        {
-            Task.Run(async () =>
-            {
-                var controller = new CaregiverController();
-                var task = controller.GetByCaregiverId(caregiverId);
-                IEnumerable<Caregiver> appointments = (IEnumerable<Caregiver>)task;
-                Assert.AreEqual(1, appointments.ToList().Count);
-            });
-        }
-
-        [TestMethod]
         public void GetByUserIdTest()
         {
             Task.Run(async () =>
             {
                 var controller = new CaregiverController();
-                var task = controller.GetByUserId(userId);
+                var task = controller.Get(userId);
                 IEnumerable<Caregiver> appointments = (IEnumerable<Caregiver>)task;
                 Assert.AreEqual(1, appointments.ToList().Count);
             });

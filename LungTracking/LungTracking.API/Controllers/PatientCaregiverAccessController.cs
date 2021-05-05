@@ -32,7 +32,7 @@ namespace LungTracking.API.Controllers
 
         // GET: api/<PatientCaregiverAccessController>
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<IEnumerable<PatientCaregiverAccess>>> GetById(Guid patientId, Guid caregiverId)
+        public async Task<ActionResult<IEnumerable<PatientCaregiverAccess>>> Get(Guid patientId, Guid caregiverId)
         {
             // Return all the patientCaregiverAccesss
             try

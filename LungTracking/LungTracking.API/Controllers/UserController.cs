@@ -15,20 +15,6 @@ namespace LungTracking.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // POST api/<UserController>
-        [HttpGet("login")]
-        public async Task<IActionResult> Login([FromBody] User user)
-        {
-            try
-            {
-                return Ok(await UserManager.Login(user));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
         // GET: api/<UserController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
@@ -46,25 +32,11 @@ namespace LungTracking.API.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<User>> GetByUserId(Guid userId)
+        public async Task<ActionResult<User>> Get(Guid userId)
         {
             try
             {
                 return Ok(await UserManager.LoadByUserId(userId));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        // GET api/<UserController>/5
-        [HttpGet("{userId:Guid}")]
-        public async Task<ActionResult<Patient>> GetPatientByUserId(Guid userId)
-        {
-            try
-            {
-                return Ok(await PatientManager.LoadByUserId(userId));
             }
             catch (Exception ex)
             {
@@ -100,9 +72,10 @@ namespace LungTracking.API.Controllers
             }
         }
 
+        // Update password
         // PUT api/<UserController>/5
         [HttpGet("updatepassword")]
-        public async Task<IActionResult> UpdatePassword([FromBody] Guid id, string password, string newPassword, string confirmPassword)
+        public async Task<IActionResult> Put([FromBody] Guid id, string password, string newPassword, string confirmPassword)
         {
             try
             {

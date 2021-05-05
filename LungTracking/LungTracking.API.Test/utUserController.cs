@@ -20,32 +20,6 @@ namespace AJP.SurveyMaker.API.Test
         Guid userId = Guid.Parse("fce022bb-584d-42d6-97c0-b83ac1985807");
 
         [TestMethod]
-        public void LoginPassTest()
-        {
-            Task.Run(async () =>
-            {
-                var controller = new UserController();
-                var task = controller.Login(loginPass);
-                IHttpActionResult actionResult = (IHttpActionResult)task;
-                var createdResult = actionResult as OkNegotiatedContentResult<User>;
-                Assert.IsNotNull(createdResult);
-            });
-        }
-
-        [TestMethod]
-        public void LoginFailTest()
-        {
-            Task.Run(async () =>
-            {
-                var controller = new UserController();
-                var task = controller.Login(loginFail);
-                IHttpActionResult actionResult = (IHttpActionResult)task;
-                var createdResult = actionResult as OkNegotiatedContentResult<User>;
-                Assert.IsNull(createdResult);
-            });
-        }
-
-        [TestMethod]
         public void GetTest()
         {
             Task.Run(async () =>
@@ -63,7 +37,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new UserController();
-                var task = controller.GetByUserId(userId);
+                var task = controller.Get(userId);
                 IEnumerable<User> users = (IEnumerable<User>)task;
                 Assert.AreEqual(1, users.ToList().Count);
             });
@@ -114,7 +88,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new UserController();
-                var task = controller.UpdatePassword(user.Id, user.Password, user.NewPassword, user.ConfirmPassword);
+                var task = controller.Put(user.Id, user.Password, user.NewPassword, user.ConfirmPassword);
                 IHttpActionResult actionResult = (IHttpActionResult)task;
                 var createdResult = actionResult as OkNegotiatedContentResult<User>;
                 Assert.IsNotNull(createdResult);

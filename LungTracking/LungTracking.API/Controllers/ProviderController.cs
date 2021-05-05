@@ -31,22 +31,8 @@ namespace LungTracking.API.Controllers
         }
 
         // GET api/<ProviderController>/5
-        [HttpGet("{providerId:Guid}")]
-        public async Task<ActionResult<Provider>> GetByProviderId(Guid providerId)
-        {
-            try
-            {
-                return Ok(await ProviderManager.LoadByProviderId(providerId));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        // GET api/<ProviderController>/5
         [HttpGet("{userId:Guid}")]
-        public async Task<ActionResult<Provider>> GetByUserId(Guid userId)
+        public async Task<ActionResult<Provider>> Get(Guid userId)
         {
             try
             {

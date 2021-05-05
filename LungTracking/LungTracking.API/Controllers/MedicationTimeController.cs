@@ -32,7 +32,7 @@ namespace LungTracking.API.Controllers
 
         // GET api/<MedicationTimeController>/5
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<MedicationTime>> GetByPatientId(Guid patientId)
+        public async Task<ActionResult<MedicationTime>> Get(Guid patientId)
         {
             try
             {

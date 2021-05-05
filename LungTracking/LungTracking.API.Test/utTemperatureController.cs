@@ -36,7 +36,7 @@ namespace AJP.SurveyMaker.API.Test
             Task.Run(async () =>
             {
                 var controller = new TemperatureController();
-                var task = controller.GetByPatientId(patientId);
+                var task = controller.Get(patientId);
                 IEnumerable<Temperature> appointments = (IEnumerable<Temperature>)task;
                 Assert.AreEqual(1, appointments.ToList().Count);
             });

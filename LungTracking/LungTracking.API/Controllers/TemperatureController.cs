@@ -32,7 +32,7 @@ namespace LungTracking.API.Controllers
 
         // GET api/<TemperatureController>/5
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<Temperature>> GetByPatientId(Guid patientId)
+        public async Task<ActionResult<Temperature>> Get(Guid patientId)
         {
             try
             {
