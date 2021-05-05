@@ -1,28 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"  
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-             x:Class="XF_Login.Pages.LoginPage"
-             Title="Login"
-             BackgroundImage="logo.jpg">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LungTracking.Mobile.Views.LoginPage"
+             Title="Login">
     <ContentPage.Content>
         <StackLayout Orientation="Vertical" Padding="30" Spacing="40">
             <BoxView HeightRequest="10"/>
             <Image HorizontalOptions="Center" WidthRequest="300" Source="maco.jpg"/>
-            <Frame BackgroundColor="#03045e" HasShadow="False">
+            <Frame BackgroundColor="#03045e" HasShadow="True">
                 <StackLayout Orientation="Vertical" Spacing="10">
-                    <Entry x:Name="Email" Text="{Binding Email}" Placeholder="Email"   
-                           PlaceholderColor="White" HeightRequest="40"   
-                           Keyboard="Email"  
-                           TextColor="White"/>
+                    <Entry x:Name="Username" Text="{Binding Username}" Placeholder="Username"   
+                           PlaceholderColor="#FFFFF" HeightRequest="40"   
+                           TextColor="#FFFFF"/>
                     <Entry x:Name="Password" Text="{Binding Password}" Placeholder="Password"   
-                           PlaceholderColor="White" HeightRequest="40"   
+                           PlaceholderColor="#FFFFF" HeightRequest="40"   
                            IsPassword="True"  
-                           TextColor="White"/>
+                           TextColor="#FFFFF"/>
                 </StackLayout>
             </Frame>
-            <Button Command="{Binding SubmitCommand}" Text="Login" TextColor="White"  
-                    FontAttributes="Bold" FontSize="Large" HorizontalOptions="FillAndExpand"  
+            <Button Command="{Binding LoginCommand}" Text="Login" TextColor="White"  
+                    FontAttributes="Bold" FontSize="Small" HorizontalOptions="FillAndExpand"  
+                    BackgroundColor="#03045e"
+                    Clicked="Button_Clicked"/>
+            <Button Command="{Binding CreateCommand}" Text="Create Account" TextColor="White"  
+                    FontAttributes="Bold" FontSize="Small" HorizontalOptions="FillAndExpand"  
                     BackgroundColor="#03045e" />
         </StackLayout>
     </ContentPage.Content>
-</ContentPage> 
+</ContentPage>
