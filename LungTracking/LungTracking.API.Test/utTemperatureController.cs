@@ -9,7 +9,7 @@ using LungTracking.API.Controllers;
 using LungTracking.BL.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AJP.SurveyMaker.API.Test
+namespace AJP.LungTracking.API.Test
 {
     [TestClass]
     public class utTemperatureController
