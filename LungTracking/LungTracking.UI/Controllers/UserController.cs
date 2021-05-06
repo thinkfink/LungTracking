@@ -3,6 +3,7 @@ using LungTracking.BL.Models;
 using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -15,6 +16,13 @@ namespace LungTracking.UI.Controllers
 {
     public class UserController : Controller
     {
+        private readonly ILogger<UserController> _logger;
+
+        public UserController(ILogger<UserController> logger)
+        {
+            _logger = logger;
+        }
+
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();

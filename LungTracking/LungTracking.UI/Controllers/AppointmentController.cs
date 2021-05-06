@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Extensions;
 using LungTracking.UI.Models;
+using Microsoft.Extensions.Logging;
 
 namespace LungTracking.UI.Controllers
 {
@@ -18,13 +19,20 @@ namespace LungTracking.UI.Controllers
     {
         private readonly IWebHostEnvironment _host;
 
+        private readonly ILogger<AppointmentController> _logger;
+
+        public AppointmentController(ILogger<AppointmentController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: AppointmentController
         public AppointmentController(IWebHostEnvironment host)
         {
             _host = host;
         }
 
-        public ActionResult Index(Guid patiendId)
+        public ActionResult Index(Guid patientId)
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
@@ -34,10 +42,11 @@ namespace LungTracking.UI.Controllers
 
                 HttpClient client = InitializeClient();
 
-                response = client.GetAsync("Appointment/" + patiendId).Result;
+                response = client.GetAsync("Appointment/" + patientId).Result;
                 result = response.Content.ReadAsStringAsync().Result;
                 items = (JArray)JsonConvert.DeserializeObject(result);
                 List<Appointment> appointments = items.ToObject<List<Appointment>>();
+                _logger.LogInformation("Loaded " + appointments.Count + " appointments for patientId" + patientId);
 
                 return View(appointments);
             }
@@ -76,6 +85,7 @@ namespace LungTracking.UI.Controllers
                 result = response.Content.ReadAsStringAsync().Result;
                 items = (JArray)JsonConvert.DeserializeObject(result);
                 List<Appointment> appointments = items.ToObject<List<Appointment>>();
+                _logger.LogInformation("Created appointment. AppointmentId: " + appointment.Id + " PatientId: " + appointment.PatientId + " Location:" + appointment.Location + " StartDateTime: "  + appointment.StartDateTime + " EndDateTime: " + appointment.EndDateTime);
 
                 return View(nameof(Index), appointments);
             }
@@ -121,6 +131,7 @@ namespace LungTracking.UI.Controllers
                 var content = new StringContent(serializedObject);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 HttpResponseMessage response = client.PutAsync("Appointment/" + appointment.Id, content).Result;
+                _logger.LogInformation("Updated appointment. AppointmentId: " + appointment.Id + " PatientId: " + appointment.PatientId + " Location:" + appointment.Location + " StartDateTime: " + appointment.StartDateTime + " EndDateTime: " + appointment.EndDateTime);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -159,6 +170,7 @@ namespace LungTracking.UI.Controllers
                 var content = new StringContent(serializedObject);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 HttpResponseMessage response = client.DeleteAsync("Appointment/" + appointment.Id).Result;
+                _logger.LogInformation("Deleted appointment. AppointmentId: " + appointment.Id + " PatientId: " + appointment.PatientId + " Location:" + appointment.Location + " StartDateTime: " + appointment.StartDateTime + " EndDateTime: " + appointment.EndDateTime);
 
                 return RedirectToAction(nameof(Index));
             }
