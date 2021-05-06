@@ -9,7 +9,7 @@ using LungTracking.API.Controllers;
 using LungTracking.BL.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AJP.LungTracking.API.Test
+namespace LungTracking.API.Test
 {
     [TestClass]
     public class utPulseController
