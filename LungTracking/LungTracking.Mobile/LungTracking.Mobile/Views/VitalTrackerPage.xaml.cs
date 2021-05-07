@@ -28,7 +28,7 @@ namespace LungTracking.Mobile.Views
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://ee52cf2d1e58.ngrok.io/");
+            client.BaseAddress = new Uri("https://3928f303f9a2.ngrok.io/");
             //client.BaseAddress = new Uri("https://localhost:44364/");
             return client;
         }
@@ -62,7 +62,8 @@ namespace LungTracking.Mobile.Views
                     FEV1Number = Convert.ToDecimal(txtFEV1Number.Text),
                     BeginningEnd = beginningEnd,
                     TimeOfDay = DateTime.Parse(txtTime.Text),
-                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8"),
+                    Alert = null
                 };
 
                 BloodPressure bloodPressure = new Models.BloodPressure
@@ -104,7 +105,7 @@ namespace LungTracking.Mobile.Views
 
                 string serializedFEV1 = JsonConvert.SerializeObject(fev1);
                 var fev1Content = new StringContent(serializedFEV1);
-                pefContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                fev1Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 HttpResponseMessage fev1Response = client.PostAsync("FEV1/", fev1Content).Result;
 
                 string serializedBloodPressure = JsonConvert.SerializeObject(bloodPressure);

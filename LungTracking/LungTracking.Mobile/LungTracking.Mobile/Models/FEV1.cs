@@ -11,5 +11,6 @@ namespace LungTracking.Mobile.Models
         public bool BeginningEnd { get; set; }
         public DateTime TimeOfDay { get; set; }
         public Guid PatientId { get; set; }
+        public string Alert { get; set; }
     }
 }

@@ -165,7 +165,7 @@ namespace LungTracking.BL
                     PatientId = patientId
                 };
 
-                // grab recent FEV1 entries and put them into an array
+                /*// grab recent FEV1 entries and put them into an array
                 IEnumerable<Models.FEV1> fev1List = (IEnumerable<FEV1>)LoadRecentByPatientId(patientId);
                 List<FEV1> fev1Array = fev1List.ToList();
 
@@ -181,7 +181,7 @@ namespace LungTracking.BL
                     {
                         fev1.Alert = "Warning: FEV1 dropped by 10% or more since last entry.";
                     }
-                }
+                }*/
 
                 await Insert(fev1, rollback);
                 return fev1.Id;
