@@ -80,8 +80,8 @@
             <div class="container">
                 <div class="mynav_navbar">
                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Lung Tracking Home</a>
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Medications</a>
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Blood Sugars</a>
+                    <a class="nav-link" asp-area="" asp-controller="Medications" asp-action="Index">Medications</a>
+                    <a class="nav-link" asp-area="" asp-controller="BloodSugar" asp-action="Create">Blood Sugars</a>
                     <a class="nav-link" asp-area="" asp-controller="Appointment" asp-action="Index">Appointments</a>
                     <div class="mynav_dropdown">
                         <button class="mynav_dropbtn">
@@ -89,12 +89,12 @@
                             <i class="fa fa-caret-down"></i>
                         </button>
                         <div class="mynav_dropdown-content">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Weight</a>
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Blood Pressure</a>
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Pulse</a>
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Temperature</a>
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">FEV1</a>
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">PEF</a>
+                            <a class="nav-link" asp-area="" asp-controller="Weight" asp-action="Create">Weight</a>
+                            <a class="nav-link" asp-area="" asp-controller="BloodPressure" asp-action="Create">Blood Pressure</a>
+                            <a class="nav-link" asp-area="" asp-controller="Pulse" asp-action="Create">Pulse</a>
+                            <a class="nav-link" asp-area="" asp-controller="Temperature" asp-action="Create">Temperature</a>
+                            <a class="nav-link" asp-area="" asp-controller="FEV1" asp-action="Create">FEV1</a>
+                            <a class="nav-link" asp-area="" asp-controller="PEF" asp-action="Create">PEF</a>
                         </div>
                     </div>
                 </div>
