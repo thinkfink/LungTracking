@@ -123,9 +123,9 @@ namespace LungTracking.Mobile.Views
                 temperatureContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 HttpResponseMessage temperatureResponse = client.PostAsync("Temperature/", temperatureContent).Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
