@@ -5,20 +5,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Weight</h1>
 
-<h4>Weight</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                @Html.Label("Track Weight")
+                @Html.Label("Track Weight")<br />
                 @Html.TextBox("txtWeight")
             </div>
             <div class="form-group">
-                @Html.Label("Track Time")
+                @Html.Label("Track Time")<br />
                 @Html.TextBox("txtTimeOfDay")
             </div>
             <div class="form-group">
@@ -26,10 +25,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

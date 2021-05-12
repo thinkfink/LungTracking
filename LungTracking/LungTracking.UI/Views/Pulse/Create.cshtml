@@ -5,25 +5,31 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Pulse</h1>
 
-<h4>Pulse</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                @Html.Label("Track Pulse")
+                @Html.Label("Track Pulse")<br />
                 @Html.TextBox("txtPulseNumber")
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="BeginningEnd" /> @Html.DisplayNameFor(model => model.BeginningEnd)
-                </label>
-            </div>
             <div class="form-group">
-                @Html.Label("Track Time")
+                @Html.Label("Beginning or End of Day")<br />
+                @Html.RadioButtonFor(m => m.BeginningEnd, "False")
+                @Html.Label("Beginning")<br />
+                @Html.RadioButtonFor(m => m.BeginningEnd, "True")
+                @Html.Label("End")
+            </div>
+            <!--<div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="BeginningEnd" /> @Html.DisplayNameFor(model => model.BeginningEnd)
+        </label>
+    </div>-->
+            <div class="form-group">
+                @Html.Label("Track Time")<br />
                 @Html.TextBox("txtTimeOfDay")
             </div>
             <div class="form-group">
@@ -31,10 +37,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

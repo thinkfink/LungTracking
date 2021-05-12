@@ -62,8 +62,8 @@ namespace LungTracking.UI.Controllers
                     Id = Guid.NewGuid(),
                     BPsystolic = Convert.ToInt32(collection["txtBPSNumber"].ToString()),
                     BPdiastolic = Convert.ToInt32(collection["txtBPDNumber"].ToString()),
+                    // BeginningEnd is passed through radio buttons on view
                     TimeOfDay = DateTime.Now,
-                    BeginningEnd = true,
                     PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
                 };
                 string serializedObject = JsonConvert.SerializeObject(bloodPressure);

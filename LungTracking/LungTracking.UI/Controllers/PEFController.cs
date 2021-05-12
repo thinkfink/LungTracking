@@ -62,7 +62,7 @@ namespace LungTracking.UI.Controllers
                     Id = Guid.NewGuid(),
                     PEFNumber = Convert.ToDecimal(collection["txtPEFNumber"].ToString()),
                     TimeOfDay = DateTime.Now,
-                    BeginningEnd = true,
+                    // BeginningEnd is passed through radio buttons on view
                     PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
                 };
                 string serializedObject = JsonConvert.SerializeObject(pef);
