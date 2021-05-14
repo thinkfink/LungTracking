@@ -9,10 +9,10 @@
             <Image HorizontalOptions="Center" WidthRequest="300" Source="maco.jpg"/>
             <Frame BackgroundColor="#03045e" HasShadow="True">
                 <StackLayout Orientation="Vertical" Spacing="10">
-                    <Entry x:Name="Username" Text="{Binding Username}" Placeholder="Username"   
+                    <Entry x:Name="txtUsername" Text="{Binding Username}" Placeholder="Username"   
                            PlaceholderColor="#FFFFF" HeightRequest="40"   
                            TextColor="#FFFFF"/>
-                    <Entry x:Name="Password" Text="{Binding Password}" Placeholder="Password"   
+                    <Entry x:Name="txtPassword" Text="{Binding Password}" Placeholder="Password"   
                            PlaceholderColor="#FFFFF" HeightRequest="40"   
                            IsPassword="True"  
                            TextColor="#FFFFF"/>
