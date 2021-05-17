@@ -16,7 +16,8 @@ namespace LungTracking.API.Controllers
     public class LoginController : ControllerBase
     {
         // POST api/<UserController>
-        [HttpPost("login")]
+        //[HttpPost("login")]
+        [HttpPost]
         public async Task<IActionResult> Post([FromBody] User user)
         {
             try
