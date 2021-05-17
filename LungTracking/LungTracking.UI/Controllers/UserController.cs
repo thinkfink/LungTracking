@@ -27,7 +27,7 @@ namespace LungTracking.UI.Controllers
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44323/api/");
+            client.BaseAddress = new Uri("https://localhost:44323/");
             return client;
         }
 
