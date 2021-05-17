@@ -1,4 +1,5 @@
 ﻿using LungTracking.API.Controllers;
+using LungTracking.BL;
 using LungTracking.BL.Models;
 using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
@@ -30,13 +31,40 @@ namespace LungTracking.UI.Controllers
             return client;
         }
 
+        public IActionResult Seed()
+        {
+            UserManager.Seed();
+            return View();
+        }
+
+        // GET: UserController/Create
+        public IActionResult Login(string returnUrl)
+        {
+            TempData["returnurl"] = returnUrl;
+            return View();
+        }
+
+        // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(User user, string returnUrl)
+        public async Task<IActionResult> Login(User user, string returnUrl, IFormCollection collection)
         {
             try
             {
-                if(StatusCodeResult.Equals(StatusCode(200), user))
+                HttpClient client = InitializeClient();
+                user = new User
+                {
+                    Username = collection["txtUsername"].ToString(),
+                    Password = collection["txtPassword"].ToString(),
+                    LastLogin = DateTime.Now
+                };
+                string serializedObject = JsonConvert.SerializeObject(user);
+                var content = new StringContent(serializedObject);
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage response = client.PostAsync("Login/", content).Result;
+
+                if (response.ReasonPhrase == "OK")
+                //if(UserManager.Login(user))
                 {
                     HttpContext.Session.SetObject("user", user);
                     HttpContext.Session.SetObject("username", "");
@@ -76,6 +104,12 @@ namespace LungTracking.UI.Controllers
             }
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.SetObject("user", null);
+            HttpContext.Session.SetObject("username", "");
+            return View();
+        }
 
         // GET: UserController
         public ActionResult Index()
@@ -98,10 +132,11 @@ namespace LungTracking.UI.Controllers
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(User user)
         {
             try
             {
+                UserManager.Insert(user);
                 return RedirectToAction(nameof(Index));
             }
             catch

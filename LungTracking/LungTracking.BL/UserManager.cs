@@ -19,6 +19,20 @@ namespace LungTracking.BL
                 return Convert.ToBase64String(hash.ComputeHash(hashbytes));
             }
         }
+
+        public class LoginFailureException : Exception
+        {
+            public LoginFailureException() : base("Cannot log in with these credentials.Your IP address has been saved.")
+            {
+
+            }
+
+            public LoginFailureException(string message) : base(message)
+            {
+
+            }
+        }
+
         public async static Task<IEnumerable<Models.User>> Load()
         {
             try
@@ -188,6 +202,13 @@ namespace LungTracking.BL
 
                 throw;
             }
+        }
+
+        public static void Seed()
+        {
+            // Hardcoding a couple of users with hashed passwords.
+            User user = new User { Username = "tfink", Password = "tyler", LastLogin = DateTime.Now };
+            Insert(user);
         }
 
         public async static Task<bool> Login(User user, bool rollback = false)
