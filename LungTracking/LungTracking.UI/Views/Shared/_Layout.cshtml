@@ -81,11 +81,11 @@
                 <div class="mynav_navbar">
                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Lung Tracking Home</a>
                     <a class="nav-link" asp-area="" asp-controller="Medications" asp-action="Index">Medications</a>
-                    <a class="nav-link" asp-area="" asp-controller="BloodSugar" asp-action="Create">Blood Sugars</a>
                     <a class="nav-link" asp-area="" asp-controller="Appointment" asp-action="Index">Appointments</a>
+                    <a class="nav-link" asp-area="" asp-controller="BloodSugar" asp-action="Create">Track Blood Sugars</a>
                     <div class="mynav_dropdown">
                         <button class="mynav_dropbtn">
-                            Vitals Spirometry
+                            Track Vitals Spirometry
                             <i class="fa fa-caret-down"></i>
                         </button>
                         <div class="mynav_dropdown-content">
@@ -95,6 +95,21 @@
                             <a class="nav-link" asp-area="" asp-controller="Temperature" asp-action="Create">Temperature</a>
                             <a class="nav-link" asp-area="" asp-controller="FEV1" asp-action="Create">FEV1</a>
                             <a class="nav-link" asp-area="" asp-controller="PEF" asp-action="Create">PEF</a>
+                        </div>
+                    </div>
+                    <div class="mynav_dropdown">
+                        <button class="mynav_dropbtn">
+                            Vitals Spirometry History
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                        <div class="mynav_dropdown-content">
+                            <a href="/BloodSugar/Index">BloodSugar</a>
+                            <a href="/Weight/Index">Weight</a>
+                            <a href="/BloodPressure/Index">BloodPressure</a>
+                            <a href="/Pulse/Index">Pulse</a>
+                            <a href="/Temperature/Index">Temperature</a>
+                            <a href="/FEV1/Index">FEV1</a>
+                            <a href="/PEF/Index">PEF</a>
                         </div>
                     </div>
                     <a class="nav-link" asp-area="" asp-controller="User" asp-action="Login">Login</a>

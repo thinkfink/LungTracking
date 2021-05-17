@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Blood Pressure History</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -18,9 +18,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BPdiastolic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MAP)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BeginningEnd)
@@ -41,10 +38,7 @@
                 @Html.DisplayFor(modelItem => item.BPdiastolic)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MAP)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BeginningEnd)
+                @Html.ValueFor(modelItem => item.BeginningEnd)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TimeOfDay)
@@ -58,3 +52,8 @@
 }
     </tbody>
 </table>
+
+<script>
+    document.body.innerHTML = document.body.innerHTML.replace(/True/g, 'Beginning of Day');
+    document.body.innerHTML = document.body.innerHTML.replace(/False/g, 'End of Day');
+</script>

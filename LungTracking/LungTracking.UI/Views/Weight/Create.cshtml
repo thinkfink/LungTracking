@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 @Html.Label("Track Time")<br />
-                @Html.TextBox("txtTimeOfDay")
+                @Html.TextBox("txtTimeOfDay", DateTime.Now)
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

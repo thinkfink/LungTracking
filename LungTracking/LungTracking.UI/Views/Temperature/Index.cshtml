@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Temperature History</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.TempNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BeginningEnd)
+                @Html.ValueFor(modelItem => item.BeginningEnd)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TimeOfDay)
@@ -52,3 +52,8 @@
 }
     </tbody>
 </table>
+
+<script>
+    document.body.innerHTML = document.body.innerHTML.replace(/True/g, 'Beginning of Day');
+    document.body.innerHTML = document.body.innerHTML.replace(/False/g, 'End of Day');
+</script>
