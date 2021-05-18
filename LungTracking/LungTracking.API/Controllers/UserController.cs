@@ -44,6 +44,20 @@ namespace LungTracking.API.Controllers
             }
         }
 
+        // GET api/<UserController>/5
+        [HttpGet("{username:string}")]
+        public async Task<ActionResult<User>> Get(string username)
+        {
+            try
+            {
+                return Ok(await UserManager.LoadByUsername(username));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         // POST api/<UserController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] User user)

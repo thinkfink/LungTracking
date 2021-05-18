@@ -65,6 +65,42 @@ namespace LungTracking.BL
             }
         }
 
+        public async static Task<Models.User> LoadByUsername(string username)
+        {
+            try
+            {
+                Models.User user = new Models.User();
+                await Task.Run(() =>
+                {
+                    using (LungTrackingEntities dc = new LungTrackingEntities())
+                    {
+                        tblUser tblUser = dc.tblUsers.FirstOrDefault(c => c.Username == username);
+
+                        if (tblUser != null)
+                        {
+                            user.Id = tblUser.Id;
+                            user.Username = tblUser.Username;
+                            user.Password = tblUser.Password;
+                            user.Role = tblUser.Role;
+                            user.Email = tblUser.Email;
+                            user.Created = tblUser.Created;
+                            user.LastLogin = tblUser.LastLogin;
+                        }
+                        else
+                        {
+                            throw new Exception("Could not find the row");
+                        }
+                    }
+                });
+                return user;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async static Task<Models.User> LoadByUserId(Guid userId)
         {
             try

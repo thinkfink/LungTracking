@@ -58,6 +58,8 @@ namespace LungTracking.UI.Controllers
                     Password = collection["txtPassword"].ToString(),
                     LastLogin = DateTime.Now
                 };
+                
+                // running the login method
                 string serializedObject = JsonConvert.SerializeObject(user);
                 var content = new StringContent(serializedObject);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
