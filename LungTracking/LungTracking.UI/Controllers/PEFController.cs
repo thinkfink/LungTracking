@@ -1,6 +1,9 @@
 ﻿using LungTracking.BL.Models;
+using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +16,12 @@ namespace LungTracking.UI.Controllers
 {
     public class PEFController : Controller
     {
+        private readonly ILogger<PEFController> _logger;
+        public PEFController(ILogger<PEFController> logger)
+        {
+            _logger = logger;
+        }
+
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
@@ -24,17 +33,25 @@ namespace LungTracking.UI.Controllers
         // GET: PEFController
         public ActionResult Index()
         {
-            HttpClient client = InitializeClient();
-            HttpResponseMessage response;
-            string result;
-            dynamic items;
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                HttpClient client = InitializeClient();
+                HttpResponseMessage response;
+                string result;
+                dynamic items;
 
-            response = client.GetAsync("PEF").Result;
-            result = response.Content.ReadAsStringAsync().Result;
-            items = (JArray)JsonConvert.DeserializeObject(result);
-            List<PEF> pefs = items.ToObject<List<PEF>>();
+                response = client.GetAsync("PEF").Result;
+                result = response.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<PEF> pefs = items.ToObject<List<PEF>>();
+                _logger.LogInformation("Loaded " + pefs.Count + " PEF records");
 
-            return View(pefs);
+                return View(pefs);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
         }
 
         // GET: PEFController/Details/5
@@ -69,8 +86,11 @@ namespace LungTracking.UI.Controllers
                 var content = new StringContent(serializedObject);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 HttpResponseMessage response = client.PostAsync("PEF/", content).Result;
+                _logger.LogInformation("Created PEF. PEFId: " + pef.Id + " PEFNumber: " + pef.PEFNumber +
+                                       " TimeOfDay:" + pef.TimeOfDay + " BeginningEnd: " + pef.BeginningEnd +
+                                       " PatientId: " + pef.PatientId);
 
-                return RedirectToAction(nameof(Index), pef);
+                return RedirectToAction("Index", "Home");
             }
             catch
             {

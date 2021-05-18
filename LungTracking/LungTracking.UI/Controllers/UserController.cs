@@ -64,20 +64,9 @@ namespace LungTracking.UI.Controllers
                 HttpResponseMessage response = client.PostAsync("Login/", content).Result;
 
                 if (response.ReasonPhrase == "OK")
-                //if(UserManager.Login(user))
                 {
                     HttpContext.Session.SetObject("user", user);
                     HttpContext.Session.SetObject("username", "");
-                    //HttpResponseMessage response;
-                    //string result;
-                    //dynamic items;
-
-                    //HttpClient client = InitializeClient();
-
-                    //response = client.GetAsync("User/" + user.Id).Result;
-                    //result = response.Content.ReadAsStringAsync().Result;
-                    //items = (JArray)JsonConvert.DeserializeObject(result);
-                    //List<Patient> patients = items.ToObject<List<Patient>>();
 
                     if (user != null)
                         HttpContext.Session.SetObject("username", "Welcome " + user.Username);
@@ -88,7 +77,8 @@ namespace LungTracking.UI.Controllers
                     }
                     else
                     {
-                        ViewBag.Message = "You are logged in.";
+                        ViewBag.Message = "You are logged in, " + user.Username + "!";
+                        _logger.LogInformation(user.Username + " logged in");
                         return View();
                     }
                 }
@@ -132,12 +122,28 @@ namespace LungTracking.UI.Controllers
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User user)
+        public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                UserManager.Insert(user);
-                return RedirectToAction(nameof(Index));
+                HttpClient client = InitializeClient();
+                User user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = collection["txtUsername"].ToString(),
+                    Password = collection["txtPassword"].ToString(),
+                    Role = Convert.ToInt32(collection["txtRole"].ToString()),
+                    Email = collection["txtEmail"].ToString(),
+                    Created = DateTime.Now,
+                    LastLogin = DateTime.Now
+                };
+                string serializedObject = JsonConvert.SerializeObject(user);
+                var content = new StringContent(serializedObject);
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                HttpResponseMessage response = client.PostAsync("User/", content).Result;
+                _logger.LogInformation("Created account: " + user.Username);
+
+                return RedirectToAction("Index", "Home");
             }
             catch
             {

@@ -1,6 +1,9 @@
 ﻿using LungTracking.BL.Models;
+using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +16,11 @@ namespace LungTracking.UI.Controllers
 {
     public class BloodPressureController : Controller
     {
+        private readonly ILogger<BloodPressureController> _logger;
+        public BloodPressureController(ILogger<BloodPressureController> logger)
+        {
+            _logger = logger;
+        }
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
@@ -24,17 +32,27 @@ namespace LungTracking.UI.Controllers
         // GET: BloodPressureController
         public ActionResult Index()
         {
-            HttpClient client = InitializeClient();
-            HttpResponseMessage response;
-            string result;
-            dynamic items;
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
 
-            response = client.GetAsync("BloodPressure").Result;
-            result = response.Content.ReadAsStringAsync().Result;
-            items = (JArray)JsonConvert.DeserializeObject(result);
-            List<BloodPressure> bloodPressures = items.ToObject<List<BloodPressure>>();
+                HttpClient client = InitializeClient();
+                HttpResponseMessage response;
+                string result;
+                dynamic items;
 
-            return View(bloodPressures);
+                response = client.GetAsync("BloodPressure").Result;
+                result = response.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<BloodPressure> bloodPressures = items.ToObject<List<BloodPressure>>();
+                _logger.LogInformation("Loaded " + bloodPressures.Count + " blood pressure records");
+
+                return View(bloodPressures);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
         }
 
         // GET: BloodPressureController/Details/5
@@ -56,22 +74,34 @@ namespace LungTracking.UI.Controllers
         {
             try
             {
-                HttpClient client = InitializeClient();
-                BloodPressure bloodPressure = new BloodPressure
+                if (Authenticate.IsAuthenticated(HttpContext))
                 {
-                    Id = Guid.NewGuid(),
-                    BPsystolic = Convert.ToInt32(collection["txtBPSNumber"].ToString()),
-                    BPdiastolic = Convert.ToInt32(collection["txtBPDNumber"].ToString()),
-                    // BeginningEnd is passed through radio buttons on view
-                    TimeOfDay = DateTime.Now,
-                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
-                };
-                string serializedObject = JsonConvert.SerializeObject(bloodPressure);
-                var content = new StringContent(serializedObject);
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                HttpResponseMessage response = client.PostAsync("BloodPressure/", content).Result;
+                    User currentUser = HttpContext.Session.GetObject<User>("user");
 
-                return RedirectToAction(nameof(Index), bloodPressure);
+                    HttpClient client = InitializeClient();
+                    BloodPressure bloodPressure = new BloodPressure
+                    {
+                        Id = Guid.NewGuid(),
+                        BPsystolic = Convert.ToInt32(collection["txtBPSNumber"].ToString()),
+                        BPdiastolic = Convert.ToInt32(collection["txtBPDNumber"].ToString()),
+                        // BeginningEnd is passed through radio buttons on view
+                        TimeOfDay = DateTime.Now,
+                        PatientId = currentUser.Id
+                    };
+                    string serializedObject = JsonConvert.SerializeObject(bloodPressure);
+                    var content = new StringContent(serializedObject);
+                    content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                    HttpResponseMessage response = client.PostAsync("BloodPressure/", content).Result;
+                    _logger.LogInformation("Created blood pressure. BloodPressureId: " + bloodPressure.Id + " BPsystolic: " + bloodPressure.BPsystolic +
+                                           " BPdiastolic:" + bloodPressure.BPdiastolic + " BeginningEnd: " + bloodPressure.BeginningEnd +
+                                           " TimeOfDay: " + bloodPressure.TimeOfDay + " PatientId: " + bloodPressure.PatientId);
+
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+                }
             }
             catch
             {
