@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Wkhtmltopdf.NetCore;
 
 namespace LungTracking.API
 {
@@ -28,6 +29,9 @@ namespace LungTracking.API
         {
 
             services.AddControllers();
+            // reporting
+            services.AddWkhtmltopdf("wkhtmltopdf");
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LungTracking.API", Version = "v1" });
