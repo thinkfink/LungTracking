@@ -70,6 +70,17 @@ namespace LungTracking.UI.Controllers
                     HttpContext.Session.SetObject("user", user);
                     HttpContext.Session.SetObject("username", "");
 
+                    HttpResponseMessage userResponse;
+                    string result;
+                    dynamic item;
+
+                    userResponse = client.GetAsync("UserId/" + user.Username).Result;
+                    result = response.Content.ReadAsStringAsync().Result;
+                    item = JsonConvert.DeserializeObject(result);
+                    User loadedUser = item.ToObject<User>();
+
+                    HttpContext.Session.SetObject("userId", loadedUser.Id);
+
                     if (user != null)
                         HttpContext.Session.SetObject("username", "Welcome " + user.Username);
 
