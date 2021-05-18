@@ -16,7 +16,7 @@ namespace LungTracking.API.Controllers
     public class UserIdController : ControllerBase
     {
         // GET api/<UserController>/5
-        [HttpGet("{username:alpha}")]
+        [HttpGet("{username}")]
         public async Task<ActionResult<User>> Get(string username)
         {
             try
