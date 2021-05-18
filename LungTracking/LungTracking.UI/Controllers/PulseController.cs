@@ -1,6 +1,9 @@
 ﻿using LungTracking.BL.Models;
+using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +16,12 @@ namespace LungTracking.UI.Controllers
 {
     public class PulseController : Controller
     {
+        private readonly ILogger<PulseController> _logger;
+        public PulseController(ILogger<PulseController> logger)
+        {
+            _logger = logger;
+        }
+
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
@@ -24,17 +33,25 @@ namespace LungTracking.UI.Controllers
         // GET: PulseController
         public ActionResult Index()
         {
-            HttpClient client = InitializeClient();
-            HttpResponseMessage response;
-            string result;
-            dynamic items;
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                HttpClient client = InitializeClient();
+                HttpResponseMessage response;
+                string result;
+                dynamic items;
 
-            response = client.GetAsync("Pulse").Result;
-            result = response.Content.ReadAsStringAsync().Result;
-            items = (JArray)JsonConvert.DeserializeObject(result);
-            List<Pulse> pulses = items.ToObject<List<Pulse>>();
+                response = client.GetAsync("Pulse").Result;
+                result = response.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<Pulse> pulses = items.ToObject<List<Pulse>>();
+                _logger.LogInformation("Loaded " + pulses.Count + " pulse records");
 
-            return View(pulses);
+                return View(pulses);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
         }
 
         // GET: PulseController/Details/5
@@ -56,21 +73,31 @@ namespace LungTracking.UI.Controllers
         {
             try
             {
-                HttpClient client = InitializeClient();
-                Pulse pulse = new Pulse
+                if (Authenticate.IsAuthenticated(HttpContext))
                 {
-                    Id = Guid.NewGuid(),
-                    PulseNumber = Convert.ToInt32(collection["txtPulseNumber"].ToString()),
-                    TimeOfDay = DateTime.Now,
-                    // BeginningEnd is passed through radio buttons on view
-                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
-                };
-                string serializedObject = JsonConvert.SerializeObject(pulse);
-                var content = new StringContent(serializedObject);
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                HttpResponseMessage response = client.PostAsync("Pulse/", content).Result;
+                    HttpClient client = InitializeClient();
+                    Pulse pulse = new Pulse
+                    {
+                        Id = Guid.NewGuid(),
+                        PulseNumber = Convert.ToInt32(collection["txtPulseNumber"].ToString()),
+                        TimeOfDay = DateTime.Now,
+                        // BeginningEnd is passed through radio buttons on view
+                        PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                    };
+                    string serializedObject = JsonConvert.SerializeObject(pulse);
+                    var content = new StringContent(serializedObject);
+                    content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                    HttpResponseMessage response = client.PostAsync("Pulse/", content).Result;
+                    _logger.LogInformation("Created pulse. PulseId: " + pulse.Id + " PEFNumber: " + pulse.PulseNumber +
+                                           " TimeOfDay:" + pulse.TimeOfDay + " BeginningEnd: " + pulse.BeginningEnd +
+                                           " PatientId: " + pulse.PatientId);
 
-                return RedirectToAction(nameof(Index), pulse);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+                }
             }
             catch
             {

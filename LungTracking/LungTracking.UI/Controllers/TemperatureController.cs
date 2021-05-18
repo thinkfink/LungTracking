@@ -1,6 +1,9 @@
 ﻿using LungTracking.BL.Models;
+using LungTracking.UI.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +16,12 @@ namespace LungTracking.UI.Controllers
 {
     public class TemperatureController : Controller
     {
+        private readonly ILogger<TemperatureController> _logger;
+        public TemperatureController(ILogger<TemperatureController> logger)
+        {
+            _logger = logger;
+        }
+
         private static HttpClient InitializeClient()
         {
             HttpClient client = new HttpClient();
@@ -24,17 +33,25 @@ namespace LungTracking.UI.Controllers
         // GET: TemperatureController
         public ActionResult Index()
         {
-            HttpClient client = InitializeClient();
-            HttpResponseMessage response;
-            string result;
-            dynamic items;
+            if (Authenticate.IsAuthenticated(HttpContext))
+            {
+                HttpClient client = InitializeClient();
+                HttpResponseMessage response;
+                string result;
+                dynamic items;
 
-            response = client.GetAsync("Temperature").Result;
-            result = response.Content.ReadAsStringAsync().Result;
-            items = (JArray)JsonConvert.DeserializeObject(result);
-            List<Temperature> temperatures = items.ToObject<List<Temperature>>();
+                response = client.GetAsync("Temperature").Result;
+                result = response.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<Temperature> temperatures = items.ToObject<List<Temperature>>();
+                _logger.LogInformation("Loaded " + temperatures.Count + " temperature records");
 
-            return View(temperatures);
+                return View(temperatures);
+            }
+            else
+            {
+                return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+            }
         }
 
         // GET: TemperatureController/Details/5
@@ -56,22 +73,32 @@ namespace LungTracking.UI.Controllers
         {
             try
             {
-                HttpClient client = InitializeClient();
-                Temperature temperature = new Temperature
+                if (Authenticate.IsAuthenticated(HttpContext))
                 {
-                    Id = Guid.NewGuid(),
-                    TempNumber = Convert.ToDecimal(collection["txtTempNumber"].ToString()),
-                    TimeOfDay = DateTime.Now,
-                    // BeginningEnd is passed through radio buttons on view
-                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8"),
-                    Alert = ""
-                };
-                string serializedObject = JsonConvert.SerializeObject(temperature);
-                var content = new StringContent(serializedObject);
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-                HttpResponseMessage response = client.PostAsync("Temperature/", content).Result;
+                    HttpClient client = InitializeClient();
+                    Temperature temperature = new Temperature
+                    {
+                        Id = Guid.NewGuid(),
+                        TempNumber = Convert.ToDecimal(collection["txtTempNumber"].ToString()),
+                        TimeOfDay = DateTime.Now,
+                        // BeginningEnd is passed through radio buttons on view
+                        PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8"),
+                        Alert = ""
+                    };
+                    string serializedObject = JsonConvert.SerializeObject(temperature);
+                    var content = new StringContent(serializedObject);
+                    content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                    HttpResponseMessage response = client.PostAsync("Temperature/", content).Result;
+                    _logger.LogInformation("Created temperature. TemperatureId: " + temperature.Id + " PEFNumber: " + temperature.TempNumber +
+                                           " TimeOfDay:" + temperature.TimeOfDay + " BeginningEnd: " + temperature.BeginningEnd +
+                                           " PatientId: " + temperature.PatientId + " Alert: " + temperature.Alert);
 
-                return RedirectToAction(nameof(Index), temperature);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("Login", "User", new { returnUrl = UriHelper.GetDisplayUrl(HttpContext.Request) });
+                }
             }
             catch
             {
