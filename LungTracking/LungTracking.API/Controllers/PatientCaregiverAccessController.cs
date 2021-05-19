@@ -45,6 +45,7 @@ namespace LungTracking.API.Controllers
             }
         }
 
+        /*
         // GET: api/<PatientCaregiverAccessController>
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<IEnumerable<PatientCaregiverAccess>>> Get(Guid patientId, Guid caregiverId)
@@ -59,6 +60,7 @@ namespace LungTracking.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        */
 
         // POST api/<PatientCaregiverAccessController>
         [HttpPost]

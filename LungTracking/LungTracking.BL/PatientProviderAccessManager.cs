@@ -39,6 +39,7 @@ namespace LungTracking.BL
             }
         }
 
+        /*
         public async static Task<Models.PatientProviderAccess> LoadById(Guid patientId, Guid providerId)
         {
             try
@@ -70,6 +71,7 @@ namespace LungTracking.BL
                 throw;
             }
         }
+        */
 
         public async static Task<List<Models.PatientProviderAccess>> LoadByProviderId(Guid providerId)
         {
