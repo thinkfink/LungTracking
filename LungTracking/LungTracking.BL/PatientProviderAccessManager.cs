@@ -71,6 +71,54 @@ namespace LungTracking.BL
             }
         }
 
+        public async static Task<List<Models.PatientProviderAccess>> LoadByProviderId(Guid providerId)
+        {
+            try
+            {
+                List<PatientProviderAccess> results = new List<PatientProviderAccess>();
+                await Task.Run(() =>
+                {
+                    if (providerId != null)
+                    {
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
+                        {
+                            var ppa = (from dt in dc.tblPatientProviderAccesses
+                                         where dt.ProviderId == providerId
+                                         select new
+                                         {
+                                             dt.Id,
+                                             dt.ProviderId,
+                                             dt.PatientId
+                                         }).ToList();
+
+                            if (ppa != null)
+                            {
+                                ppa.ForEach(app => results.Add(new PatientProviderAccess
+                                {
+                                    Id = app.Id,
+                                    ProviderId = app.ProviderId,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("PatientProviderAccess was not found.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async static Task<int> Insert(Models.PatientProviderAccess ppa, bool rollback = false)
         {
             try

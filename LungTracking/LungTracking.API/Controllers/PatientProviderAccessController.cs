@@ -32,12 +32,27 @@ namespace LungTracking.API.Controllers
 
         // GET: api/<PatientCaregiverAccessController>
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<IEnumerable<PatientCaregiverAccess>>> Get(Guid patientId, Guid providerId)
+        public async Task<ActionResult<IEnumerable<PatientProviderAccess>>> Get(Guid providerId)
         {
             // Return all the patientCaregiverAccesss
             try
             {
-                return Ok(await PatientCaregiverAccessManager.LoadById(patientId, providerId));
+                return Ok(await PatientProviderAccessManager.LoadByProviderId(providerId));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        // GET: api/<PatientCaregiverAccessController>
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<IEnumerable<PatientProviderAccess>>> Get(Guid patientId, Guid providerId)
+        {
+            // Return all the patientCaregiverAccesss
+            try
+            {
+                return Ok(await PatientProviderAccessManager.LoadById(patientId, providerId));
             }
             catch (Exception ex)
             {

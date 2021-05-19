@@ -71,6 +71,54 @@ namespace LungTracking.BL
             }
         }
 
+        public async static Task<List<Models.PatientCaregiverAccess>> LoadByCaregiverId(Guid caregiverId)
+        {
+            try
+            {
+                List<PatientCaregiverAccess> results = new List<PatientCaregiverAccess>();
+                await Task.Run(() =>
+                {
+                    if (caregiverId != null)
+                    {
+                        using (LungTrackingEntities dc = new LungTrackingEntities())
+                        {
+                            var ppa = (from dt in dc.tblPatientCaregiverAccesses
+                                       where dt.CaregiverId == caregiverId
+                                       select new
+                                       {
+                                           dt.Id,
+                                           dt.CaregiverId,
+                                           dt.PatientId
+                                       }).ToList();
+
+                            if (ppa != null)
+                            {
+                                ppa.ForEach(app => results.Add(new PatientCaregiverAccess
+                                {
+                                    Id = app.Id,
+                                    CaregiverId = app.CaregiverId,
+                                    PatientId = app.PatientId
+                                }));
+                            }
+                            else
+                            {
+                                throw new Exception("PatientCaregiverAccess was not found.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Please provide a patient Id.");
+                    }
+                });
+                return results;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async static Task<int> Insert(Models.PatientCaregiverAccess pca, bool rollback = false)
         {
             try
