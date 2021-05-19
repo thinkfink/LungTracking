@@ -49,7 +49,6 @@ namespace LungTracking.BL
             try
             {
                 List<BloodPressure> results = new List<BloodPressure>();
-                results = null;
                 await Task.Run(() =>
                 {
                     if (patientId != null)
@@ -70,14 +69,14 @@ namespace LungTracking.BL
 
                             if (bloodPressure != null)
                             {
-                                bloodPressure.ForEach(app => results.Add(new BloodPressure
+                                bloodPressure.ForEach(a => results.Add(new BloodPressure
                                 {
-                                    Id = app.Id,
-                                    BPsystolic = app.Bpsystolic,
-                                    BPdiastolic = app.Bpdiastolic,
-                                    BeginningEnd = app.BeginningEnd,
-                                    TimeOfDay = app.TimeOfDay,
-                                    PatientId = app.PatientId
+                                    Id = a.Id,
+                                    BPsystolic = a.Bpsystolic,
+                                    BPdiastolic = a.Bpdiastolic,
+                                    BeginningEnd = a.BeginningEnd,
+                                    TimeOfDay = a.TimeOfDay,
+                                    PatientId = a.PatientId
                                 }));
                             }
                             else
