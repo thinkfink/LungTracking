@@ -70,6 +70,7 @@ namespace LungTracking.UI.Controllers
                     HttpContext.Session.SetObject("user", user);
                     HttpContext.Session.SetObject("username", "");
 
+                    // grab the userId upon login
                     HttpClient userClient = InitializeClient();
                     HttpResponseMessage userResponse;
                     string result;
@@ -81,6 +82,98 @@ namespace LungTracking.UI.Controllers
                     User loadedUser = item.ToObject<User>();
 
                     HttpContext.Session.SetObject("userId", loadedUser);
+
+                    // check to see if the userId has a patientId, caregiverId, or providerId
+                    HttpClient patientClient = InitializeClient();
+                    HttpResponseMessage patientResponse;
+                    string patientResult;
+                    dynamic patientItem;
+                    patientResponse = patientClient.GetAsync("Patient/" + loadedUser.Id).Result;
+
+                    HttpClient caregiverClient = InitializeClient();
+                    HttpResponseMessage caregiverResponse;
+                    string caregiverResult;
+                    dynamic caregiverItem;
+                    caregiverResponse = caregiverClient.GetAsync("Caregiver/" + loadedUser.Id).Result;
+
+                    HttpClient providerClient = InitializeClient();
+                    HttpResponseMessage providerResponse;
+                    string providerResult;
+                    dynamic providerItem;
+                    providerResponse = providerClient.GetAsync("Provider/" + loadedUser.Id).Result;
+
+                    if (patientResponse.ReasonPhrase == "OK")
+                    {
+                        patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                        patientItem = JsonConvert.DeserializeObject(patientResult);
+                        Patient loadedPatient = patientItem[0].ToObject<Patient>();
+
+                        HttpContext.Session.SetObject("patientId", loadedPatient.Id);
+                    }
+                    else if(caregiverResponse.ReasonPhrase == "OK")
+                    {
+                        caregiverResult = caregiverResponse.Content.ReadAsStringAsync().Result;
+                        caregiverItem = JsonConvert.DeserializeObject(caregiverResult);
+                        Caregiver loadedCaregiver = caregiverItem[0].ToObject<Caregiver>();
+
+                        HttpContext.Session.SetObject("caregiverId", loadedCaregiver.Id);
+                    }
+                    else if(providerResponse.ReasonPhrase == "OK")
+                    {
+                        providerResult = providerResponse.Content.ReadAsStringAsync().Result;
+                        providerItem = JsonConvert.DeserializeObject(providerResult);
+                        Provider loadedProvider = providerItem[0].ToObject<Provider>();
+
+                        HttpContext.Session.SetObject("providerId", loadedProvider.Id);
+                    }
+
+                    /*
+                    if (patientResponse.ReasonPhrase == "OK")
+                    {
+                        patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                        patientItem = JsonConvert.DeserializeObject(patientResult);
+                        Patient loadedPatient = patientItem.ToObject<Patient>();
+
+                        HttpContext.Session.SetObject("patientId", loadedPatient.Id);
+                    }
+                    else
+                    {
+                        HttpClient caregiverClient = InitializeClient();
+                        HttpResponseMessage caregiverResponse;
+                        string caregiverResult;
+                        dynamic caregiverItem;
+
+                        caregiverResponse = caregiverClient.GetAsync("Caregiver/" + loadedUser.Id).Result;
+
+                        if (caregiverResponse.ReasonPhrase == "OK")
+                        {
+                            caregiverResult = caregiverResponse.Content.ReadAsStringAsync().Result;
+                            caregiverItem = JsonConvert.DeserializeObject(caregiverResult);
+                            Caregiver loadedCaregiver = caregiverItem.ToObject<Caregiver>();
+
+                            HttpContext.Session.SetObject("caregiverId", loadedCaregiver.Id);
+                        }
+                        else
+                        {
+                            HttpClient providerClient = InitializeClient();
+                            HttpResponseMessage providerResponse;
+                            string providerResult;
+                            dynamic providerItem;
+
+                            providerResponse = providerClient.GetAsync("Provider/" + loadedUser.Id).Result;
+
+                            if (providerResponse.ReasonPhrase == "OK")
+                            {
+                                providerResult = providerResponse.Content.ReadAsStringAsync().Result;
+                                providerItem = JsonConvert.DeserializeObject(providerResult);
+                                Provider loadedProvider = providerItem.ToObject<Provider>();
+
+                                HttpContext.Session.SetObject("caregiverId", loadedProvider.Id);
+                            }
+                        }
+                    }
+                    */
+
 
                     if (user != null)
                         HttpContext.Session.SetObject("username", "Welcome " + user.Username);
