@@ -40,28 +40,66 @@ namespace LungTracking.UI.Controllers
 
                 int role = currentUserById.Role;
 
-                HttpClient patientClient = InitializeClient();
-                HttpResponseMessage patientResponse;
-                string patientResult;
-                dynamic patientItems;
+                if (role == 0)
+                {
+                    HttpClient patientClient = InitializeClient();
+                    HttpResponseMessage patientResponse;
+                    string patientResult;
+                    dynamic patientItems;
 
-                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
-                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
-                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
-                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+                    patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                    patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                    patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                    List<Patient> patients = patientItems.ToObject<List<Patient>>();
 
-                HttpClient client = InitializeClient();
-                HttpResponseMessage response;
-                string bpResult;
-                dynamic bpItems;
+                    HttpClient client = InitializeClient();
+                    HttpResponseMessage response;
+                    string bpResult;
+                    dynamic bpItems;
 
-                response = client.GetAsync("BloodPressure/" + patients[0].Id).Result;
-                bpResult = response.Content.ReadAsStringAsync().Result;
-                bpItems = (JArray)JsonConvert.DeserializeObject(bpResult);
-                List<BloodPressure> bloodPressures = bpItems.ToObject<List<BloodPressure>>();
-                _logger.LogInformation("Loaded " + bloodPressures.Count + " blood pressure records");
+                    response = client.GetAsync("BloodPressure/" + patients[0].Id).Result;
+                    bpResult = response.Content.ReadAsStringAsync().Result;
+                    bpItems = (JArray)JsonConvert.DeserializeObject(bpResult);
+                    List<BloodPressure> bloodPressures = bpItems.ToObject<List<BloodPressure>>();
+                    _logger.LogInformation("Loaded " + bloodPressures.Count + " blood pressure records");
 
-                return View(bloodPressures);
+                    return View(bloodPressures);
+                }
+                else if (role == 1)
+                {
+                    HttpClient providerClient = InitializeClient();
+                    HttpResponseMessage providerResponse;
+                    string providerResult;
+                    dynamic providerItems;
+
+                    providerResponse = providerClient.GetAsync("Provider/" + currentUser.Id).Result;
+                    providerResult = providerResponse.Content.ReadAsStringAsync().Result;
+                    providerItems = (JArray)JsonConvert.DeserializeObject(providerResult);
+                    List<Patient> providers = providerItems.ToObject<List<Patient>>();
+
+                    HttpClient patientProviderClient = InitializeClient();
+                    HttpResponseMessage patientProviderResponse;
+                    string patientProviderResult;
+                    dynamic patientProviderItems;
+
+                    patientProviderResponse = patientProviderClient.GetAsync("PatientProviderAccess/" + providers[0].Id).Result;
+                    patientProviderResult = patientProviderResponse.Content.ReadAsStringAsync().Result;
+                    patientProviderItems = (JArray)JsonConvert.DeserializeObject(patientProviderResult);
+                    List<Patient> patients = patientProviderItems.ToObject<List<Patient>>();
+
+                    HttpClient patientsClient = InitializeClient();
+                    HttpResponseMessage patientsResponse;
+                    string patientsResult;
+                    dynamic patientsItems;
+
+                    patientsResponse = patientsClient.GetAsync("BloodPressure/" + patients[0].Id).Result;
+                    patientsResult = patientsResponse.Content.ReadAsStringAsync().Result;
+                    patientsItems = (JArray)JsonConvert.DeserializeObject(patientsResult);
+                    List<BloodPressure> bloodPressures = patientsItems.ToObject<List<BloodPressure>>();
+                    _logger.LogInformation("Loaded " + bloodPressures.Count + " blood pressure records");
+                }
+                return View();
+                
             }
             else
             {
