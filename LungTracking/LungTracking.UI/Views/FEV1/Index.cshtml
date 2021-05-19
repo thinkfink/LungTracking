@@ -10,6 +10,13 @@
 <p>
     <button class="btn btn-primary" asp-action="Create">Create New</button>
 </p>
+
+<style>
+    tbody tr:nth-child(odd) {
+        background-color: #edfafd;
+    }
+</style>
+
 <table class="table">
     <thead>
         <tr>
@@ -54,6 +61,6 @@
 </table>
 
 <script>
-    document.body.innerHTML = document.body.innerHTML.replace(/True/g, 'Beginning of Day');
-    document.body.innerHTML = document.body.innerHTML.replace(/False/g, 'End of Day');
+    document.body.innerHTML = document.body.innerHTML.replace(/False/g, 'Beginning of Day');
+    document.body.innerHTML = document.body.innerHTML.replace(/True/g, 'End of Day');
 </script>

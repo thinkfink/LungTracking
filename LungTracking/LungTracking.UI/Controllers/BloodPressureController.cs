@@ -38,6 +38,8 @@ namespace LungTracking.UI.Controllers
                 User currentUserById = HttpContext.Session.GetObject<User>("userId");
                 currentUser.Id = currentUserById.Id;
 
+                int role = currentUserById.Role;
+
                 HttpClient patientClient = InitializeClient();
                 HttpResponseMessage patientResponse;
                 string patientResult;
