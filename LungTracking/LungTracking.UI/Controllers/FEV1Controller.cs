@@ -35,15 +35,29 @@ namespace LungTracking.UI.Controllers
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string fev1Result;
+                dynamic fev1Items;
 
-                response = client.GetAsync("FEV1").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<FEV1> fev1s = items.ToObject<List<FEV1>>();
+                response = client.GetAsync("FEV1/" + patients[0].Id).Result;
+                fev1Result = response.Content.ReadAsStringAsync().Result;
+                fev1Items = (JArray)JsonConvert.DeserializeObject(fev1Result);
+                List<FEV1> fev1s = fev1Items.ToObject<List<FEV1>>();
                 _logger.LogInformation("Loaded " + fev1s.Count + " FEV1 records");
 
                 return View(fev1s);

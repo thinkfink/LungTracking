@@ -35,15 +35,29 @@ namespace LungTracking.UI.Controllers
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string pefResult;
+                dynamic pefItems;
 
-                response = client.GetAsync("PEF").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<PEF> pefs = items.ToObject<List<PEF>>();
+                response = client.GetAsync("PEF/" + patients[0].Id).Result;
+                pefResult = response.Content.ReadAsStringAsync().Result;
+                pefItems = (JArray)JsonConvert.DeserializeObject(pefResult);
+                List<PEF> pefs = pefItems.ToObject<List<PEF>>();
                 _logger.LogInformation("Loaded " + pefs.Count + " PEF records");
 
                 return View(pefs);

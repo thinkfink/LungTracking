@@ -35,15 +35,29 @@ namespace LungTracking.UI.Controllers
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string bsResult;
+                dynamic bsItems;
 
-                response = client.GetAsync("BloodSugar").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<BloodSugar> bloodSugars = items.ToObject<List<BloodSugar>>();
+                response = client.GetAsync("BloodSugar/" + patients[0].Id).Result;
+                bsResult = response.Content.ReadAsStringAsync().Result;
+                bsItems = (JArray)JsonConvert.DeserializeObject(bsResult);
+                List<BloodSugar> bloodSugars = bsItems.ToObject<List<BloodSugar>>();
                 _logger.LogInformation("Loaded " + bloodSugars.Count + " blood sugar records");
 
                 return View(bloodSugars);
