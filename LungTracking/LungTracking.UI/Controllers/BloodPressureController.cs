@@ -77,6 +77,18 @@ namespace LungTracking.UI.Controllers
                 if (Authenticate.IsAuthenticated(HttpContext))
                 {
                     User currentUser = HttpContext.Session.GetObject<User>("user");
+                    User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                    currentUser.Id = currentUserById.Id;
+
+                    HttpClient patientClient = InitializeClient();
+                    HttpResponseMessage patientResponse;
+                    string result;
+                    dynamic items;
+
+                    patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                    result = patientResponse.Content.ReadAsStringAsync().Result;
+                    items = (JArray)JsonConvert.DeserializeObject(result);
+                    List<Patient> patients = items.ToObject<List<Patient>>();
 
                     HttpClient client = InitializeClient();
                     BloodPressure bloodPressure = new BloodPressure
@@ -86,7 +98,7 @@ namespace LungTracking.UI.Controllers
                         BPdiastolic = Convert.ToInt32(collection["txtBPDNumber"].ToString()),
                         // BeginningEnd is passed through radio buttons on view
                         TimeOfDay = DateTime.Now,
-                        PatientId = currentUser.Id
+                        PatientId = patients[0].Id
                     };
                     string serializedObject = JsonConvert.SerializeObject(bloodPressure);
                     var content = new StringContent(serializedObject);

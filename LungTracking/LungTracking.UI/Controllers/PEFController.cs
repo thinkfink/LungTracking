@@ -73,6 +73,20 @@ namespace LungTracking.UI.Controllers
         {
             try
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string result;
+                dynamic items;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                result = patientResponse.Content.ReadAsStringAsync().Result;
+                items = (JArray)JsonConvert.DeserializeObject(result);
+                List<Patient> patients = items.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 PEF pef = new PEF
                 {
@@ -80,7 +94,7 @@ namespace LungTracking.UI.Controllers
                     PEFNumber = Convert.ToDecimal(collection["txtPEFNumber"].ToString()),
                     TimeOfDay = DateTime.Now,
                     // BeginningEnd is passed through radio buttons on view
-                    PatientId = Guid.Parse("9563aae1-85d2-4724-a65f-8d7efefdb0b8")
+                    PatientId = patients[0].Id
                 };
                 string serializedObject = JsonConvert.SerializeObject(pef);
                 var content = new StringContent(serializedObject);

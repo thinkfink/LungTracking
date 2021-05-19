@@ -80,7 +80,7 @@ namespace LungTracking.UI.Controllers
                     item = JsonConvert.DeserializeObject(result);
                     User loadedUser = item.ToObject<User>();
 
-                    HttpContext.Session.SetObject("userId", loadedUser.Id);
+                    HttpContext.Session.SetObject("userId", loadedUser);
 
                     if (user != null)
                         HttpContext.Session.SetObject("username", "Welcome " + user.Username);
