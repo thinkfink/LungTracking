@@ -35,15 +35,29 @@ namespace LungTracking.UI.Controllers
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string pulseResult;
+                dynamic pulseItems;
 
-                response = client.GetAsync("Pulse").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<Pulse> pulses = items.ToObject<List<Pulse>>();
+                response = client.GetAsync("Pulse/" + patients[0].Id).Result;
+                pulseResult = response.Content.ReadAsStringAsync().Result;
+                pulseItems = (JArray)JsonConvert.DeserializeObject(pulseResult);
+                List<Pulse> pulses = pulseItems.ToObject<List<Pulse>>();
                 _logger.LogInformation("Loaded " + pulses.Count + " pulse records");
 
                 return View(pulses);

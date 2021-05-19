@@ -28,15 +28,29 @@ namespace LungTracking.UI.Controllers
         {
             if (Authenticate.IsAuthenticated(HttpContext))
             {
+                User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
+
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string weightResult;
+                dynamic weightItems;
 
                 response = client.GetAsync("Weight").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<Weight> weights = items.ToObject<List<Weight>>();
+                weightResult = response.Content.ReadAsStringAsync().Result;
+                weightItems = (JArray)JsonConvert.DeserializeObject(weightResult);
+                List<Weight> weights = weightItems.ToObject<List<Weight>>();
 
                 return View(weights);
             }

@@ -31,7 +31,7 @@ namespace LungTracking.API.Controllers
         }
 
         // GET api/<WeightController>/5
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{patientId:Guid}")]
         public async Task<ActionResult<Weight>> Get(Guid patientId)
         {
             try

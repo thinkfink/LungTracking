@@ -31,7 +31,7 @@ namespace LungTracking.API.Controllers
         }
 
         // GET api/<PEFController>/5
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{patientId:Guid}")]
         public async Task<ActionResult<PEF>> Get(Guid patientId)
         {
             try

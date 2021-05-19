@@ -35,16 +35,28 @@ namespace LungTracking.UI.Controllers
             if (Authenticate.IsAuthenticated(HttpContext))
             {
                 User currentUser = HttpContext.Session.GetObject<User>("user");
+                User currentUserById = HttpContext.Session.GetObject<User>("userId");
+                currentUser.Id = currentUserById.Id;
+
+                HttpClient patientClient = InitializeClient();
+                HttpResponseMessage patientResponse;
+                string patientResult;
+                dynamic patientItems;
+
+                patientResponse = patientClient.GetAsync("Patient/" + currentUser.Id).Result;
+                patientResult = patientResponse.Content.ReadAsStringAsync().Result;
+                patientItems = (JArray)JsonConvert.DeserializeObject(patientResult);
+                List<Patient> patients = patientItems.ToObject<List<Patient>>();
 
                 HttpClient client = InitializeClient();
                 HttpResponseMessage response;
-                string result;
-                dynamic items;
+                string bpResult;
+                dynamic bpItems;
 
-                response = client.GetAsync("BloodPressure").Result;
-                result = response.Content.ReadAsStringAsync().Result;
-                items = (JArray)JsonConvert.DeserializeObject(result);
-                List<BloodPressure> bloodPressures = items.ToObject<List<BloodPressure>>();
+                response = client.GetAsync("BloodPressure/" + patients[0].Id).Result;
+                bpResult = response.Content.ReadAsStringAsync().Result;
+                bpItems = (JArray)JsonConvert.DeserializeObject(bpResult);
+                List<BloodPressure> bloodPressures = bpItems.ToObject<List<BloodPressure>>();
                 _logger.LogInformation("Loaded " + bloodPressures.Count + " blood pressure records");
 
                 return View(bloodPressures);
